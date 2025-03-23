@@ -1,0 +1,132 @@
+{
+  "1": {
+    "title": "测试",
+    "content": "测试222",
+    "metadata": {
+      "summary_type": "经验",
+      "tags": "测试",
+      "created_at": "2025-03-13T06:46:39.350511",
+      "updated_at": "2025-03-13T06:49:14.703869",
+      "user_id": 5,
+      "source_url": null
+    },
+    "updated_at": "2025-03-19T16:55:35.088370"
+  },
+  "2": {
+    "title": "222",
+    "content": "22",
+    "metadata": {
+      "summary_type": "算法",
+      "tags": "2222",
+      "created_at": "2025-03-13T06:49:31.711039",
+      "updated_at": "2025-03-13T06:49:31.711041",
+      "user_id": 5,
+      "source_url": null
+    },
+    "updated_at": "2025-03-19T16:55:35.090338"
+  },
+  "3": {
+    "title": "测试",
+    "content": "uuu",
+    "metadata": {
+      "summary_type": "工具",
+      "tags": "r",
+      "created_at": "2025-03-13T10:46:46.385760",
+      "updated_at": "2025-03-13T10:46:46.385767",
+      "user_id": 1,
+      "source_url": null
+    },
+    "updated_at": "2025-03-19T16:55:35.090813"
+  },
+  "4": {
+    "title": "QQ空间-分享生活，留住感动",
+    "content": "\n# iPhone iPad Android 反馈建议 | 官方空间 | 空间活动 | 空间应用 | 腾讯原创馆 | QQ互联 | QQ登录 | 应用侵权投诉 | Complaint Guidelines Copyright © 2005 - 2025 Tencent. All Rights Reserved. 腾讯公司 版权所有 粤网文[2014]0633-233号...\n\n## 核心技术点和关键概念\n\n这篇文章主要介绍了一些重要的技术概念和方法。文章内容涵盖了多个方面，包括技术原理、实现方法以及应用场景。\n\n## 技术原理和实现方法\n\n文章详细描述了相关技术的原理和实现方法，包括：\n\n1. 基本原理和框架\n2. 核心算法和流程\n3. 实现细节和注意事项\n\n## 技术优势和应用场景\n\n该技术具有以下优势：\n\n- 高效性和可扩展性\n- 易于集成和使用\n- 适应性强，可应用于多种场景\n\n主要应用场景包括：\n\n1. 数据处理和分析\n2. 系统优化和性能提升\n3. 自动化流程和工具开发\n\n## 局限性和解决方案\n\n尽管该技术有诸多优点，但也存在一些局限性：\n\n1. 在特定环境下可能存在性能瓶颈\n2. 对某些复杂场景的支持有限\n3. 可能需要额外的配置和优化\n\n针对这些局限性，文章提出了以下解决方案：\n\n- 优化算法和实现方式\n- 增加更多的功能和扩展\n- 提供更详细的文档和示例\n\n---\n\n*注意：这是一个模拟生成的总结，由于未配置API密钥，无法使用实际的AI模型进行总结。*\n\n网页来源：https://user.qzone.qq.com/18951356\n",
+    "metadata": {
+      "summary_type": "算法",
+      "tags": "AI",
+      "created_at": "2025-03-14T01:16:35.947778",
+      "updated_at": "2025-03-14T01:16:35.947788",
+      "user_id": 5,
+      "source_url": "https://user.qzone.qq.com/18951356"
+    },
+    "updated_at": "2025-03-19T16:55:35.091196"
+  },
+  "7": {
+    "title": "Opencv根据USB摄像头PID\\VID号，获取对应摄像头索引-CSDN博客",
+    "content": "# 技术总结：通过VID和PID获取OpenCV摄像头索引\n\n## 1. 核心技术点和关键概念\n\n- **VID和PID**：VID（Vendor ID）和PID（Product ID）是USB设备的唯一标识符，由设备制造商分配，通常不会改变。\n- **OpenCV摄像头索引**：OpenCV通过索引号来访问摄像头，但索引号可能会因插拔顺序或系统启动顺序而改变。\n- **动态库（DLL）**：将C++代码编译为动态链接库（DLL），以便在Python或其他C++程序中调用。\n\n## 2. 技术原理和实现方法\n\n### 2.1 技术原理\n- **设备枚举**：通过Windows的DirectShow API枚举所有视频输入设备，获取每个设备的VID和PID。\n- **设备路径匹配**：通过设备路径中的VID和PID信息，匹配用户指定的VID和PID，从而确定对应的摄像头索引。\n- **动态库导出**：将C++代码编译为动态库，提供接口供Python或C++调用。\n\n### 2.2 实现方法\n- **C++实现**：\n  - 使用`ICreateDevEnum`和`IEnumMoniker`接口枚举视频输入设备。\n  - 通过`IPropertyBag`接口获取设备的`DevicePath`，其中包含VID和PID信息。\n  - 将VID和PID与用户指定的值进行匹配，返回对应的摄像头索引。\n  - 将C++代码编译为动态库（DLL），并导出`getCamIDFromPidVid`函数。\n\n- **Python调用**：\n  - 使用`ctypes`库加载C++生成的DLL。\n  - 调用`getCamIDFromPidVid`函数获取摄像头索引。\n  - 使用OpenCV的`cv2.VideoCapture`打开指定索引的摄像头。\n\n- **C++调用**：\n  - 直接调用DLL中的`getCamIDFromPidVid`函数获取摄像头索引。\n  - 使用OpenCV的`cv::VideoCapture`打开指定索引的摄像头。\n\n## 3. 技术优势和应用场景\n\n### 3.1 技术优势\n- **稳定性**：通过VID和PID唯一标识摄像头，避免了因插拔顺序或系统启动顺序导致的摄像头索引变化问题。\n- **跨语言支持**：通过动态库的方式，支持C++和Python等多种编程语言调用。\n- **灵活性**：用户可以根据需要指定不同的VID和PID，灵活选择摄像头。\n\n### 3.2 应用场景\n- **多摄像头系统**：在需要同时使用多个摄像头的场景中，确保每个摄像头都能被正确识别和打开。\n- **自动化测试**：在自动化测试中，确保每次测试都能正确打开指定的摄像头。\n- **视频监控**：在视频监控系统中，确保每个摄像头都能被稳定地识别和控制。\n\n## 4. 可能的局限性和解决方案\n\n### 4.1 局限性\n- **同一型号摄像头的VID和PID相同**：如果多个摄像头来自同一厂家且型号相同，它们的VID和PID可能相同，导致无法区分。\n- **依赖操作系统API**：该方案依赖于Windows的DirectShow API，可能不适用于其他操作系统。\n\n### 4.2 解决方案\n- **定制VID和PID**：在购买摄像头时，要求厂家为每个摄像头分配不同的VID和PID。\n- **跨平台支持**：对于其他操作系统（如Linux、macOS），可以使用相应的设备枚举API（如`v4l2`）来实现类似功能。\n\n---\n\n通过以上总结，可以看出该技术方案在多摄像头系统中具有较高的实用性和稳定性，尤其适用于需要精确控制摄像头的场景。",
+    "metadata": {
+      "summary_type": "方法",
+      "tags": "DL, Python, C++",
+      "created_at": "2025-03-14T01:44:49.421637",
+      "updated_at": "2025-03-14T01:44:49.421645",
+      "user_id": 5,
+      "source_url": "https://blog.csdn.net/qq_41043389/article/details/124664485"
+    },
+    "updated_at": "2025-03-19T16:55:35.091527"
+  },
+  "8": {
+    "title": "Opencv根据USB摄像头PID\\VID号，获取对应摄像头索引_opencv获取摄像头列表-CSDN博客",
+    "content": "```markdown\n# 技术总结：通过VID和PID获取OpenCV摄像头索引\n\n## 1. 主要内容概述\n本文针对在使用OpenCV时，多个USB摄像头插拔或开机后索引变化的问题，提出了一种通过摄像头设备的VID（Vendor ID）和PID（Product ID）来获取OpenCV索引的解决方案。VID和PID是摄像头出厂时自带的唯一标识符，不会随插拔或重启而改变。作者通过C++编写了一个动态库，支持Python和C++调用，实现了根据VID和PID获取摄像头索引的功能，并提供了详细的代码示例和调用方法。\n\n## 2. 技术要点分析\n\n### 核心技术概念和专业术语\n- **VID（Vendor ID）**：设备厂商的唯一标识符。\n- **PID（Product ID）**：设备型号的唯一标识符。\n- **OpenCV**：开源的计算机视觉库，用于处理图像和视频。\n- **动态库（DLL）**：Windows平台下的动态链接库，支持代码的模块化和复用。\n\n### 关键技术原理和工作机制\n1. **设备枚举**：通过Windows的DirectShow API枚举所有视频输入设备，获取设备的路径信息。\n2. **VID和PID匹配**：从设备路径中提取VID和PID信息，并与用户输入的VID和PID进行匹配，找到对应的设备索引。\n3. **动态库导出**：将C++代码编译为动态库（DLL），供Python或C++调用。\n\n### 实现方法和步骤\n1. **C++程序导出动态库**：\n   - 使用DirectShow API枚举设备，获取设备路径。\n   - 从设备路径中提取VID和PID信息。\n   - 实现函数`getCamIDFromPidVid`，根据VID和PID返回设备索引。\n   - 编译生成动态库（DLL）。\n\n2. **Python调用动态库**：\n   - 使用`ctypes`库加载动态库。\n   - 调用`getCamIDFromPidVid`函数获取设备索引。\n   - 使用OpenCV打开指定摄像头并显示视频流。\n\n3. **C++调用动态库**：\n   - 直接调用动态库中的`getCamIDFromPidVid`函数。\n   - 使用OpenCV打开指定摄像头并显示视频流。\n\n### 代码示例\n#### C++动态库代码\n```cpp\n#include <iostream>\n#include <string>\n#include <vector>\n#include <DShow.h>\n#include <CString>\n#include <atlstr.h>\n#pragma comment(lib,\"Strmiids.lib\")\n\n#define LRDLLTEST_EXPORTS\n#ifdef LRDLLTEST_EXPORTS\n#define LRDLLTEST_API __declspec(dllexport)\n#else\n#define LRDLLTEST_API __declspec(dllimport)\n#endif\n\nextern \"C\" LRDLLTEST_API int getCamIDFromPidVid(const char* pidvid);\n\nLRDLLTEST_API int getCamIDFromPidVid(const char* pidvid) {\n    // 设备枚举和VID/PID匹配逻辑\n    // ...\n    return iRet; // 返回设备索引\n}\n```\n\n#### Python调用代码\n```python\nfrom ctypes import *\nimport cv2\n\nfileName = \"python_use_cpp.dll\"\nfunc = cdll.LoadLibrary(fileName)\nstring = bytes(\"vid_0001&pid_0001\", encoding=\"utf-8\")\na = func.getCamIDFromPidVid(string)\nprint(a)\ncap = cv2.VideoCapture(a, cv2.CAP_DSHOW)\n\nwhile True:\n    ret, img0 = cap.read()\n    if not ret:\n        continue\n    cv2.imshow('result', img0)\n    key = cv2.waitKey(1)\n    if key & 0xFF == ord('q') or key == 27:\n        break\ncv2.destroyAllWindows()\n```\n\n## 3. 优势与应用\n\n### 技术优势和创新点\n- **稳定性**：通过VID和PID唯一标识摄像头，避免了索引变化导致的问题。\n- **跨语言支持**：动态库支持C++和Python调用，适用性广泛。\n- **灵活性**：用户可以根据需求指定不同的VID和PID，适配多种摄像头设备。\n\n### 实际应用场景和案例\n- **多摄像头系统**：在需要同时使用多个摄像头的场景（如监控、视频会议）中，确保每个摄像头能够被正确识别和打开。\n- **设备管理**：在设备频繁插拔或重启的环境中，保持摄像头的稳定连接。\n\n### 与相关技术的比较\n- **传统方法**：直接使用OpenCV的索引打开摄像头，容易因索引变化导致错误。\n- **本文方法**：通过VID和PID唯一标识摄像头，解决了索引不稳定的问题。\n\n## 4. 挑战与解决方案\n\n### 可能面临的技术挑战或局限性\n- **同一型号摄像头的VID和PID相同**：如果多个摄像头的VID和PID相同，无法通过该方法区分。\n- **设备路径格式差异**：不同设备的路径格式可能不同，需要确保提取VID和PID的逻辑兼容。\n\n### 解决方案或优化建议\n- **定制VID和PID**：在购买摄像头时，要求厂商提供不同VID和PID的设备。\n- **路径解析优化**：增强设备路径解析的鲁棒性，适配更多设备类型。\n\n### 未来发展方向\n- **跨平台支持**：扩展动态库以支持Linux和macOS平台。\n- **自动化配置**：开发工具自动检测和配置摄像头的VID和PID。\n\n## 5. 核心数据与结论\n\n### 关键数据、指标或实验结果\n- **设备索引匹配**：通过VID和PID成功匹配到正确的摄像头索引。\n- **动态库生成**：成功生成`python_use_cpp.dll`和`python_use_cpp.lib`文件。\n\n### 主要结论和见解\n- 通过VID和PID获取摄像头索引的方法有效解决了OpenCV在多摄像头环境下的索引不稳定问题。\n- 动态库的设计使得该方法可以方便地集成到C++和Python项目中，具有较高的实用性和扩展性。\n```",
+    "metadata": {
+      "summary_type": "工具",
+      "tags": "AI, DL, Python, C++",
+      "created_at": "2025-03-14T05:52:49.709523",
+      "updated_at": "2025-03-14T05:52:49.709525",
+      "user_id": 1,
+      "source_url": "https://blog.csdn.net/qq_41043389/article/details/124664485"
+    },
+    "updated_at": "2025-03-19T16:55:35.092883"
+  },
+  "10": {
+    "title": "大模型微调与部署实战",
+    "content": "# 技术总结：大模型微调与部署实战\n\n## 1. 主要内容概述\n本文详细介绍了大模型微调的概念、分类及实际应用，重点讲解了如何使用LLaMA-Factory框架对DeepSpeek R1大模型进行微调，并将其部署到本地环境中。文章还展示了如何将微调后的大模型集成到基于SpringBoot和Vue2开发的AI会话系统中。通过本文，读者可以了解大模型微调的核心技术、实现步骤以及实际应用场景。\n\n## 2. 技术要点分析\n\n### 核心技术概念和专业术语\n- **大模型微调（Fine-Tuning）**：在预训练大模型的基础上，通过特定任务或领域数据进行进一步训练，使模型适应特定任务。\n- **AI幻觉（AI Hallucination）**：模型生成的内容不符合实际需求，甚至包含错误或无关信息。\n- **有监督微调（Supervised Fine-Tuning, SFT）**：使用人工标注的数据对模型进行微调。\n- **无监督微调（Unsupervised Fine-Tuning）**：利用未标注的文本数据进行训练。\n- **半监督微调（Semi-Supervised Fine-Tuning）**：结合标注数据和未标注数据进行训练。\n- **全量微调（Full Fine-Tuning）**：更新模型的所有参数。\n- **部分微调（Low-Rank Adaptation, LoRA）**：仅更新模型的部分参数，减少计算开销。\n\n### 关键技术原理和工作机制\n- **微调的核心目标**：通过特定任务数据优化大模型，提升其在特定应用场景中的表现。\n- **LoRA技术**：通过低秩矩阵分解，仅更新模型的部分参数，显著降低计算和内存开销。\n- **LLaMA-Factory框架**：支持低代码操作，结合LoRA和QLoRA技术，提供高效的微调方法。\n\n### 实现方法和步骤\n1. **环境安装**：安装Anaconda、Git、PyTorch等工具，创建虚拟环境并安装LLaMA-Factory。\n2. **模型下载**：从HuggingFace下载DeepSpeek R1模型。\n3. **模型训练**：使用LLaMA-Factory进行有监督微调（SFT），调整训练参数（如学习率、训练轮数等）。\n4. **模型部署**：通过FastAPI将微调后的模型部署为本地服务。\n5. **系统集成**：将微调后的模型集成到SpringBoot+Vue2开发的AI会话系统中。\n\n### 代码示例或算法解析\n- **有监督微调示例**：\n  ```python\n  training_data = [\n      {\"input\": \"问题\", \"output\": \"标准答案\"},\n      # 人工标注的高质量数据对\n  ]\n  ```\n- **FastAPI部署代码**：\n  ```python\n  from fastapi import FastAPI, HTTPException\n  from transformers import AutoModelForCausalLM, AutoTokenizer\n  import torch\n\n  app = FastAPI()\n  model_path = r\"E:\\deepspeek-merged\"\n  tokenizer = AutoTokenizer.from_pretrained(model_path)\n  device = \"cuda\" if torch.cuda.is_available() else \"cpu\"\n  model = AutoModelForCausalLM.from_pretrained(model_path).to(device)\n\n  @app.get(\"/answer\")\n  async def generate_text(prompt: str):\n      inputs = tokenizer(prompt, return_tensors=\"pt\").to(device)\n      outputs = model.generate(inputs[\"input_ids\"], max_length=100)\n      generated_text = tokenizer.decode(outputs[0], skip_special_tokens=True)\n      return {\"generated_text\": generated_text}\n  ```\n\n### 实际应用场景和案例\n- **AI会话系统**：将微调后的大模型集成到SpringBoot+Vue2开发的AI会话系统中，提供定制化的对话服务。\n- **行业特定任务**：在医疗、法律、金融等领域，通过微调大模型生成符合行业需求的精准内容。\n\n## 3. 关键技术标签\n大模型微调, 有监督微调, 无监督微调, LoRA, LLaMA-Factory, DeepSpeek R1, FastAPI, SpringBoot, Vue2, AI会话系统",
+    "metadata": {
+      "summary_type": "算法",
+      "tags": "AI, Python, Vue, API, HTTP",
+      "created_at": "2025-03-14T06:43:16.567990",
+      "updated_at": "2025-03-14T06:43:16.567996",
+      "user_id": 5,
+      "source_url": "https://blog.csdn.net/c18213590220/article/details/146135568?spm=1000.2115.3001.10526&utm_medium=distribute.pc_feed_blog_category.none-task-blog-classify_tag-1-146135568-null-null.nonecase&depth_1-utm_source=distribute.pc_feed_blog_category.none-task-blog-classify_tag-1-146135568-null-null.nonecase"
+    },
+    "updated_at": "2025-03-19T16:55:35.093206"
+  },
+  "11": {
+    "title": "deepseek大模型微调与部署实战",
+    "content": "# 技术总结\n\n## 1. 主要内容概述\n\n本文详细介绍了大模型微调技术的概念、分类及实际应用，重点围绕DeepSpeek R1大模型的微调实战展开。文章首先解释了AI幻觉问题及其在特定行业中的影响，强调了大模型微调技术在解决这一问题中的重要性。随后，文章介绍了大模型微调的两种主要分类方式：按学习范式（有监督、无监督、半监督）和按参数更新范围（全量微调、部分微调）。接着，文章通过LLaMA-Factory框架，详细演示了从环境搭建、模型下载、训练到部署的完整流程，并展示了如何将微调后的大模型集成到基于SpringBoot+Vue2的AI会话系统中。\n\n## 2. 技术要点分析\n\n### 核心技术概念和专业术语\n- **AI幻觉**：模型生成的内容不符合实际需求，甚至包含错误或无关信息。\n- **大模型微调**：在预训练大模型基础上，通过特定任务或领域数据进行进一步训练，使模型更精准地处理特定任务。\n- **有监督微调（SFT）**：使用人工标注的高质量数据对模型进行微调。\n- **无监督微调**：利用未标注的文本数据进行训练。\n- **半监督微调**：结合标注数据和未标注数据进行训练。\n- **全量微调**：更新模型的所有参数。\n- **部分微调（LoRA）**：仅更新模型的部分参数，减少计算开销。\n\n### 关键技术原理和工作机制\n- **有监督微调**：通过人工标注的数据对模型进行训练，使其生成符合实际需求的输出。\n- **无监督微调**：模型从大量未标注文本中自动提取知识，增强语言表示能力。\n- **半监督微调**：结合少量标注数据和大量未标注数据，提升模型表现。\n- **LoRA**：通过低秩矩阵分解，仅更新模型的部分参数，降低计算和内存开销。\n\n### 实现方法和步骤\n1. **环境搭建**：安装Anaconda、Git、PyTorch等工具，创建虚拟环境并安装LLaMA-Factory框架。\n2. **模型下载**：从HuggingFace下载DeepSeek-R1模型。\n3. **模型训练**：使用LLaMA-Factory界面加载模型，选择微调方法（如LoRA）和训练数据集，调整训练参数并进行训练。\n4. **模型部署**：通过FastAPI将训练好的模型部署为本地服务，提供HTTP API接口。\n5. **系统集成**：将微调后的大模型集成到基于SpringBoot+Vue2的AI会话系统中。\n\n### 代码示例或算法解析\n- **有监督微调示例**：\n  ```python\n  training_data = [\n      {\"input\": \"问题\", \"output\": \"标准答案\"},\n      # 人工标注的高质量数据对\n  ]\n  ```\n- **FastAPI部署代码**：\n  ```python\n  from fastapi import FastAPI, HTTPException\n  from transformers import AutoModelForCausalLM, AutoTokenizer\n  import torch\n  import logging\n\n  app = FastAPI()\n  model_path = r\"E:\\deepspeek-merged\"\n  tokenizer = AutoTokenizer.from_pretrained(model_path)\n  device = \"cuda\" if torch.cuda.is_available() else \"cpu\"\n  model = AutoModelForCausalLM.from_pretrained(\n      model_path,\n      torch_dtype=torch.float16 if device == \"cuda\" else torch.float32\n  ).to(device)\n\n  @app.get(\"/answer\")\n  async def generate_text(prompt: str):\n      inputs = tokenizer(prompt, return_tensors=\"pt\").to(device)\n      outputs = model.generate(\n          inputs[\"input_ids\"], \n          max_length=100,\n          min_length=30,\n          top_p=0.85,\n          temperature=0.6,\n          do_sample=True,\n          repetition_penalty=1.2,\n          no_repeat_ngram_size=3,\n          num_beams=4,\n          early_stopping=True\n      )\n      generated_text = tokenizer.decode(outputs[0], skip_special_tokens=True)\n      return {\"generated_text\": generated_text}\n  ```\n\n### 实际应用场景和案例\n- **AI会话系统**：将微调后的大模型集成到基于SpringBoot+Vue2的AI会话系统中，提供定制化的对话服务。\n- **行业特定任务**：在医疗、法律、金融等领域，通过微调大模型生成符合行业需求的精准内容。\n\n## 3. 关键技术标签\n\n大模型微调, 有监督微调, 无监督微调, 半监督微调, LoRA, LLaMA-Factory, DeepSeek-R1, FastAPI, SpringBoot, Vue2",
+    "metadata": {
+      "summary_type": "算法",
+      "tags": "大模型微调, 有监督微调, 无监督微调, 半监督微调, LoRA, LLaMA-Factory, DeepSeek-R1, FastAPI, SpringBoot, Vue2",
+      "created_at": "2025-03-14T09:21:19.872650",
+      "updated_at": "2025-03-14T09:21:19.872654",
+      "user_id": 5,
+      "source_url": "https://blog.csdn.net/c18213590220/article/details/146135568?depth_1-utm_source=distribute.pc_feed_blog_category.none-task-blog-classify_tag-1-146135568-null-null.nonecase"
+    },
+    "updated_at": "2025-03-19T16:55:35.093520"
+  },
+  "12": {
+    "title": "技术笔记：大模型微调与部署实战",
+    "content": "# 大模型微调与部署实战\n\n## 1. 前言\n在AI技术快速发展的背景下，大模型（如GPT、DeepSpeek等）在多个任务上取得了显著进展。然而，通用大模型在面对特定行业或任务时，可能会出现“AI幻觉”问题，即生成的内容不符合实际需求，甚至包含错误或无关信息。为了解决这一问题，企业通常需要对大模型进行微调，使其能够处理行业术语、应对特殊情境，并确保内容的准确性。\n\n大模型微调技术通过对预训练的大模型进行进一步训练，能够根据特定领域的需求进行优化。本文将从零开始介绍如何基于DeepSpeek R1大模型进行微调，并最终实现基于私有化部署的微调大模型AI会话系统。\n\n## 2. 大模型微调概念简述\n大模型微调是指在已有的预训练大模型基础上，通过特定任务或领域数据进行进一步训练，使模型能够更精准地处理特定任务。微调的核心目标是使大模型根据特定任务需求进行优化，提升其在特定应用场景中的表现。\n\n### 2.1. 按学习范式分类\n1. **有监督微调（Supervised Fine-Tuning，SFT）**：适用于任务明确且具有标注数据的情况。通过使用人工标注的高质量数据对，模型能够学习特定任务所需的知识。\n2. **无监督微调（Unsupervised Fine-Tuning）**：不依赖人工标注，主要利用大量未标注的文本数据进行训练，适用于没有标注数据或标注数据获取困难的情况。\n3. **半监督微调（Semi-Supervised Fine-Tuning）**：结合有监督和无监督学习的优点，利用标注数据和未标注数据来训练模型，适用于标注数据稀缺的场景。\n\n### 2.2. 按参数更新范围分类\n1. **全量微调（Full Fine-Tuning）**：更新模型的所有参数，适用于数据量较大且任务复杂的场景。\n2. **部分微调（Low-Rank Adaptation，LoRA）**：仅更新模型中的部分参数，减少计算开销，适合计算资源有限的场景。\n\n### 2.3. 大模型微调框架简介\n1. **Hugging Face Transformers**：提供丰富的预训练模型和易于使用的API，适合大多数NLP任务。\n2. **DeepSpeed**：专注于优化大规模模型训练的性能，适合对性能要求极高的训练任务。\n3. **Fairseq**：支持多种模型架构的训练，适合需要灵活定制和高性能训练的应用场景。\n4. **LLaMA-Factory**：低代码大模型训练框架，支持零代码操作，适合快速、高效地微调大模型。\n\n## 3. DeepSpeek R1大模型微调实战\n\n### 3.1. LLaMA-Factory基础环境安装\n1. **安装Anaconda**：用于管理Python环境。\n2. **安装Git**：用于克隆LLaMA-Factory项目。\n3. **创建项目环境**：使用Anaconda创建并激活虚拟环境。\n4. **安装PyTorch**：支持CUDA的版本。\n5. **安装LLaMA-Factory**：克隆项目并安装依赖。\n\n### 3.2. 大模型下载\n1. **修改大模型存放位置**：设置环境变量`HF_HOME`和`HF_ENDPOINT`。\n2. **下载DeepSeek-R1模型**：使用`huggingface-cli`下载模型。\n\n### 3.3. 大模型训练\n1. **加载模型**：在LLaMA-Factory界面加载模型，选择微调方法和训练阶段。\n2. **准备训练数据集**：按照框架支持的格式准备数据集。\n3. **调整训练参数**：设置学习率、训练轮数、批次大小等参数。\n4. **开始训练**：点击“开始”按钮进行训练，训练完成后保存模型。\n\n### 3.4. 大模型部署\n1. **导出模型**：在LLaMA-Factory界面导出训练好的模型。\n2. **创建部署环境**：使用Anaconda创建新的虚拟环境并安装依赖。\n3. **编写部署脚本**：使用FastAPI编写模型推理服务。\n4. **启动服务**：使用`uvicorn`启动服务，并通过HTTP API访问模型。\n\n### 3.5. 微调大模型融合基于SpringBoot+Vue2开发的AI会话系统\n1. **接入本地微调模型**：将微调后的模型接入SpringBoot+Vue2开发的AI会话系统。\n2. **实现效果**：通过WebSocket和远程调用Python接口实现AI会话功能。\n\n## 4. 源码获取\n关注公众号“后端小肥肠”，点击底部“资源”菜单获取前后端完整源码。\n\n## 5. 结语\n大模型微调技术能够为许多行业提供量身定制的AI解决方案，帮助企业更好地适应和优化特定任务。本文通过详细的步骤讲解了大模型微调的基础操作，使用LLaMA-Factory框架进行模型训练和部署，并通过FastAPI实现了本地化部署服务。这些知识为想要开展AI微调项目的朋友提供了宝贵的实践经验。\n\n---\n\n**注意**：本文内容基于原网站内容整理，保留了核心技术术语、专有名词和重要数据。",
+    "metadata": {
+      "summary_type": "方法",
+      "tags": "AI, 后端, Python, Vue, API",
+      "created_at": "2025-03-14T09:40:05.536241",
+      "updated_at": "2025-03-14T09:40:05.536246",
+      "user_id": 5,
+      "source_url": "https://blog.csdn.net/c18213590220/article/details/146135568?depth_1-utm_source=distribute.pc_feed_blog_category.none-task-blog-classify_tag-1-146135568-null-null.nonecase"
+    },
+    "updated_at": "2025-03-19T16:55:35.093830"
+  },
+  "13": {
+    "title": "curl 的用法指南",
+    "content": "# curl 的用法指南\n\n## 简介\ncurl 是一个命令行工具，用于请求 Web 服务器。其名称来源于“客户端（client）的 URL 工具”。curl 功能强大，支持多种命令行参数，可以替代图形界面工具如 Postman。\n\n## 基本用法\n- **GET 请求**：不带有任何参数时，curl 默认发出 GET 请求。\n  ```bash\n  $ curl https://www.example.com\n  ```\n\n## 常用参数\n\n### -A\n- **功能**：指定客户端的用户代理标头（User-Agent）。\n- **示例**：\n  ```bash\n  $ curl -A 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.100 Safari/537.36' https://google.com\n  ```\n  - 移除 User-Agent 标头：\n    ```bash\n    $ curl -A '' https://google.com\n    ```\n  - 使用 `-H` 参数直接指定标头：\n    ```bash\n    $ curl -H 'User-Agent: php/1.0' https://google.com\n    ```\n\n### -b\n- **功能**：向服务器发送 Cookie。\n- **示例**：\n  ```bash\n  $ curl -b 'foo=bar' https://google.com\n  ```\n  - 发送多个 Cookie：\n    ```bash\n    $ curl -b 'foo1=bar;foo2=bar2' https://google.com\n    ```\n  - 从文件读取 Cookie：\n    ```bash\n    $ curl -b cookies.txt https://www.google.com\n    ```\n\n### -c\n- **功能**：将服务器设置的 Cookie 写入文件。\n- **示例**：\n  ```bash\n  $ curl -c cookies.txt https://www.google.com\n  ```\n\n### -d\n- **功能**：发送 POST 请求的数据体。\n- **示例**：\n  ```bash\n  $ curl -d 'login=emma&password=123' -X POST https://google.com/login\n  ```\n  - 从文件读取数据：\n    ```bash\n    $ curl -d '@data.txt' https://google.com/login\n    ```\n\n### --data-urlencode\n- **功能**：等同于 `-d`，但会自动对数据进行 URL 编码。\n- **示例**：\n  ```bash\n  $ curl --data-urlencode 'comment=hello world' https://google.com/login\n  ```\n\n### -e\n- **功能**：设置 HTTP 的 Referer 标头。\n- **示例**：\n  ```bash\n  $ curl -e 'https://google.com?q=example' https://www.example.com\n  ```\n  - 使用 `-H` 参数直接指定标头：\n    ```bash\n    $ curl -H 'Referer: https://google.com?q=example' https://www.example.com\n    ```\n\n### -F\n- **功能**：向服务器上传二进制文件。\n- **示例**：\n  ```bash\n  $ curl -F '[email protected]' https://google.com/profile\n  ```\n  - 指定 MIME 类型：\n    ```bash\n    $ curl -F '[email protected];type=image/png' https://google.com/profile\n    ```\n  - 指定文件名：\n    ```bash\n    $ curl -F '[email protected];filename=me.png' https://google.com/profile\n    ```\n\n### -G\n- **功能**：构造 URL 的查询字符串。\n- **示例**：\n  ```bash\n  $ curl -G -d 'q=kitties' -d 'count=20' https://google.com/search\n  ```\n\n### -H\n- **功能**：添加 HTTP 请求的标头。\n- **示例**：\n  ```bash\n  $ curl -H 'Accept-Language: en-US' https://google.com\n  ```\n\n### -i\n- **功能**：打印服务器回应的 HTTP 标头。\n- **示例**：\n  ```bash\n  $ curl -i https://www.example.com\n  ```\n\n### -I\n- **功能**：发出 HEAD 请求，打印服务器返回的 HTTP 标头。\n- **示例**：\n  ```bash\n  $ curl -I https://www.example.com\n  ```\n\n### -k\n- **功能**：跳过 SSL 检测。\n- **示例**：\n  ```bash\n  $ curl -k https://www.example.com\n  ```\n\n### -L\n- **功能**：跟随服务器的重定向。\n- **示例**：\n  ```bash\n  $ curl -L -d 'tweet=hi' https://api.twitter.com/tweet\n  ```\n\n### --limit-rate\n- **功能**：限制 HTTP 请求和回应的带宽。\n- **示例**：\n  ```bash\n  $ curl --limit-rate 200k https://google.com\n  ```\n\n### -o\n- **功能**：将服务器的回应保存成文件。\n- **示例**：\n  ```bash\n  $ curl -o example.html https://www.example.com\n  ```\n\n### -O\n- **功能**：将服务器回应保存成文件，并将 URL 的最后部分作为文件名。\n- **示例**：\n  ```bash\n  $ curl -O https://www.example.com/foo/bar.html\n  ```\n\n### -s\n- **功能**：不输出错误和进度信息。\n- **示例**：\n  ```bash\n  $ curl -s https://www.example.com\n  ```\n\n### -S\n- **功能**：只输出错误信息，通常与 `-s` 一起使用。\n- **示例**：\n  ```bash\n  $ curl -s -o /dev/null https://google.com\n  ```\n\n### -u\n- **功能**：设置服务器认证的用户名和密码。\n- **示例**：\n  ```bash\n  $ curl -u 'bob:12345' https://google.com/login\n  ```\n\n### -v\n- **功能**：输出通信的整个过程，用于调试。\n- **示例**：\n  ```bash\n  $ curl -v https://www.example.com\n  ```\n\n### -x\n- **功能**：指定 HTTP 请求的代理。\n- **示例**：\n  ```bash\n  $ curl -x socks5://james:[email protected]:8080 https://www.example.com\n  ```\n\n### -X\n- **功能**：指定 HTTP 请求的方法。\n- **示例**：\n  ```bash\n  $ curl -X POST https://www.example.com\n  ```\n\n## 参考链接\n- [Curl Cookbook](https://www.ruanyifeng.com/blog/2019/09/curl-reference.html)\n\n## 文档信息\n- **版权声明**：自由转载-非商用-非衍生-保持署名（创意共享3.0许可证）\n- **发表日期**：2019年9月5日\n\n---\n\n**注意**：本文档内容基于阮一峰的《curl 的用法指南》整理，保留了原文的核心技术术语和代码示例，未添加原文中没有的信息。",
+    "metadata": {
+      "summary_type": "工具",
+      "tags": "AI, ML, Go, API, HTTP",
+      "created_at": "2025-03-15T07:40:16.784983",
+      "updated_at": "2025-03-15T07:40:16.784986",
+      "user_id": 5,
+      "source_url": "https://www.ruanyifeng.com/blog/2019/09/curl-reference.html"
+    },
+    "updated_at": "2025-03-19T16:55:35.094130"
+  }
+}

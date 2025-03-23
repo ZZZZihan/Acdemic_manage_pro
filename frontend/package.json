@@ -1,0 +1,29 @@
+{
+  "name": "lab-knowledge-management-frontend",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs --fix --ignore-path .gitignore"
+  },
+  "dependencies": {
+    "@wangeditor/editor": "^5.1.23",
+    "@wangeditor/editor-for-vue": "^5.1.12",
+    "axios": "^1.3.4",
+    "element-plus": "^2.3.0",
+    "marked": "^15.0.7",
+    "md-editor-v3": "^2.11.3",
+    "pinia": "^2.0.33",
+    "vue": "^3.2.47",
+    "vue-router": "^4.1.6"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^4.0.0",
+    "eslint": "^8.36.0",
+    "eslint-plugin-vue": "^9.9.0",
+    "sass": "^1.59.3",
+    "vite": "^4.1.4"
+  }
+}
