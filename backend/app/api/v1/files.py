@@ -89,11 +89,56 @@ def upload_file():
         'original_name': file.filename
     }), 200
 
-@api.route('/files/download/<filename>', methods=['GET'])
+@api.route('/files/download/<path:filename>', methods=['GET'])
 def download_file(filename):
     """
     下载文件API
     """
     upload_folder = get_upload_path()
-    original_name = request.args.get('original_name', filename)
-    return send_from_directory(upload_folder, filename, as_attachment=True, download_name=original_name) 
+    
+    # 处理前导斜杠问题
+    if filename.startswith('/'):
+        filename = filename[1:]
+    
+    # 检查文件路径是否安全（防止目录遍历攻击）
+    normalized_path = os.path.normpath(filename)
+    if '..' in normalized_path or normalized_path.startswith('/'):
+        return jsonify({"msg": "无效的文件路径"}), 400
+    
+    # 项目图片特殊处理
+    if 'projects/' in normalized_path:
+        project_image = os.path.basename(normalized_path)
+        project_folder = os.path.join(current_app.root_path, 'static', 'uploads', 'projects')
+        if os.path.exists(os.path.join(project_folder, project_image)):
+            return send_from_directory(project_folder, project_image)
+    
+    # 检查完整路径
+    full_path = os.path.join(upload_folder, normalized_path)
+    dir_path = os.path.dirname(full_path)
+    file_name = os.path.basename(full_path)
+    
+    if os.path.exists(full_path) and os.path.isfile(full_path):
+        return send_from_directory(dir_path, file_name)
+    
+    # 尝试从uploads/projects目录获取
+    projects_dir = os.path.join(current_app.root_path, 'static', 'uploads', 'projects')
+    if os.path.exists(os.path.join(projects_dir, file_name)):
+        return send_from_directory(projects_dir, file_name)
+    
+    # 尝试直接从static目录获取
+    static_path = os.path.join(current_app.root_path, 'static', normalized_path)
+    if os.path.exists(static_path) and os.path.isfile(static_path):
+        static_dir = os.path.dirname(static_path)
+        return send_from_directory(static_dir, os.path.basename(static_path))
+    
+    # 文件不存在
+    return jsonify({"msg": "文件不存在", "path": normalized_path}), 404
+
+# 添加静态文件访问路由
+@api.route('/static/<path:filename>', methods=['GET'])
+def serve_static(filename):
+    """
+    提供静态文件访问
+    """
+    static_folder = os.path.join(current_app.root_path, 'static')
+    return send_from_directory(static_folder, filename) 

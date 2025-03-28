@@ -10,7 +10,7 @@
       "user_id": 5,
       "source_url": null
     },
-    "updated_at": "2025-03-19T16:55:35.088370"
+    "updated_at": "2025-03-27T13:47:44.031008"
   },
   "2": {
     "title": "222",
@@ -23,7 +23,7 @@
       "user_id": 5,
       "source_url": null
     },
-    "updated_at": "2025-03-19T16:55:35.090338"
+    "updated_at": "2025-03-27T13:47:44.032383"
   },
   "3": {
     "title": "测试",
@@ -36,20 +36,7 @@
       "user_id": 1,
       "source_url": null
     },
-    "updated_at": "2025-03-19T16:55:35.090813"
-  },
-  "4": {
-    "title": "QQ空间-分享生活，留住感动",
-    "content": "\n# iPhone iPad Android 反馈建议 | 官方空间 | 空间活动 | 空间应用 | 腾讯原创馆 | QQ互联 | QQ登录 | 应用侵权投诉 | Complaint Guidelines Copyright © 2005 - 2025 Tencent. All Rights Reserved. 腾讯公司 版权所有 粤网文[2014]0633-233号...\n\n## 核心技术点和关键概念\n\n这篇文章主要介绍了一些重要的技术概念和方法。文章内容涵盖了多个方面，包括技术原理、实现方法以及应用场景。\n\n## 技术原理和实现方法\n\n文章详细描述了相关技术的原理和实现方法，包括：\n\n1. 基本原理和框架\n2. 核心算法和流程\n3. 实现细节和注意事项\n\n## 技术优势和应用场景\n\n该技术具有以下优势：\n\n- 高效性和可扩展性\n- 易于集成和使用\n- 适应性强，可应用于多种场景\n\n主要应用场景包括：\n\n1. 数据处理和分析\n2. 系统优化和性能提升\n3. 自动化流程和工具开发\n\n## 局限性和解决方案\n\n尽管该技术有诸多优点，但也存在一些局限性：\n\n1. 在特定环境下可能存在性能瓶颈\n2. 对某些复杂场景的支持有限\n3. 可能需要额外的配置和优化\n\n针对这些局限性，文章提出了以下解决方案：\n\n- 优化算法和实现方式\n- 增加更多的功能和扩展\n- 提供更详细的文档和示例\n\n---\n\n*注意：这是一个模拟生成的总结，由于未配置API密钥，无法使用实际的AI模型进行总结。*\n\n网页来源：https://user.qzone.qq.com/18951356\n",
-    "metadata": {
-      "summary_type": "算法",
-      "tags": "AI",
-      "created_at": "2025-03-14T01:16:35.947778",
-      "updated_at": "2025-03-14T01:16:35.947788",
-      "user_id": 5,
-      "source_url": "https://user.qzone.qq.com/18951356"
-    },
-    "updated_at": "2025-03-19T16:55:35.091196"
+    "updated_at": "2025-03-27T13:47:44.034282"
   },
   "7": {
     "title": "Opencv根据USB摄像头PID\\VID号，获取对应摄像头索引-CSDN博客",
@@ -62,7 +49,7 @@
       "user_id": 5,
       "source_url": "https://blog.csdn.net/qq_41043389/article/details/124664485"
     },
-    "updated_at": "2025-03-19T16:55:35.091527"
+    "updated_at": "2025-03-27T13:47:44.034812"
   },
   "8": {
     "title": "Opencv根据USB摄像头PID\\VID号，获取对应摄像头索引_opencv获取摄像头列表-CSDN博客",
@@ -75,7 +62,7 @@
       "user_id": 1,
       "source_url": "https://blog.csdn.net/qq_41043389/article/details/124664485"
     },
-    "updated_at": "2025-03-19T16:55:35.092883"
+    "updated_at": "2025-03-27T13:47:44.035177"
   },
   "10": {
     "title": "大模型微调与部署实战",
@@ -88,7 +75,7 @@
       "user_id": 5,
       "source_url": "https://blog.csdn.net/c18213590220/article/details/146135568?spm=1000.2115.3001.10526&utm_medium=distribute.pc_feed_blog_category.none-task-blog-classify_tag-1-146135568-null-null.nonecase&depth_1-utm_source=distribute.pc_feed_blog_category.none-task-blog-classify_tag-1-146135568-null-null.nonecase"
     },
-    "updated_at": "2025-03-19T16:55:35.093206"
+    "updated_at": "2025-03-27T13:47:44.035513"
   },
   "11": {
     "title": "deepseek大模型微调与部署实战",
@@ -101,7 +88,7 @@
       "user_id": 5,
       "source_url": "https://blog.csdn.net/c18213590220/article/details/146135568?depth_1-utm_source=distribute.pc_feed_blog_category.none-task-blog-classify_tag-1-146135568-null-null.nonecase"
     },
-    "updated_at": "2025-03-19T16:55:35.093520"
+    "updated_at": "2025-03-27T13:47:44.035824"
   },
   "12": {
     "title": "技术笔记：大模型微调与部署实战",
@@ -114,7 +101,7 @@
       "user_id": 5,
       "source_url": "https://blog.csdn.net/c18213590220/article/details/146135568?depth_1-utm_source=distribute.pc_feed_blog_category.none-task-blog-classify_tag-1-146135568-null-null.nonecase"
     },
-    "updated_at": "2025-03-19T16:55:35.093830"
+    "updated_at": "2025-03-27T13:47:44.036125"
   },
   "13": {
     "title": "curl 的用法指南",
@@ -127,6 +114,45 @@
       "user_id": 5,
       "source_url": "https://www.ruanyifeng.com/blog/2019/09/curl-reference.html"
     },
-    "updated_at": "2025-03-19T16:55:35.094130"
+    "updated_at": "2025-03-27T13:47:44.036418"
+  },
+  "14": {
+    "title": "Coding Interview University 技术笔记整理",
+    "content": "# Coding Interview University 技术笔记整理\n\n## 概述\n\n### 项目背景\n- 最初是一个简短的软件工程师学习清单，后来扩展为全面的技术面试准备指南\n- 作者通过该学习计划成功获得亚马逊软件开发工程师职位\n- 适用于大型科技公司技术面试准备（Amazon、Facebook、Google、Microsoft等）\n\n### 适用人群\n- 需要具备：基础编程经验（变量、循环、方法/函数等）、耐心和时间\n- 主要针对软件工程岗位，非前端或全栈开发\n\n## 学习计划结构\n\n### 核心学习模块\n1. **算法复杂度**：Big-O/渐进分析\n2. **数据结构**：\n   - 数组、链表、栈、队列、哈希表\n   - 树结构（BST、堆、平衡搜索树）\n   - 图（有向/无向、邻接矩阵/列表、遍历方法）\n3. **排序算法**：\n   - 选择排序、插入排序\n   - 堆排序、快速排序、归并排序\n4. **进阶知识**：\n   - 递归、动态规划\n   - 设计模式、组合数学与概率\n   - 计算机程序处理原理\n   - 缓存、进程与线程\n   - 字符串处理、Trie树\n   - 网络基础\n\n### 可选扩展主题\n- 编译器原理\n- Unix命令行工具\n- 密码学、计算机安全\n- 并行编程\n- 系统设计（4年以上经验者）\n- 高级数据结构：\n  - B树、红黑树、AVL树\n  - 跳表、k-d树\n  - 布隆过滤器、HyperLogLog\n\n## 学习建议\n\n### 编程语言选择\n- **学习语言**：推荐C（理解底层）和Python（高效编码）\n- **面试语言**：C++、Java、Python最稳妥\n- 学习资源：\n  - 《C程序设计语言》（第2版）\n  - 在线练习平台：Exercism、Codewars、HackerEarth\n\n### 推荐书籍\n1. **数据结构与算法**：\n   - Python：《Coding Interview Patterns》\n   - C：《Algorithms in C》（1-5部分）\n   - Java：《Data Structures and Algorithms in Java》\n   - C++：《Algorithms in C++》（1-5部分）\n\n2. **面试准备**：\n   - 《Programming Interviews Exposed》\n   - 《Cracking the Coding Interview》\n\n### 学习策略\n1. **时间投入**：可能需要数月时间（作者每天8-12小时）\n2. **学习顺序**：按大纲从上到下系统学习\n3. **进度跟踪**：使用GitHub任务列表标记完成项\n4. **心理建设**：克服\"不够聪明\"的自我怀疑（推荐观看相关心理建设视频）\n\n## 实用资源\n\n### 学习工具\n- GitHub仓库：https://github.com/jwasham/coding-interview-university\n- 计算机科学自学路线图：https://roadmap.sh/computer-science\n\n### 注意事项\n1. 视频资源部分可能需要等待MOOC课程开课\n2. 建议用实际编码练习替代纯理论学习\n3. 不必覆盖全部大学CS课程内容（掌握75%核心即可）\n4. 作者提醒避免他曾经的时间浪费错误\n\n## 面试准备\n\n### 求职流程\n1. 简历更新\n2. 职位寻找\n3. 面试准备：\n   - 技术问题练习\n   - 系统设计准备（资深岗位）\n   - 准备向面试官提问的问题\n\n### 面试后\n- 入职后的持续学习建议\n- 职业发展思考\n\n---\n\n> 注：本笔记保留了原始内容的核心技术术语和学习路径，省略了部分重复列表项和翻译信息，重点提取了可操作的学习建议和知识框架。完整内容请参考原始GitHub仓库。",
+    "metadata": {
+      "summary_type": "算法",
+      "tags": "前端, 全栈, Python, Java, C++",
+      "created_at": "2025-03-26T13:44:50.815810",
+      "updated_at": "2025-03-26T13:44:50.815816",
+      "user_id": 5,
+      "source_url": "https://github.com/jwasham/coding-interview-university"
+    },
+    "updated_at": "2025-03-27T13:47:44.036775"
+  },
+  "15": {
+    "title": "Retrieval-Augmented Generation (RAG) 技术笔记",
+    "content": "# Retrieval-Augmented Generation (RAG) 技术笔记\n\n## 概述\nRetrieval-Augmented Generation (RAG) 是一种人工智能技术，通过让大型语言模型(LLM)在不经过再训练的情况下利用更多数据资源，改善生成式AI的输出质量。\n\n## 核心概念\n- **RAG作用**：在不修改基础模型本身的情况下，以目标信息优化LLM输出\n- **关键优势**：\n  - 提供比LLM训练数据更即时的信息\n  - 能为特定组织和行业量身定制\n  - 提供更适合情境的答案\n\n## 工作原理\n1. **知识库构建**：\n   - 将组织的结构化/非结构化数据转换为通用格式\n   - 使用嵌入语言模型处理成数值表示\n   - 存储在向量数据库中\n\n2. **查询处理流程**：\n   ```\n   用户查询 → 转换为向量 → 查询向量数据库 → 检索相关信息 → \n   结合原始查询输入LLM → 生成最终响应\n   ```\n\n## 应用场景\n- 体育联盟信息查询系统\n- 度假屋信息聊天机器人\n- 财务报告分析\n- 石油天然气勘探辅助\n- 医疗研究论文检索\n\n## 优势\n1. 可访问比LLM训练数据更新的信息\n2. 知识库可持续低成本更新\n3. 信息更具情境相关性\n4. 可追踪信息来源并修正错误\n\n## 挑战\n1. 相对较新的技术，组织认知度低\n2. 实施成本高于单独使用LLM\n3. 数据建模复杂度高\n4. 需要建立数据更新和错误修正流程\n\n## 技术组件\n- **向量数据库**：存储处理后的数值表示\n- **嵌入语言模型**：将数据转换为向量\n- **语义搜索**：理解查询深层含义的关键技术\n\n## 与LLM的关系\n- RAG不是LLM的替代品，而是增强器\n- 结合LLM的通用知识和RAG的特定知识\n- 更新RAG知识库比再训练LLM成本低得多\n\n## 未来发展\n1. 从回答问题扩展到执行操作\n2. 处理更复杂的决策支持场景\n3. 与业务流程深度集成\n\n## Oracle的RAG实现\n- 提供OCI Generative AI服务\n- 单租户AI集群确保数据隔离\n- 可基于组织专有数据构建定制模型\n\n## 常见问题\n**Q: RAG与生成式AI是否相同？**\nA: 不同。RAG通过扩展LLM的知识范围来提供更准确的结果。\n\n**Q: RAG使用哪些类型的信息？**\nA: 可整合多种来源：数据库、文档、网络数据流、音频记录等。\n\n**Q: RAG能否引用数据来源？**\nA: 可以。向量数据库包含具体来源信息，便于引用和修正。\n\n---\n\n*注：本笔记基于Oracle官方技术文章整理，保留了原文的核心技术术语和关键概念，未添加原文外的信息。*",
+    "metadata": {
+      "summary_type": "其他",
+      "tags": "人工智能, AI, 数据库",
+      "created_at": "2025-03-26T13:51:58.732720",
+      "updated_at": "2025-03-26T13:51:58.732725",
+      "user_id": 5,
+      "source_url": "https://www.oracle.com/tw/artificial-intelligence/generative-ai/retrieval-augmented-generation-rag/"
+    },
+    "updated_at": "2025-03-27T13:47:44.037055"
+  },
+  "16": {
+    "title": "ThreadLocal与上下文管理组件技术笔记",
+    "content": "# ThreadLocal与上下文管理组件技术笔记\n\n## 一、ThreadLocal核心知识\n\n### 1. ThreadLocal原理\n\n#### 基本结构\n- 每个Thread对象包含一个`ThreadLocal.ThreadLocalMap`类型的`threadLocals`成员变量\n- ThreadLocalMap内部定义`Entry(ThreadLocal<?> k, Object v)`节点类，继承`WeakReference<ThreadLocal<?>>`\n\n#### 线程隔离实现机制\n1. 线程通过自己的`threadlocals`哈希表存储变量\n2. Entry中：key是ThreadLocal弱引用，value是变量实体\n3. 获取变量时：\n   - 从当前线程获取`threadlocals`\n   - 以ThreadLocal对象为key查询对应value\n\n### 2. 内存管理关键问题\n\n#### 引用类型与GC行为\n- **强引用**：不会被GC回收（默认new对象）\n- **软引用**：内存不足时回收（`SoftReference`）\n- **弱引用**：GC时立即回收（`WeakReference`）\n- **虚引用**：仅用于死亡通知（`PhantomReference`）\n\n#### 内存泄漏防护\n- **风险点**：Entry的value是强引用，即使key被回收仍存在\n- **JDK解决方案**：在`set()`/`get()`/`remove()`时清理无效Entry\n  ```java\n  private Entry getEntryAfterMiss(ThreadLocal<?> key, int i, Entry e) {\n      while (e != null) {\n          if (k == null)  // key被回收\n              expungeStaleEntry(i);  // 清理Entry\n          // ...\n      }\n  }\n  ```\n\n### 3. 核心源码分析\n\n#### ThreadLocal.set()\n```java\npublic void set(T value) {\n    Thread t = Thread.currentThread();\n    ThreadLocalMap map = getMap(t);\n    if (map != null) {\n        map.set(this, value);\n    } else {\n        createMap(t, value);  // 初始化容量16的Entry数组\n    }\n}\n```\n\n#### ThreadLocal.get()\n```java\npublic T get() {\n    ThreadLocalMap map = getMap(Thread.currentThread());\n    if (map != null) {\n        Entry e = map.getEntry(this);\n        if (e != null) {\n            return (T)e.value;\n        }\n    }\n    return setInitialValue();  // 未找到时初始化null值\n}\n```\n\n#### ThreadLocal.remove()\n```java\npublic void remove() {\n    ThreadLocalMap m = getMap(Thread.currentThread());\n    if (m != null) {\n        m.remove(this);  // 清除key和value引用\n    }\n}\n```\n\n## 二、ContextManager实现\n\n### 1. 核心设计\n```java\npublic class ContextManager {\n    private static final ThreadLocal<ContextManager> CONTEXT_THREAD_LOCAL = new ThreadLocal<>();\n    private final ConcurrentMap<String, Object> values = new ConcurrentHashMap<>();\n\n    // 上下文生命周期管理\n    public static ContextManager beginContext() {\n        ContextManager context = new ContextManager();\n        CONTEXT_THREAD_LOCAL.set(context);\n        return context;\n    }\n    \n    public static void endContext() {\n        CONTEXT_THREAD_LOCAL.remove();\n    }\n}\n```\n\n### 2. 典型使用场景\n```java\npublic void addToCart(Product product) {\n    ContextManager.beginContext();\n    try {\n        // 设置上下文数据\n        ContextManager.getCurrentContext().set(\"userId\", \"user123\");\n        // 执行业务逻辑\n        checkout();\n    } finally {\n        ContextManager.endContext();  // 必须清理\n    }\n}\n\nprivate void checkout() {\n    // 获取上下文数据\n    String userId = (String) ContextManager.getCurrentContext().get(\"userId\");\n    // ...\n}\n```\n\n## 三、线程池集成方案\n\n### 1. 上下文传递实现\n```java\npublic static <T> Future<T> submitWithContext(Callable<T> task) {\n    // 捕获当前上下文\n    ContextManager context = ContextManager.getCurrentContext();\n    \n    return threadPool.submit(() -> {\n        ContextManager.CONTEXT_THREAD_LOCAL.set(context);\n        try {\n            return task.call();\n        } finally {\n            ContextManager.endContext();\n        }\n    });\n}\n```\n\n### 2. 自定义线程池\n```java\npublic class ContextAwareThreadPool extends ThreadPoolExecutor {\n    protected <T> RunnableFuture<T> newTaskFor(Callable<T> callable) {\n        ContextManager context = ContextManager.getCurrentContext();\n        return super.newTaskFor(() -> {\n            ContextManager.CONTEXT_THREAD_LOCAL.set(context);\n            try {\n                return callable.call();\n            } finally {\n                ContextManager.endContext();\n            }\n        });\n    }\n}\n```\n\n## 关键注意事项\n\n1. **必须清理**：使用`try-finally`确保`endContext()`执行\n2. **线程池风险**：默认会丢失上下文，需显式传递\n3. **性能影响**：ConcurrentHashMap会增加少量开销\n4. **内存泄漏**：长时间存活的线程需定期清理上下文\n\n## 典型应用场景\n\n1. Web请求链路跟踪\n2. 用户会话管理\n3. 分布式事务上下文\n4. 多线程任务编排\n\n> 通过ThreadLocal+线程池封装，可实现高效、线程安全的上下文管理，但需特别注意生命周期管理和内存泄漏防护。",
+    "metadata": {
+      "summary_type": "其他",
+      "tags": "DL, Java",
+      "created_at": "2025-03-27T05:41:39.689514",
+      "updated_at": "2025-03-27T05:41:39.689520",
+      "user_id": 5,
+      "source_url": "https://blog.csdn.net/xiaofeng10330111/article/details/139667074?spm=1000.2115.3001.10526&utm_medium=distribute.pc_feed_blog_category.none-task-blog-classify_tag-6-139667074-null-null.nonecase&depth_1-utm_source=distribute.pc_feed_blog_category.none-task-blog-classify_tag-6-139667074-null-null.nonecase"
+    },
+    "updated_at": "2025-03-27T13:47:44.037339"
   }
 }

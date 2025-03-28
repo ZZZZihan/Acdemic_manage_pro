@@ -79,25 +79,13 @@ def get_achievements():
     })
 
 @api.route('/achievements/<int:id>', methods=['GET'])
-@jwt_required()
 def get_achievement(id):
     """获取指定ID的成果"""
-    current_user_id = get_jwt_identity()
-    
-    # 确保user_id是整数
-    if isinstance(current_user_id, str):
-        try:
-            current_user_id = int(current_user_id)
-        except ValueError:
-            return jsonify({"msg": "无效的用户ID"}), 400
-    
     achievement = Achievement.query.get(id)
     if not achievement:
         return not_found('成果不存在')
     
-    if achievement.user_id != current_user_id:
-        return unauthorized('无权访问此成果')
-    
+    # 返回成果信息，不再验证用户权限
     return jsonify(achievement.to_dict())
 
 @api.route('/achievements', methods=['POST'])
