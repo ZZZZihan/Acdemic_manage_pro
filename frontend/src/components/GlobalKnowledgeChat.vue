@@ -47,10 +47,21 @@
     </div>
     
     <div class="chat-settings">
-      <el-select v-model="provider" placeholder="选择AI模型" size="small">
-        <el-option label="DeepSeek" value="deepseek" />
-        <el-option label="OpenAI" value="openai" />
-      </el-select>
+      <div class="settings-group">
+        <el-select v-model="provider" placeholder="选择AI模型" size="small">
+          <el-option label="DeepSeek" value="deepseek" />
+          <el-option label="OpenAI" value="openai" />
+          <el-option label="Ollama" value="ollama" />
+        </el-select>
+        
+        <el-switch
+          v-model="useRag"
+          active-text="RAG"
+          inactive-text="普通"
+          size="small"
+          style="margin-left: 10px;"
+        />
+      </div>
       
       <el-button size="small" type="danger" @click="clearChat">清空对话</el-button>
     </div>
@@ -67,6 +78,7 @@ const messagesContainer = ref(null)
 const userInput = ref('')
 const loading = ref(false)
 const provider = ref('deepseek')
+const useRag = ref(true)  // 默认启用RAG功能
 const messages = reactive([
   {
     role: 'ai',
@@ -111,7 +123,12 @@ const sendMessage = async () => {
   // 发送请求
   loading.value = true
   try {
-    const response = await axios.post('/api/v1/knowledge_base/chat', {
+    // 根据是否启用RAG选择不同的API端点
+    const endpoint = useRag.value 
+      ? '/api/v1/rag/chat' 
+      : '/api/v1/knowledge_base/chat'
+    
+    const response = await axios.post(endpoint, {
       query: input,
       provider: provider.value
     })
@@ -122,7 +139,8 @@ const sendMessage = async () => {
         role: 'ai',
         content: response.data.data.answer,
         time: new Date(),
-        provider: response.data.data.provider
+        provider: useRag.value ? response.data.data.model : response.data.data.provider,
+        sources: response.data.data.sources || []
       })
     } else {
       ElMessage.error(response.data.message || '获取回答失败')
@@ -258,6 +276,13 @@ onMounted(() => {
   border-top: 1px solid #e0e0e0;
   display: flex;
   justify-content: space-between;
+  align-items: center;
+}
+
+.settings-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
 /* 打字指示器 */

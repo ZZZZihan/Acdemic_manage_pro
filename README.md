@@ -315,6 +315,6 @@ ENABLE_LOCAL_LLM=true
 
 ## 联系方式
 
-项目维护者 - [@yourgithub](https://github.com/yourgithub)
+项目维护者 - [@ZZZZihan](https://github.com/ZZZZihan/)
 
-项目链接: [https://github.com/yourusername/your-repo-name](https://github.com/yourusername/your-repo-name)
+项目链接: [https://github.com/ZZZZihan/Acdemic_manage_pro](https://github.com/ZZZZihan/Acdemic_manage_pro)
