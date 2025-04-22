@@ -147,7 +147,7 @@
         <el-form-item label="文件附件" prop="attachments">
           <el-upload
             class="attachment-uploader"
-            :action="`/api/meetings/attachments`"
+            :action="`/api/v1/meetings/attachments`"
             :headers="uploadHeaders"
             :on-success="handleUploadSuccess"
             :on-error="handleUploadError"
@@ -169,7 +169,7 @@
 import { ref, reactive, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage, ElLoading } from 'element-plus'
-import axios from 'axios'
+import axios from '@/utils/axios'
 import _ from 'lodash'
 import { useUserStore } from '@/stores/user'
 
@@ -230,10 +230,10 @@ export default {
     // 获取用户创建的项目列表
     const loadProjects = async () => {
       try {
-        const response = await axios.get('/api/projects', { 
+        const response = await axios.get('/api/v1/projects', { 
           params: { filter: 'created', limit: 100 } 
         })
-        projects.value = response.data.items
+        projects.value = response.data.items || response.data.projects || response.data || []
       } catch (error) {
         console.error('加载项目失败:', error)
         ElMessage.error('加载项目列表失败')
@@ -246,7 +246,7 @@ export default {
       
       searchingUsers.value = true
       try {
-        const response = await axios.get('/api/users/search', {
+        const response = await axios.get('/api/v1/users/search', {
           params: { query }
         })
         users.value = response.data
@@ -306,9 +306,14 @@ export default {
         
         submitting.value = true
         try {
-          const response = await axios.post('/api/meetings', form)
+          const submitData = getSubmitData()
+          console.log('提交数据:', submitData)
+          
+          // 创建会议
+          const response = await axios.post('/api/v1/meetings', submitData)
+          
           ElMessage.success('会议创建成功')
-          router.push(`/dashboard/meetings/${response.data.id}`)
+          router.push(`/meetings/${response.data.id}`)
         } catch (error) {
           console.error('创建会议失败:', error)
           ElMessage.error('创建会议失败，请重试')
@@ -316,6 +321,25 @@ export default {
           submitting.value = false
         }
       })
+    }
+    
+    // 准备提交的数据
+    const getSubmitData = () => {
+      return {
+        title: form.title,
+        start_time: form.start_time,
+        end_time: form.end_time,
+        location: form.location,
+        status: form.status,
+        project_id: form.project_id,
+        agenda: form.agenda,
+        notes: form.notes,
+        participants: form.participants.map(userId => ({ user_id: userId })),
+        attachments: form.attachments.map(attachment => ({
+          id: attachment.id,
+          name: attachment.name
+        }))
+      }
     }
     
     onMounted(() => {

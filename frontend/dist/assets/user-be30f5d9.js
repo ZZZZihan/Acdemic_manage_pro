@@ -1,0 +1,1 @@
+import{a2 as n,u as a,j as r}from"./index-9a8ac2de.js";const m=n("user",()=>{const s=a(),u=r(()=>{var e;return(e=s.user)==null?void 0:e.id}),t=r(()=>{var e;return(e=s.user)==null?void 0:e.username}),o=r(()=>s.user);return{userId:u,username:t,user:o}});export{m as u};

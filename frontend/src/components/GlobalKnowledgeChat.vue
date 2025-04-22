@@ -48,7 +48,7 @@
     
     <div class="chat-settings">
       <div class="settings-group">
-        <el-select v-model="provider" placeholder="选择AI模型" size="small">
+        <el-select v-model="provider" placeholder="选择AI模型" size="small" style="min-width: 90px;">
           <el-option label="DeepSeek" value="deepseek" />
           <el-option label="OpenAI" value="openai" />
           <el-option label="Ollama" value="ollama" />
@@ -57,7 +57,7 @@
         <el-switch
           v-model="useRag"
           active-text="RAG"
-          inactive-text="普通"
+          inactive-text=""
           size="small"
           style="margin-left: 10px;"
         />
@@ -282,7 +282,7 @@ onMounted(() => {
 .settings-group {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 20px;
 }
 
 /* 打字指示器 */
