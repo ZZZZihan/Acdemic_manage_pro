@@ -72,12 +72,6 @@ const routes = [
         name: 'KnowledgeChat',
         component: () => import('@/views/KnowledgeChat.vue'),
         meta: { title: '知识库聊天', requiresAuth: false }
-      },
-      {
-        path: 'ollama_chat',
-        name: 'OllamaChat',
-        component: () => import('@/views/OllamaChat.vue'),
-        meta: { title: 'Ollama聊天', requiresAuth: false }
       }
     ]
   },
