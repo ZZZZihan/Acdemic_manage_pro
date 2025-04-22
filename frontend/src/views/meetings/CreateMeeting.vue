@@ -108,26 +108,6 @@
         </template>
         
         <div class="participants-header">
-          <el-form-item label="会议主持人" prop="host_id" class="host-item">
-            <el-select 
-              v-model="meetingForm.host_id" 
-              placeholder="请选择会议主持人" 
-              filterable
-            >
-              <el-option 
-                v-for="user in userOptions" 
-                :key="user.id" 
-                :label="user.name" 
-                :value="user.id" 
-              >
-                <div class="user-option">
-                  <el-avatar :size="30" :src="user.avatar">{{ user.name.substring(0, 1) }}</el-avatar>
-                  <span>{{ user.name }}</span>
-                </div>
-              </el-option>
-            </el-select>
-          </el-form-item>
-          
           <el-button type="primary" @click="showAddParticipantDialog" plain size="small" class="add-participant-btn">
             添加参会人员
           </el-button>
@@ -185,7 +165,11 @@
     <el-dialog v-model="participantDialogVisible" title="添加参会人员" width="500px">
       <el-form :model="participantForm" label-width="80px">
         <el-form-item label="选择用户">
+          <div v-if="users.length === 0" class="empty-users">
+            <el-empty description="暂无可选用户" />
+          </div>
           <el-select
+            v-else
             v-model="participantForm.selectedUsers"
             multiple
             filterable
@@ -195,13 +179,13 @@
             <el-option
               v-for="user in availableUsers"
               :key="user.id"
-              :label="user.name"
+              :label="user.name || user.username"
               :value="user.id"
               :disabled="isUserSelected(user.id)"
             >
               <div class="user-option">
-                <el-avatar :size="30" :src="user.avatar">{{ user.name.substring(0, 1) }}</el-avatar>
-                <span>{{ user.name }}</span>
+                <el-avatar :size="30">{{ (user.name || user.username).substring(0, 1) }}</el-avatar>
+                <span>{{ user.name || user.username }}</span>
               </div>
             </el-option>
           </el-select>
@@ -241,7 +225,6 @@ export default {
       location: '',
       status: 'pending',
       content: '',
-      host_id: userStore.user?.id || null,
       participants: [],
       attachments: []
     })
@@ -293,17 +276,12 @@ export default {
       status: [
         { required: true, message: '请选择会议状态', trigger: 'change' }
       ],
-      host_id: [
-        { required: true, message: '请选择会议主持人', trigger: 'change' }
-      ],
       content: [
         { required: true, message: '请输入会议内容', trigger: 'blur' }
       ]
     }
     
     // 计算属性
-    const userOptions = computed(() => users.value || [])
-    
     const availableUsers = computed(() => {
       return users.value.filter(user => {
         // 过滤掉已经添加的参会者（除了当前用户）
@@ -323,11 +301,17 @@ export default {
       
       try {
         const response = await axios.get(`/api/v1/projects/${projectId}/members`)
-        const projectMembers = response.data.members.map(member => ({
-          id: member.user.id,
-          name: member.user.name,
-          avatar: member.user.avatar
-        }))
+        console.log('获取项目成员成功:', response.data)
+        
+        const members = response.data.members || response.data || []
+        const projectMembers = members.map(member => {
+          const user = member.user || member
+          return {
+            id: user.id,
+            name: user.name || user.username,
+            avatar: user.avatar || ''
+          }
+        })
         
         // 更新参会人员，避免重复
         participants.value = mergeParticipants(participants.value, projectMembers)
@@ -382,7 +366,7 @@ export default {
     
     // 判断用户是否已选择
     const isUserSelected = (userId) => {
-      return participants.value.some(p => p.id === userId) && userId !== userStore.user?.id
+      return participants.value.some(p => p.id === userId)
     }
     
     // 添加参会人员
@@ -396,8 +380,8 @@ export default {
         participantForm.selectedUsers.includes(user.id)
       ).map(user => ({
         id: user.id,
-        name: user.name,
-        avatar: user.avatar
+        name: user.name || user.username,
+        avatar: user.avatar || ''
       }))
       
       participants.value = mergeParticipants(participants.value, selectedUserObjects)
@@ -423,6 +407,12 @@ export default {
           return
         }
         
+        // 验证至少有一名参会人员
+        if (participants.value.length === 0) {
+          ElMessage.error('请至少添加一名参会人员')
+          return
+        }
+        
         submitting.value = true
         
         try {
@@ -431,6 +421,8 @@ export default {
             // 将content字段映射到后端需要的字段
             description: meetingForm.content,
             agenda: meetingForm.content,
+            // 使用当前用户作为主持人
+            host_id: userStore.user?.id,
             participants: participants.value.map(p => ({
               user_id: p.id
             })),
@@ -459,7 +451,9 @@ export default {
         const response = await axios.get('/api/v1/projects', { 
           params: { limit: 100, tab: 'my' } 
         })
-        projects.value = response.data.projects
+        console.log('获取项目数据成功:', response.data)
+        // API返回格式调整
+        projects.value = response.data.projects || response.data || []
       } catch (error) {
         console.error('获取项目列表失败:', error)
       }
@@ -468,18 +462,24 @@ export default {
     const loadUsers = async () => {
       try {
         const response = await axios.get('/api/v1/users')
-        users.value = response.data.users
+        
+        // 调试输出API返回数据
+        console.log('获取用户数据成功:', response.data)
+        
+        // API返回的是数组而不是{users: [...]}对象
+        users.value = response.data || []
         
         // 默认添加当前用户作为参会者
         if (userStore.user) {
-          participants.value.push({
+          participants.value = [{
             id: userStore.user.id,
-            name: userStore.user.name,
-            avatar: userStore.user.avatar
-          })
+            name: userStore.user.name || userStore.user.username,
+            avatar: userStore.user.avatar || ''
+          }]
         }
       } catch (error) {
         console.error('获取用户列表失败:', error)
+        ElMessage.error('获取用户列表失败，请刷新重试')
       }
     }
     
@@ -501,7 +501,6 @@ export default {
       participantForm,
       baseUrl,
       uploadHeaders,
-      userOptions,
       availableUsers,
       
       disablePastDates,
@@ -562,13 +561,8 @@ export default {
 
 .participants-header {
   display: flex;
-  align-items: center;
+  justify-content: flex-end;
   margin-bottom: 20px;
-}
-
-.host-item {
-  flex: 1;
-  margin-bottom: 0;
 }
 
 .add-participant-btn {
@@ -580,6 +574,11 @@ export default {
   display: flex;
   align-items: center;
   gap: 10px;
+}
+
+.empty-users {
+  padding: 20px;
+  text-align: center;
 }
 
 :deep(.el-upload-list__item) {
