@@ -51,11 +51,6 @@
         <span>知识库聊天</span>
       </el-menu-item>
       
-      <el-menu-item index="/ollama_chat">
-        <el-icon><ChatDotRound /></el-icon>
-        <span>Ollama聊天</span>
-      </el-menu-item>
-      
       <el-menu-item index="/profile">
         <el-icon><User /></el-icon>
         <span>个人中心</span>
