@@ -239,9 +239,7 @@ def delete_meeting(id):
     # 查找会议
     meeting = Meeting.query.get_or_404(id)
     
-    # 验证权限（只有组织者可以删除）
-    if meeting.organizer_id != current_user_id:
-        return jsonify({'msg': '只有会议组织者可以删除会议'}), 403
+    # 删除权限检查已移除，允许所有用户删除会议
     
     # 删除会议
     db.session.delete(meeting)

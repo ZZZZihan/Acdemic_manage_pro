@@ -71,11 +71,11 @@
           </div>
           <div class="info-item">
             <el-icon><User /></el-icon>
-            <span>主持人: {{ meeting.organizer?.username || '未知' }}</span>
+            <span>主持人: {{ meeting.host?.name || meeting.host?.username || meeting.organizer?.username || '未知' }}</span>
           </div>
           <div class="info-item">
             <el-icon><Document /></el-icon>
-            <span>{{ meeting.project ? `关联项目: ${meeting.project}` : '无关联项目' }}</span>
+            <span>{{ meeting.project?.name || meeting.project || '无关联项目' }}</span>
           </div>
         </div>
         
@@ -88,8 +88,16 @@
           </div>
           
           <div class="meeting-actions" @click.stop>
-            <el-button type="primary" size="small" icon="Edit" @click.stop="editMeeting(meeting.id)">编辑</el-button>
-            <el-button v-if="meeting.organizer_id === userId" type="danger" size="small" icon="Delete" @click.stop="confirmDelete(meeting)">删除</el-button>
+            <div class="action-buttons">
+              <el-button type="primary" size="small" @click.stop="editMeeting(meeting.id)">
+                <el-icon><Edit /></el-icon>
+                <span>编辑</span>
+              </el-button>
+              <el-button v-if="canDeleteMeeting(meeting)" type="danger" size="small" @click.stop="confirmDelete(meeting)">
+                <el-icon><Delete /></el-icon>
+                <span>删除</span>
+              </el-button>
+            </div>
           </div>
         </div>
       </el-card>
@@ -123,9 +131,9 @@
 import { ref, onMounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { Calendar, Location, User, Document, Search } from '@element-plus/icons-vue'
+import { Calendar, Location, User, Document, Search, Edit, Delete } from '@element-plus/icons-vue'
 import { useAuthStore } from '@/stores/auth'
-import axios from 'axios'
+import axios from '@/utils/axios'
 import _ from 'lodash'
 
 export default {
@@ -135,12 +143,16 @@ export default {
     Location,
     User,
     Document,
-    Search
+    Search,
+    Edit,
+    Delete
   },
   setup() {
     const router = useRouter()
     const authStore = useAuthStore()
     const userId = computed(() => authStore.user?.id)
+    
+    console.log('当前用户ID:', userId.value)
     
     const activeTab = ref('created')
     const meetings = ref([])
@@ -170,12 +182,20 @@ export default {
           q: searchQuery.value,
           status: filterStatus.value,
           date_from: startDate,
-          date_to: endDate
+          date_to: endDate,
+          tab: activeTab.value
         }
         
+        console.log('加载会议，参数:', params)
+        
         const response = await axios.get('/api/v1/meetings', { params })
-        meetings.value = response.data.meetings || []
-        totalMeetings.value = response.data.total || 0
+        console.log('会议数据响应:', response.data)
+        
+        // 确保格式一致 
+        meetings.value = response.data.meetings || response.data || []
+        totalMeetings.value = response.data.total || meetings.value.length || 0
+        
+        console.log('处理后的会议数据:', meetings.value)
       } catch (error) {
         console.error('加载会议失败:', error)
         ElMessage.error('加载会议失败，请稍后重试')
@@ -211,15 +231,24 @@ export default {
     }
     
     const editMeeting = (id) => {
+      console.log('编辑会议:', id)
       router.push(`/meetings/${id}/edit`)
     }
     
     const confirmDelete = (meeting) => {
+      console.log('确认删除会议:', meeting)
       selectedMeeting.value = meeting
       deleteDialogVisible.value = true
     }
     
     const deleteMeeting = async () => {
+      if (!selectedMeeting.value || !selectedMeeting.value.id) {
+        ElMessage.error('无效的会议ID')
+        return
+      }
+      
+      console.log('删除会议ID:', selectedMeeting.value.id)
+      
       try {
         await axios.delete(`/api/v1/meetings/${selectedMeeting.value.id}`)
         ElMessage.success('会议已删除')
@@ -227,7 +256,7 @@ export default {
         deleteDialogVisible.value = false
       } catch (error) {
         console.error('删除会议失败:', error)
-        ElMessage.error('删除会议失败，请稍后重试')
+        ElMessage.error('删除会议失败: ' + (error.response?.data?.message || '服务器错误'))
       }
     }
     
@@ -255,6 +284,22 @@ export default {
     
     const getStatusText = (status) => {
       return status || '未知状态'
+    }
+    
+    const canDeleteMeeting = (meeting) => {
+      console.log('检查删除权限:', { 
+        meeting, 
+        organizerId: meeting.organizer_id,
+        currentUserId: userId.value 
+      })
+      
+      // 只保留组织者身份判断
+      const isOrganizer = meeting.organizer_id === userId.value
+      
+      // 管理员权限
+      const isAdmin = authStore.isAdmin
+      
+      return isOrganizer || isAdmin
     }
     
     onMounted(() => {
@@ -287,7 +332,8 @@ export default {
       formatDateTime,
       formatTime,
       getStatusType,
-      getStatusText
+      getStatusText,
+      canDeleteMeeting
     }
   }
 }
@@ -376,11 +422,44 @@ export default {
   display: flex;
   align-items: center;
   gap: 5px;
+  flex: 2;
 }
 
 .meeting-actions {
   display: flex;
   gap: 10px;
+  justify-content: flex-end;
+  align-items: center;
+  flex: 1;
+  text-align: right;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  width: 100%;
+}
+
+/* 确保按钮内部文字居中 */
+.meeting-actions :deep(.el-button) {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 8px 15px;
+}
+
+/* 调整按钮内部图标和文字对齐 */
+.meeting-actions :deep(.el-button .el-icon) {
+  margin-right: 4px;
+  vertical-align: middle;
+  display: flex;
+  align-items: center;
+}
+
+.meeting-actions :deep(.el-button span) {
+  vertical-align: middle;
+  line-height: 1;
 }
 
 .pagination-container {
