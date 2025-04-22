@@ -435,7 +435,7 @@ export default {
           const response = await axios.post('/api/v1/meetings', meetingData)
           
           ElMessage.success('会议创建成功')
-          router.push(`/dashboard/meetings/${response.data.id}`)
+          router.push(`/meetings/${response.data.id}`)
         } catch (error) {
           console.error('创建会议失败:', error)
           ElMessage.error('创建会议失败：' + (error.response?.data?.message || '未授权，请重新登录后再试'))
