@@ -206,7 +206,7 @@
 import { ref, reactive, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import axios from 'axios'
+import axios from '@/utils/axios'  // 导入配置好的axios实例
 import { useUserStore } from '@/stores/user'
 
 export default {
@@ -243,7 +243,7 @@ export default {
     })
     
     // 上传相关
-    const baseUrl = import.meta.env.VITE_API_BASE_URL || ''
+    const baseUrl = import.meta.env.VITE_API_URL || ''  // 使用和axios相同的baseURL
     const uploadHeaders = computed(() => ({
       Authorization: `Bearer ${userStore.token}`
     }))
@@ -438,7 +438,7 @@ export default {
           router.push(`/dashboard/meetings/${response.data.id}`)
         } catch (error) {
           console.error('创建会议失败:', error)
-          ElMessage.error('创建会议失败：' + (error.response?.data?.message || '未知错误'))
+          ElMessage.error('创建会议失败：' + (error.response?.data?.message || '未授权，请重新登录后再试'))
         } finally {
           submitting.value = false
         }
