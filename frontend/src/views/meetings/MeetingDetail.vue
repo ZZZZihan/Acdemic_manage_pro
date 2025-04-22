@@ -22,7 +22,7 @@
 
     <!-- 会议未找到提示 -->
     <el-empty v-if="notFound" description="会议不存在或已被删除">
-      <el-button type="primary" @click="$router.push('/dashboard/meetings')">返回会议列表</el-button>
+      <el-button type="primary" @click="$router.push('/meetings')">返回会议列表</el-button>
     </el-empty>
 
     <div v-else-if="!loading" class="meeting-detail-content">
@@ -48,7 +48,7 @@
           <el-descriptions-item label="关联项目">
             <router-link 
               v-if="meeting.project" 
-              :to="`/dashboard/projects/${meeting.project.id}`"
+              :to="`/projects/${meeting.project.id}`"
               class="project-link"
             >
               {{ meeting.project.name }}
@@ -171,7 +171,7 @@
             <el-upload
               v-if="canEdit"
               class="upload-attachment"
-              :action="`/api/meetings/${meetingId}/attachments`"
+              :action="`/api/v1/meetings/${meetingId}/attachments`"
               :headers="uploadHeaders"
               :on-success="handleAttachmentSuccess"
               :on-error="handleAttachmentError"
@@ -334,7 +334,7 @@ import { ref, reactive, computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { ArrowDown, Document } from '@element-plus/icons-vue'
-import axios from 'axios'
+import axios from '@/utils/axios'
 import { useUserStore } from '@/stores/user'
 import { formatDate } from '@/utils/format'
 
@@ -369,7 +369,20 @@ export default {
     
     // 判断当前用户是否可以编辑会议
     const canEdit = computed(() => {
-      return meeting.value.creator?.id === userStore.user.id
+      console.log('检查编辑权限:', {
+        meetingCreator: meeting.value.creator?.id || meeting.value.host_id,
+        currentUser: userStore.user?.id,
+        isAdmin: userStore.isAdmin
+      })
+      
+      // 用户是会议的创建者
+      const isCreator = meeting.value.creator?.id === userStore.user?.id
+      // 用户是会议的主持人
+      const isHost = meeting.value.host_id === userStore.user?.id
+      // 管理员权限
+      const isAdmin = userStore.isAdmin
+      
+      return isCreator || isHost || isAdmin
     })
     
     // 根据状态获取类型和文本
@@ -441,7 +454,7 @@ export default {
       loading.value = true
       
       try {
-        const response = await axios.get(`/api/meetings/${meetingId.value}`)
+        const response = await axios.get(`/api/v1/meetings/${meetingId.value}`)
         meeting.value = response.data
       } catch (error) {
         console.error('获取会议详情失败:', error)
@@ -458,7 +471,7 @@ export default {
     
     // 编辑会议
     const editMeeting = () => {
-      router.push(`/dashboard/meetings/${meetingId.value}/edit`)
+      router.push(`/meetings/${meetingId.value}/edit`)
     }
     
     // 处理下拉菜单命令
@@ -473,7 +486,7 @@ export default {
     // 复制会议
     const duplicateMeeting = () => {
       router.push({
-        path: '/dashboard/meetings/create',
+        path: '/meetings/create',
         query: { duplicate: meetingId.value }
       })
     }
@@ -501,7 +514,7 @@ export default {
       
       searchingUsers.value = true
       try {
-        const response = await axios.get('/api/users/search', {
+        const response = await axios.get('/api/v1/users/search', {
           params: { query }
         })
         userOptions.value = response.data
@@ -521,7 +534,7 @@ export default {
       
       addingParticipant.value = true
       try {
-        await axios.post(`/api/meetings/${meetingId.value}/participants`, {
+        await axios.post(`/api/v1/meetings/${meetingId.value}/participants`, {
           user_id: participantForm.user_id,
           role: participantForm.role
         })
@@ -550,7 +563,7 @@ export default {
           }
         )
         
-        await axios.delete(`/api/meetings/${meetingId.value}/participants/${participant.id}`)
+        await axios.delete(`/api/v1/meetings/${meetingId.value}/participants/${participant.id}`)
         ElMessage.success('移除参会人员成功')
         loadMeetingDetail()
       } catch (error) {
@@ -591,7 +604,7 @@ export default {
           }
         )
         
-        await axios.delete(`/api/meetings/${meetingId.value}/attachments/${attachment.id}`)
+        await axios.delete(`/api/v1/meetings/${meetingId.value}/attachments/${attachment.id}`)
         ElMessage.success('删除附件成功')
         loadMeetingDetail()
       } catch (error) {
@@ -620,7 +633,7 @@ export default {
       savingMinutes.value = true
       
       try {
-        await axios.put(`/api/meetings/${meetingId.value}/minutes`, {
+        await axios.put(`/api/v1/meetings/${meetingId.value}/minutes`, {
           content: minutesForm.content
         })
         
@@ -644,9 +657,9 @@ export default {
       deleting.value = true
       
       try {
-        await axios.delete(`/api/meetings/${meetingId.value}`)
+        await axios.delete(`/api/v1/meetings/${meetingId.value}`)
         ElMessage.success('删除会议成功')
-        router.push('/dashboard/meetings')
+        router.push('/meetings')
       } catch (error) {
         console.error('删除会议失败:', error)
         ElMessage.error('删除会议失败')
