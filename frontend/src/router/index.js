@@ -62,6 +62,54 @@ const routes = [
         meta: { title: '编辑技术总结', requiresAuth: true }
       },
       {
+        path: 'projects',
+        name: 'ProjectList',
+        component: () => import('@/views/projects/ProjectList.vue'),
+        meta: { title: '项目管理', requiresAuth: true }
+      },
+      {
+        path: 'projects/create',
+        name: 'ProjectCreate',
+        component: () => import('@/views/projects/ProjectCreate.vue'),
+        meta: { title: '创建项目', requiresAuth: true }
+      },
+      {
+        path: 'projects/:id',
+        name: 'ProjectDetail',
+        component: () => import('@/views/projects/ProjectDetail.vue'),
+        meta: { title: '项目详情', requiresAuth: true }
+      },
+      {
+        path: 'projects/:id/edit',
+        name: 'ProjectEdit',
+        component: () => import('@/views/projects/ProjectEdit.vue'),
+        meta: { title: '编辑项目', requiresAuth: true }
+      },
+      {
+        path: 'meetings',
+        name: 'MeetingList',
+        component: () => import('@/views/meetings/MeetingList.vue'),
+        meta: { title: '会议管理', requiresAuth: true }
+      },
+      {
+        path: 'meetings/create',
+        name: 'MeetingCreate',
+        component: () => import('@/views/meetings/CreateMeeting.vue'),
+        meta: { title: '创建会议', requiresAuth: true }
+      },
+      {
+        path: 'meetings/:id',
+        name: 'MeetingDetail',
+        component: () => import('@/views/meetings/MeetingDetail.vue'),
+        meta: { title: '会议详情', requiresAuth: true }
+      },
+      {
+        path: 'meetings/:id/edit',
+        name: 'MeetingEdit',
+        component: () => import('@/views/meetings/MeetingEdit.vue'),
+        meta: { title: '编辑会议', requiresAuth: true }
+      },
+      {
         path: 'profile',
         name: 'Profile',
         component: () => import('@/views/user/ProfileView.vue'),

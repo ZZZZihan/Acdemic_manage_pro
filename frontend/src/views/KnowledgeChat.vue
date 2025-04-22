@@ -3,7 +3,7 @@
     <div class="page-header">
       <h2 class="page-title">知识库聊天</h2>
       <div class="header-actions">
-        <el-button @click="$router.push('/tech_summaries')">返回技术总结</el-button>
+        <el-button @click="goToTechSummaries">返回技术总结</el-button>
       </div>
     </div>
     
@@ -61,13 +61,27 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
 import GlobalKnowledgeChat from '@/components/GlobalKnowledgeChat.vue'
 import axios from '@/utils/axios'
 
+const router = useRouter()
 const stats = ref({
   totalSummaries: 0,
   lastUpdate: '-'
 })
+
+// 跳转到技术总结页面
+const goToTechSummaries = () => {
+  console.log('跳转到技术总结页面')
+  try {
+    router.push('/tech_summaries')
+  } catch (error) {
+    console.error('路由跳转错误:', error)
+    // 如果正常路由跳转失败，尝试使用window.location
+    window.location.href = '/tech_summaries'
+  }
+}
 
 // 获取知识库统计信息
 const fetchStats = async () => {
