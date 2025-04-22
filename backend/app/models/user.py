@@ -69,6 +69,10 @@ class User(db.Model):
     member_since = db.Column(db.DateTime(), default=datetime.utcnow)
     last_seen = db.Column(db.DateTime(), default=datetime.utcnow)
     
+    project_memberships = db.relationship('ProjectMember', back_populates='user', cascade='all, delete-orphan')
+    meeting_participations = db.relationship('MeetingParticipant', back_populates='user', 
+                                         cascade='all, delete-orphan')
+    
     def __init__(self, **kwargs):
         super(User, self).__init__(**kwargs)
         if self.role is None:

@@ -19,9 +19,9 @@ instance.interceptors.request.use(
   config => {
     console.log(`发送${config.method.toUpperCase()}请求到: ${config.baseURL}${config.url}`, config)
     
-    // 从localStorage获取token
+    // 从localStorage获取token - 确保每次都获取最新的token
     const token = localStorage.getItem('token')
-    console.log('当前token状态:', { hasToken: !!token, token })
+    console.log('当前token状态:', { hasToken: !!token, tokenLength: token ? token.length : 0 })
     
     // 如果存在token，则添加到请求头
     if (token) {
@@ -29,6 +29,14 @@ instance.interceptors.request.use(
       console.log('请求已添加认证Token')
     } else {
       console.log('无token，不添加认证头')
+      
+      // 检查是否是需要认证的请求路径
+      const publicPaths = ['/auth/login', '/auth/register', '/auth/forgot-password']
+      const isAuthRequired = !publicPaths.some(path => config.url.includes(path))
+      
+      if (isAuthRequired) {
+        console.warn('警告: 访问需要认证的路径但无token')
+      }
     }
     
     // 确保所有字段都是字符串
@@ -43,7 +51,7 @@ instance.interceptors.request.use(
     console.log('最终请求配置:', {
       url: config.url,
       method: config.method,
-      headers: config.headers,
+      hasAuthHeader: !!config.headers['Authorization'],
       data: config.data
     })
     
@@ -61,7 +69,7 @@ instance.interceptors.response.use(
     console.log(`收到响应: ${response.config.url}`, response.status, response.data)
     return response
   },
-  error => {
+  async error => {
     console.error('请求失败:', error)
     
     if (error.code === 'ECONNABORTED') {
@@ -77,10 +85,15 @@ instance.interceptors.response.use(
       // 根据状态码处理错误
       switch (error.response.status) {
         case 400:
-          ElMessage.error(error.response.data.message || '请求参数错误')
+          ElMessage.error(error.response.data.message || error.response.data.msg || '请求参数错误')
           break
         case 401:
           console.error('认证失败，需要重新登录')
+          
+          // 尝试获取当前用户状态
+          const user = localStorage.getItem('user')
+          console.log('当前用户状态:', user ? '已登录' : '未登录')
+          
           // 清除认证数据
           localStorage.removeItem('token')
           localStorage.removeItem('refreshToken')
@@ -92,12 +105,15 @@ instance.interceptors.response.use(
             console.log('重定向到登录页')
             ElMessage.error('登录已过期，请重新登录')
             setTimeout(() => {
-              window.location.href = '/auth/login'
-            }, 1000)
+              router.push('/auth/login')
+            }, 500)
           }
           break
         case 403:
-          ElMessage.error('没有权限执行此操作')
+          // 详细说明权限问题
+          const errorMsg = error.response.data.msg || '没有权限执行此操作'
+          console.error('权限错误:', errorMsg)
+          ElMessage.error(errorMsg)
           break
         case 404:
           ElMessage.error('请求的资源不存在')
