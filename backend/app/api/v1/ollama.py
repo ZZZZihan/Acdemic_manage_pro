@@ -1,40 +1,45 @@
-from flask import request, jsonify
-from app.api.v1 import api
+from flask import Blueprint, request, jsonify
 from app.utils.ollama_chat import OllamaChat
 import logging
 
+# 创建蓝图
+ollama_bp = Blueprint('ollama', __name__)
+
+# 创建日志记录器
 logger = logging.getLogger(__name__)
 
-# 创建Ollama聊天实例
-ollama_chat = OllamaChat()
+# 创建Ollama客户端
+ollama_client = OllamaChat()
 
-@api.route('/ollama/chat', methods=['POST'])
+@ollama_bp.route('/chat', methods=['POST'])
 def chat():
-    """处理Ollama聊天请求"""
+    """
+    与Ollama模型聊天的API端点
+    
+    Returns:
+        JSON响应，包含模型的回答
+    """
     try:
-        # 获取请求数据
-        data = request.get_json() or {}
+        # 从请求中获取数据
+        data = request.get_json()
         
-        # 检查必填字段
-        if 'query' not in data:
+        # 验证必需参数
+        if not data or 'query' not in data:
             return jsonify({
                 'success': False,
-                'message': '问题是必填项'
+                'message': '缺少必需的参数: query'
             }), 400
-            
-        # 获取是否使用模拟模式
-        use_mock = data.get('use_mock', True)
         
-        # 调用Ollama聊天
-        result = ollama_chat.chat(data['query'], use_mock)
+        query = data.get('query', '')
         
-        if result['success']:
-            return jsonify(result)
-        else:
-            return jsonify(result), 500
-            
+        # 调用Ollama客户端进行聊天
+        result = ollama_client.chat(query)
+        
+        # 返回结果
+        return jsonify(result)
+        
     except Exception as e:
-        logger.exception(f"处理Ollama聊天请求时出错: {str(e)}")
+        logger.exception(f"Ollama聊天API出错: {str(e)}")
         return jsonify({
             'success': False,
             'message': f'处理请求时出错: {str(e)}'

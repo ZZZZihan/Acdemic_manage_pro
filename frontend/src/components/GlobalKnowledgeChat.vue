@@ -13,7 +13,16 @@
             <markdown-renderer v-if="message.role === 'ai'" :content="message.content" />
             <div v-else>{{ message.content }}</div>
           </div>
-          <div class="message-time">{{ formatTime(message.time) }}</div>
+          <div class="message-time">
+            {{ formatTime(message.time) }}
+            <span v-if="message.role === 'ai' && message.provider" class="message-provider">
+              {{ message.provider }}
+            </span>
+            <span v-if="message.role === 'ai' && message.provider && message.provider.includes('FlashRAG')" 
+                  class="engine-badge flash-badge">
+              闪电⚡
+            </span>
+          </div>
         </div>
         <div v-if="loading" class="message ai-message">
           <div class="message-content">
@@ -53,14 +62,6 @@
           <el-option label="OpenAI" value="openai" />
           <el-option label="Ollama" value="ollama" />
         </el-select>
-        
-        <el-switch
-          v-model="useRag"
-          active-text="RAG"
-          inactive-text=""
-          size="small"
-          style="margin-left: 10px;"
-        />
       </div>
       
       <el-button size="small" type="danger" @click="clearChat">清空对话</el-button>
@@ -73,12 +74,13 @@ import { ref, reactive, onMounted, nextTick, watch } from 'vue'
 import axios from '@/utils/axios'
 import { ElMessage } from 'element-plus'
 import MarkdownRenderer from '@/components/MarkdownRenderer.vue'
+import { InfoFilled } from '@element-plus/icons-vue'
 
 const messagesContainer = ref(null)
 const userInput = ref('')
 const loading = ref(false)
+const initLoading = ref(false)
 const provider = ref('deepseek')
-const useRag = ref(true)  // 默认启用RAG功能
 const messages = reactive([
   {
     role: 'ai',
@@ -86,6 +88,31 @@ const messages = reactive([
     time: new Date()
   }
 ])
+
+// 初始化FlashRAG
+const initFlashRAG = async () => {
+  try {
+    initLoading.value = true
+    const response = await axios.post('/api/v1/rag/init_flashrag')
+    if (response.data.success) {
+      ElMessage.success('FlashRAG初始化成功')
+      // 添加系统消息
+      messages.push({
+        role: 'ai',
+        content: '✅ FlashRAG索引已重建完成，现在可以更高效地查询知识库',
+        time: new Date(),
+        engine: 'flashrag'
+      })
+    } else {
+      ElMessage.error(response.data.message || 'FlashRAG初始化失败')
+    }
+  } catch (error) {
+    console.error('FlashRAG初始化请求失败:', error)
+    ElMessage.error('初始化请求失败，请稍后再试')
+  } finally {
+    initLoading.value = false
+  }
+}
 
 // 初始化知识库
 const initKnowledgeBase = async () => {
@@ -123,15 +150,15 @@ const sendMessage = async () => {
   // 发送请求
   loading.value = true
   try {
-    // 根据是否启用RAG选择不同的API端点
-    const endpoint = useRag.value 
-      ? '/api/v1/rag/chat' 
-      : '/api/v1/knowledge_base/chat'
+    // 始终使用RAG API端点
+    const endpoint = '/api/v1/rag/chat'
     
-    const response = await axios.post(endpoint, {
+    const payload = {
       query: input,
       provider: provider.value
-    })
+    }
+    
+    const response = await axios.post(endpoint, payload)
     
     if (response.data.success) {
       // 添加AI回复
@@ -139,7 +166,7 @@ const sendMessage = async () => {
         role: 'ai',
         content: response.data.data.answer,
         time: new Date(),
-        provider: useRag.value ? response.data.data.model : response.data.data.provider,
+        provider: response.data.data.model,
         sources: response.data.data.sources || []
       })
     } else {
@@ -260,6 +287,29 @@ onMounted(() => {
   color: #999;
   margin-top: 4px;
   text-align: right;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 6px;
+}
+
+.message-provider {
+  font-size: 11px;
+  padding: 1px 4px;
+  background-color: #eaeaea;
+  border-radius: 4px;
+}
+
+.engine-badge {
+  font-size: 11px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-weight: bold;
+}
+
+.flash-badge {
+  background-color: #ffed80;
+  color: #e67700;
 }
 
 .chat-input {
@@ -283,6 +333,12 @@ onMounted(() => {
   display: flex;
   align-items: center;
   gap: 20px;
+}
+
+.info-icon {
+  color: #909399;
+  cursor: help;
+  font-size: 15px;
 }
 
 /* 打字指示器 */

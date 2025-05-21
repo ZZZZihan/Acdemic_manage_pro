@@ -1,9 +1,9 @@
 import logging
-import random
-import time
+import os
+import requests
 from typing import Dict, Any, Optional, List
-
 from app.utils.knowledge_base import knowledge_base
+from app.utils.flashrag_service import flashrag_service
 
 # 配置日志
 logging.basicConfig(level=logging.INFO)
@@ -23,45 +23,88 @@ def chat_with_document(document_content: str, user_query: str, provider: str = '
     """
     logger.info(f"使用{provider}基于单个文档进行问答，问题: {user_query}")
     
-    # 模拟处理延迟
-    if provider.lower() == 'deepseek':
-        delay = random.uniform(1.5, 3)
-    else:  # openai
-        delay = random.uniform(0.8, 1.5)
+    try:
+        # 获取API密钥
+        DEEPSEEK_API_KEY = os.environ.get("DEEPSEEK_API_KEY", "")
+        OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY", "")
         
-    time.sleep(delay)
-    
-    # 简单的关键词匹配
-    keywords = user_query.lower().split()
-    relevant_sentences = []
-    
-    # 将文档分成段落
-    paragraphs = document_content.split('\n\n')
-    
-    # 在段落中查找包含关键词的内容
-    for paragraph in paragraphs:
-        paragraph_lower = paragraph.lower()
-        if any(keyword in paragraph_lower for keyword in keywords):
-            relevant_sentences.append(paragraph)
-    
-    # 如果找到相关内容，生成回答
-    if relevant_sentences:
-        answer = f"## 回答\n\n根据文档内容，关于\"{user_query}\"的信息如下：\n\n"
+        # 检查是否有可用的API密钥
+        if provider.lower() == 'deepseek' and not DEEPSEEK_API_KEY:
+            return {
+                "success": False,
+                "message": "未设置DeepSeek API密钥，无法使用DeepSeek功能",
+                "provider": provider
+            }
+        elif provider.lower() == 'openai' and not OPENAI_API_KEY:
+            return {
+                "success": False,
+                "message": "未设置OpenAI API密钥，无法使用OpenAI功能",
+                "provider": provider
+            }
         
-        # 添加找到的相关内容
-        for i, sentence in enumerate(relevant_sentences[:3]):  # 最多使用3个相关段落
-            answer += f"{sentence}\n\n"
+        # 构建系统提示
+        system_prompt = f"""你是一个智能问答助手。请基于以下文档内容回答用户的问题。
+如果文档中没有相关信息，请诚实地说不知道，不要编造答案。
+
+文档内容:
+{document_content}
+"""
+        
+        # 根据不同提供商调用相应API
+        if provider.lower() == 'deepseek':
+            api_url = "https://api.deepseek.com/v1/chat/completions"
+            api_key = DEEPSEEK_API_KEY
+            model = "deepseek-chat"
+        else:  # openai
+            api_url = "https://api.openai.com/v1/chat/completions"
+            api_key = OPENAI_API_KEY
+            model = "gpt-3.5-turbo"
+        
+        # 准备请求
+        headers = {
+            "Content-Type": "application/json",
+            "Authorization": f"Bearer {api_key}"
+        }
+        
+        payload = {
+            "model": model,
+            "messages": [
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": user_query}
+            ],
+            "temperature": 0.7
+        }
+        
+        # 发送请求
+        response = requests.post(api_url, headers=headers, json=payload, timeout=60)
+        
+        # 解析响应
+        if response.status_code == 200:
+            data = response.json()
+            answer = data["choices"][0]["message"]["content"]
             
-        # 添加一些通用的结束语
-        answer += "希望这些信息对您有所帮助。如果您有更多问题，请继续提问。"
-    else:
-        answer = f"## 抱歉\n\n在提供的文档中没有找到与\"{user_query}\"直接相关的信息。请尝试使用其他关键词，或者提出与文档内容更相关的问题。"
+            return {
+                "success": True,
+                "answer": answer,
+                "provider": provider
+            }
+        else:
+            error_msg = f"API调用失败: {response.status_code} - {response.text}"
+            logger.error(error_msg)
+            return {
+                "success": False,
+                "message": error_msg,
+                "provider": provider
+            }
     
-    return {
-        "success": True,
-        "answer": answer,
-        "provider": f"mock_{provider}"
-    }
+    except Exception as e:
+        error_msg = f"处理查询时出错: {str(e)}"
+        logger.exception(error_msg)
+        return {
+            "success": False,
+            "message": error_msg,
+            "provider": provider
+        }
 
 def chat_with_knowledge_base(user_query: str, doc_id: Optional[str] = None, provider: str = 'deepseek') -> Dict[str, Any]:
     """
@@ -77,88 +120,38 @@ def chat_with_knowledge_base(user_query: str, doc_id: Optional[str] = None, prov
     """
     logger.info(f"使用{provider}基于知识库进行问答，问题: {user_query}，文档ID: {doc_id}")
     
-    # 模拟处理延迟
-    if provider.lower() == 'deepseek':
-        delay = random.uniform(1.5, 3)
-    else:  # openai
-        delay = random.uniform(0.8, 1.5)
+    try:
+        # 如果指定了文档ID，则只在该文档中搜索
+        if doc_id:
+            document = knowledge_base.get_document(doc_id)
+            if not document:
+                return {
+                    "success": False,
+                    "message": f"文档ID {doc_id} 不存在于知识库中",
+                    "provider": provider
+                }
+            
+            # 使用单个文档内容回答问题
+            return chat_with_document(document['content'], user_query, provider)
         
-    time.sleep(delay)
-    
-    # 如果指定了文档ID，则只在该文档中搜索
-    if doc_id:
-        document = knowledge_base.get_document(doc_id)
-        if not document:
+        # 否则，使用FlashRAG服务执行完整的RAG查询
+        try:
+            result = flashrag_service.rag_query(user_query, provider)
+            return result
+        except Exception as e:
+            error_msg = f"使用FlashRAG服务查询失败: {str(e)}"
+            logger.exception(error_msg)
             return {
                 "success": False,
-                "message": f"文档ID {doc_id} 不存在于知识库中",
-                "provider": f"mock_{provider}"
+                "message": error_msg,
+                "provider": provider
             }
-        
-        # 使用单个文档内容回答问题
-        return chat_with_document(document['content'], user_query, provider)
     
-    # 否则，在整个知识库中搜索
-    # 简单的关键词匹配
-    keywords = user_query.lower().split()
-    relevant_documents = []
-    
-    # 在所有文档中搜索
-    for doc_id, doc in knowledge_base.get_all_documents().items():
-        doc_content = doc['content'].lower()
-        doc_title = doc['title'].lower()
-        
-        # 计算关键词匹配度
-        match_score = 0
-        for keyword in keywords:
-            if keyword in doc_title:
-                match_score += 2  # 标题匹配权重更高
-            if keyword in doc_content:
-                match_score += 1
-        
-        if match_score > 0:
-            relevant_documents.append({
-                'id': doc_id,
-                'title': doc['title'],
-                'content': doc['content'],
-                'match_score': match_score
-            })
-    
-    # 按匹配度排序
-    relevant_documents.sort(key=lambda x: x['match_score'], reverse=True)
-    
-    # 如果找到相关文档，生成回答
-    if relevant_documents:
-        # 最多使用前3个最相关的文档
-        top_documents = relevant_documents[:3]
-        
-        answer = f"## 回答\n\n根据知识库内容，关于\"{user_query}\"的信息如下：\n\n"
-        
-        # 从每个文档中提取相关段落
-        for doc in top_documents:
-            # 将文档分成段落
-            paragraphs = doc['content'].split('\n\n')
-            
-            # 在段落中查找包含关键词的内容
-            relevant_paragraphs = []
-            for paragraph in paragraphs:
-                paragraph_lower = paragraph.lower()
-                if any(keyword in paragraph_lower for keyword in keywords):
-                    relevant_paragraphs.append(paragraph)
-            
-            # 最多使用每个文档中的2个最相关段落
-            if relevant_paragraphs:
-                answer += f"### 来自《{doc['title']}》的内容：\n\n"
-                for paragraph in relevant_paragraphs[:2]:
-                    answer += f"{paragraph}\n\n"
-        
-        # 添加一些通用的结束语
-        answer += "希望这些信息对您有所帮助。如果您有更多问题，请继续提问。"
-    else:
-        answer = f"## 抱歉\n\n在知识库中没有找到与\"{user_query}\"直接相关的信息。请尝试使用其他关键词，或者提出更具体的问题。"
-    
-    return {
-        "success": True,
-        "answer": answer,
-        "provider": f"mock_{provider}"
-    }
+    except Exception as e:
+        error_msg = f"处理知识库查询时出错: {str(e)}"
+        logger.exception(error_msg)
+        return {
+            "success": False,
+            "message": error_msg,
+            "provider": provider
+        }
