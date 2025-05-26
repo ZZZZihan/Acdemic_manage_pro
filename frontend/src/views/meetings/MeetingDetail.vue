@@ -36,12 +36,12 @@
         </template>
         
         <el-descriptions :column="2" border>
-          <el-descriptions-item label="创建者">
+          <el-descriptions-item label="组织者">
             <div class="user-info">
-              <el-avatar :size="24" :src="meeting.creator?.avatar">
-                {{ meeting.creator?.name?.substring(0, 1) }}
+              <el-avatar :size="24" :src="meeting.organizer?.avatar">
+                {{ meeting.organizer?.name?.substring(0, 1) }}
               </el-avatar>
-              <span>{{ meeting.creator?.name }}</span>
+              <span>{{ meeting.organizer?.name }}</span>
             </div>
           </el-descriptions-item>
           
@@ -130,17 +130,6 @@
               <template #default="scope">
                 <el-tag size="small" effect="plain">
                   {{ scope.row.role }}
-                </el-tag>
-              </template>
-            </el-table-column>
-            
-            <el-table-column prop="status" label="状态" width="120">
-              <template #default="scope">
-                <el-tag 
-                  :type="getParticipantStatusType(scope.row.status)" 
-                  size="small"
-                >
-                  {{ getParticipantStatusText(scope.row.status) }}
                 </el-tag>
               </template>
             </el-table-column>
@@ -360,7 +349,8 @@ export default {
       project: null,
       agenda: '',
       notes: '',
-      creator: null,
+      organizer: null,
+      organizer_id: null,
       participants: [],
       attachments: [],
       minutes: null,
@@ -369,20 +359,15 @@ export default {
     
     // 判断当前用户是否可以编辑会议
     const canEdit = computed(() => {
-      console.log('检查编辑权限:', {
-        meetingCreator: meeting.value.creator?.id || meeting.value.host_id,
-        currentUser: userStore.user?.id,
-        isAdmin: userStore.isAdmin
-      })
-      
-      // 用户是会议的创建者
-      const isCreator = meeting.value.creator?.id === userStore.user?.id
-      // 用户是会议的主持人
-      const isHost = meeting.value.host_id === userStore.user?.id
+      // 用户是会议的组织者 - 确保类型一致性比较
+      const isOrganizer = (meeting.value.organizer_id && userStore.user?.id && 
+                          parseInt(meeting.value.organizer_id) === parseInt(userStore.user.id)) || 
+                         (meeting.value.organizer?.id && userStore.user?.id &&
+                          parseInt(meeting.value.organizer.id) === parseInt(userStore.user.id))
       // 管理员权限
       const isAdmin = userStore.isAdmin
       
-      return isCreator || isHost || isAdmin
+      return isOrganizer || isAdmin
     })
     
     // 根据状态获取类型和文本
@@ -406,24 +391,7 @@ export default {
       return statusMap[meeting.value.status] || '未知状态'
     })
     
-    // 获取参会人员状态类型和文本
-    const getParticipantStatusType = (status) => {
-      const typeMap = {
-        'accepted': 'success',
-        'pending': 'info',
-        'declined': 'danger'
-      }
-      return typeMap[status] || 'info'
-    }
-    
-    const getParticipantStatusText = (status) => {
-      const textMap = {
-        'accepted': '已接受',
-        'pending': '待回复',
-        'declined': '已拒绝'
-      }
-      return textMap[status] || '未知状态'
-    }
+
     
     // 格式化日期时间
     const formatDateTime = (dateStr) => {
@@ -697,8 +665,6 @@ export default {
       searchUsers,
       addParticipant,
       removeParticipant,
-      getParticipantStatusType,
-      getParticipantStatusText,
       
       handleAttachmentSuccess,
       handleAttachmentError,

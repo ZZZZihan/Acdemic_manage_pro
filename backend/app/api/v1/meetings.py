@@ -12,8 +12,12 @@ from app.models.project import Project
 from app.api.v1.errors import bad_request, not_found
 
 @api.route('/meetings', methods=['GET'])
+@jwt_required()
 def get_meetings():
     """获取会议列表"""
+    # 获取当前用户ID
+    current_user_id = get_jwt_identity()
+    
     # 分页参数
     page = request.args.get('page', 1, type=int)
     per_page = min(request.args.get('per_page', 10, type=int), 50)
@@ -24,9 +28,34 @@ def get_meetings():
     query_term = request.args.get('q', '')
     date_from = request.args.get('date_from')
     date_to = request.args.get('date_to')
+    tab = request.args.get('tab', 'all')  # 新增tab参数
     
     # 基本查询
     query = Meeting.query
+    
+    # 根据tab参数过滤会议
+    if tab == 'created':
+        # 我创建的会议
+        query = query.filter(Meeting.organizer_id == current_user_id)
+    elif tab == 'joined':
+        # 我参与的会议（但不是组织者的）
+        query = query.join(
+            MeetingParticipant, Meeting.id == MeetingParticipant.meeting_id
+        ).filter(
+            MeetingParticipant.user_id == current_user_id,
+            Meeting.organizer_id != current_user_id
+        )
+    elif tab == 'all':
+        # 所有我相关的会议（我创建的 + 我参与的）
+        from sqlalchemy import or_
+        query = query.outerjoin(
+            MeetingParticipant, Meeting.id == MeetingParticipant.meeting_id
+        ).filter(
+            or_(
+                Meeting.organizer_id == current_user_id,
+                MeetingParticipant.user_id == current_user_id
+            )
+        ).distinct()
     
     # 应用筛选条件
     if status:
@@ -121,8 +150,7 @@ def create_meeting():
     # 组织者自动成为会议参与者
     organizer_participant = MeetingParticipant(
         user_id=current_user_id,
-        role='组织者',
-        attendance_status='已确认'
+        role='组织者'
     )
     meeting.participants.append(organizer_participant)
     
@@ -137,8 +165,7 @@ def create_meeting():
             # 创建参与者关联
             participant = MeetingParticipant(
                 user_id=participant_id,
-                role=participant_data.get('role', '参与者'),
-                attendance_status=participant_data.get('attendance_status', '未确认')
+                role=participant_data.get('role', '参与者')
             )
             meeting.participants.append(participant)
     
@@ -161,8 +188,11 @@ def update_meeting(id):
     # 查找会议
     meeting = Meeting.query.get_or_404(id)
     
+
+    
     # 验证权限（只有组织者可以修改）
-    if meeting.organizer_id != current_user_id:
+    # 确保类型一致性比较
+    if int(meeting.organizer_id) != int(current_user_id):
         return jsonify({'msg': '只有会议组织者可以修改会议信息'}), 403
     
     # 解析请求数据
@@ -219,8 +249,7 @@ def update_meeting(id):
                 participant = MeetingParticipant(
                     meeting=meeting,
                     user_id=participant_id,
-                    role=participant_data.get('role', '参与者'),
-                    attendance_status=participant_data.get('attendance_status', '未确认')
+                    role=participant_data.get('role', '参与者')
                 )
                 db.session.add(participant)
     

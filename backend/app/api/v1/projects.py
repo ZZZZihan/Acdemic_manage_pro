@@ -265,6 +265,13 @@ def get_project_files(project_id):
     # 获取当前用户ID
     current_user_id = get_jwt_identity()
     
+    # 确保用户ID是整数类型
+    try:
+        if isinstance(current_user_id, str) and current_user_id.isdigit():
+            current_user_id = int(current_user_id)
+    except (ValueError, TypeError):
+        print(f"用户ID类型转换失败: {current_user_id}, 类型: {type(current_user_id)}")
+    
     # 查找项目
     project = Project.query.get_or_404(project_id)
     
@@ -296,12 +303,30 @@ def add_project_file(project_id):
     # 获取当前用户ID
     current_user_id = get_jwt_identity()
     
+    # 确保用户ID是整数类型
+    try:
+        if isinstance(current_user_id, str) and current_user_id.isdigit():
+            current_user_id = int(current_user_id)
+    except (ValueError, TypeError):
+        print(f"用户ID类型转换失败: {current_user_id}, 类型: {type(current_user_id)}")
+    
     # 查找项目
     project = Project.query.get_or_404(project_id)
     
     # 验证权限（应该是项目成员或创建者）
     is_creator = project.creator_id == current_user_id
-    is_member = any(member.user_id == current_user_id for member in project.members)
+    
+    # 通过查询数据库判断是否为成员
+    member_query = ProjectMember.query.filter_by(
+        project_id=project_id, 
+        user_id=current_user_id
+    ).first()
+    
+    is_member = member_query is not None
+    
+    print(f"添加文件权限验证 - 用户ID: {current_user_id}, 项目ID: {project_id}")
+    print(f"创建者: {is_creator}, 成员: {is_member}")
+    print(f"项目创建者ID: {project.creator_id}")
     
     if not (is_creator or is_member):
         return jsonify({'msg': '无权为此项目添加文件'}), 403
@@ -335,6 +360,13 @@ def delete_project_file(project_id, file_id):
     """从项目中删除文件"""
     # 获取当前用户ID
     current_user_id = get_jwt_identity()
+    
+    # 确保用户ID是整数类型
+    try:
+        if isinstance(current_user_id, str) and current_user_id.isdigit():
+            current_user_id = int(current_user_id)
+    except (ValueError, TypeError):
+        print(f"用户ID类型转换失败: {current_user_id}, 类型: {type(current_user_id)}")
     
     # 查找项目
     project = Project.query.get_or_404(project_id)
@@ -397,4 +429,30 @@ def delete_project_file_physical(project_id, file_id):
     db.session.delete(project_file)
     db.session.commit()
     
-    return jsonify({'msg': '文件已完全删除'}) 
+    return jsonify({'msg': '文件已完全删除'})
+
+@api.route('/projects/<int:project_id>/members', methods=['GET'])
+def get_project_members(project_id):
+    """获取项目成员列表"""
+    # 查找项目
+    project = Project.query.get_or_404(project_id)
+    
+    # 获取项目成员
+    members = []
+    for member in project.members:
+        member_data = member.to_dict()
+        # 添加用户信息
+        if member.user:
+            member_data['user'] = {
+                'id': member.user.id,
+                'username': member.user.username,
+                'email': member.user.email,
+                'name': member.user.name
+            }
+        members.append(member_data)
+    
+    return jsonify({
+        'project_id': project_id,
+        'project_name': project.name,
+        'members': members
+    }) 

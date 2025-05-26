@@ -23,7 +23,13 @@ def create_app(config_name):
     
     # 配置CORS，允许所有来源、所有方法和自定义头
     # 直接使用简单配置解决跨域问题
-    CORS(app, resources={r"/*": {"origins": "*"}}, supports_credentials=True)
+    CORS(app, resources={
+        r"/*": {
+            "origins": "*",
+            "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+            "allow_headers": ["Content-Type", "Authorization", "X-Requested-With"]
+        }
+    }, supports_credentials=True)
     
     # 注册蓝图
     from app.api.v1 import api as api_v1_blueprint

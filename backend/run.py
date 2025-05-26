@@ -14,6 +14,10 @@ if os.path.exists(dotenv_path):
 else:
     print("未找到.env文件，请创建.env文件并设置API密钥")
 
+# 初始化启动优化器
+from app.utils.startup_optimizer import startup_optimizer
+startup_optimizer.print_startup_info()
+
 app = create_app(os.getenv('FLASK_CONFIG') or 'default')
 migrate = Migrate(app, db)
 
