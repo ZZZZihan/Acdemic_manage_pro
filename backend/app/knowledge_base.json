@@ -10,7 +10,7 @@
       "user_id": 5,
       "source_url": null
     },
-    "updated_at": "2025-04-22T20:03:03.826276"
+    "updated_at": "2025-05-26T10:25:53.643048"
   },
   "2": {
     "title": "222",
@@ -23,7 +23,7 @@
       "user_id": 5,
       "source_url": null
     },
-    "updated_at": "2025-04-22T20:03:03.826995"
+    "updated_at": "2025-05-26T10:25:53.644161"
   },
   "3": {
     "title": "测试",
@@ -36,7 +36,7 @@
       "user_id": 1,
       "source_url": null
     },
-    "updated_at": "2025-04-22T20:03:03.827487"
+    "updated_at": "2025-05-26T10:25:53.644662"
   },
   "7": {
     "title": "Opencv根据USB摄像头PID\\VID号，获取对应摄像头索引-CSDN博客",
@@ -49,20 +49,7 @@
       "user_id": 5,
       "source_url": "https://blog.csdn.net/qq_41043389/article/details/124664485"
     },
-    "updated_at": "2025-04-22T20:03:03.827846"
-  },
-  "8": {
-    "title": "Opencv根据USB摄像头PID\\VID号，获取对应摄像头索引_opencv获取摄像头列表-CSDN博客",
-    "content": "```markdown\n# 技术总结：通过VID和PID获取OpenCV摄像头索引\n\n## 1. 主要内容概述\n本文针对在使用OpenCV时，多个USB摄像头插拔或开机后索引变化的问题，提出了一种通过摄像头设备的VID（Vendor ID）和PID（Product ID）来获取OpenCV索引的解决方案。VID和PID是摄像头出厂时自带的唯一标识符，不会随插拔或重启而改变。作者通过C++编写了一个动态库，支持Python和C++调用，实现了根据VID和PID获取摄像头索引的功能，并提供了详细的代码示例和调用方法。\n\n## 2. 技术要点分析\n\n### 核心技术概念和专业术语\n- **VID（Vendor ID）**：设备厂商的唯一标识符。\n- **PID（Product ID）**：设备型号的唯一标识符。\n- **OpenCV**：开源的计算机视觉库，用于处理图像和视频。\n- **动态库（DLL）**：Windows平台下的动态链接库，支持代码的模块化和复用。\n\n### 关键技术原理和工作机制\n1. **设备枚举**：通过Windows的DirectShow API枚举所有视频输入设备，获取设备的路径信息。\n2. **VID和PID匹配**：从设备路径中提取VID和PID信息，并与用户输入的VID和PID进行匹配，找到对应的设备索引。\n3. **动态库导出**：将C++代码编译为动态库（DLL），供Python或C++调用。\n\n### 实现方法和步骤\n1. **C++程序导出动态库**：\n   - 使用DirectShow API枚举设备，获取设备路径。\n   - 从设备路径中提取VID和PID信息。\n   - 实现函数`getCamIDFromPidVid`，根据VID和PID返回设备索引。\n   - 编译生成动态库（DLL）。\n\n2. **Python调用动态库**：\n   - 使用`ctypes`库加载动态库。\n   - 调用`getCamIDFromPidVid`函数获取设备索引。\n   - 使用OpenCV打开指定摄像头并显示视频流。\n\n3. **C++调用动态库**：\n   - 直接调用动态库中的`getCamIDFromPidVid`函数。\n   - 使用OpenCV打开指定摄像头并显示视频流。\n\n### 代码示例\n#### C++动态库代码\n```cpp\n#include <iostream>\n#include <string>\n#include <vector>\n#include <DShow.h>\n#include <CString>\n#include <atlstr.h>\n#pragma comment(lib,\"Strmiids.lib\")\n\n#define LRDLLTEST_EXPORTS\n#ifdef LRDLLTEST_EXPORTS\n#define LRDLLTEST_API __declspec(dllexport)\n#else\n#define LRDLLTEST_API __declspec(dllimport)\n#endif\n\nextern \"C\" LRDLLTEST_API int getCamIDFromPidVid(const char* pidvid);\n\nLRDLLTEST_API int getCamIDFromPidVid(const char* pidvid) {\n    // 设备枚举和VID/PID匹配逻辑\n    // ...\n    return iRet; // 返回设备索引\n}\n```\n\n#### Python调用代码\n```python\nfrom ctypes import *\nimport cv2\n\nfileName = \"python_use_cpp.dll\"\nfunc = cdll.LoadLibrary(fileName)\nstring = bytes(\"vid_0001&pid_0001\", encoding=\"utf-8\")\na = func.getCamIDFromPidVid(string)\nprint(a)\ncap = cv2.VideoCapture(a, cv2.CAP_DSHOW)\n\nwhile True:\n    ret, img0 = cap.read()\n    if not ret:\n        continue\n    cv2.imshow('result', img0)\n    key = cv2.waitKey(1)\n    if key & 0xFF == ord('q') or key == 27:\n        break\ncv2.destroyAllWindows()\n```\n\n## 3. 优势与应用\n\n### 技术优势和创新点\n- **稳定性**：通过VID和PID唯一标识摄像头，避免了索引变化导致的问题。\n- **跨语言支持**：动态库支持C++和Python调用，适用性广泛。\n- **灵活性**：用户可以根据需求指定不同的VID和PID，适配多种摄像头设备。\n\n### 实际应用场景和案例\n- **多摄像头系统**：在需要同时使用多个摄像头的场景（如监控、视频会议）中，确保每个摄像头能够被正确识别和打开。\n- **设备管理**：在设备频繁插拔或重启的环境中，保持摄像头的稳定连接。\n\n### 与相关技术的比较\n- **传统方法**：直接使用OpenCV的索引打开摄像头，容易因索引变化导致错误。\n- **本文方法**：通过VID和PID唯一标识摄像头，解决了索引不稳定的问题。\n\n## 4. 挑战与解决方案\n\n### 可能面临的技术挑战或局限性\n- **同一型号摄像头的VID和PID相同**：如果多个摄像头的VID和PID相同，无法通过该方法区分。\n- **设备路径格式差异**：不同设备的路径格式可能不同，需要确保提取VID和PID的逻辑兼容。\n\n### 解决方案或优化建议\n- **定制VID和PID**：在购买摄像头时，要求厂商提供不同VID和PID的设备。\n- **路径解析优化**：增强设备路径解析的鲁棒性，适配更多设备类型。\n\n### 未来发展方向\n- **跨平台支持**：扩展动态库以支持Linux和macOS平台。\n- **自动化配置**：开发工具自动检测和配置摄像头的VID和PID。\n\n## 5. 核心数据与结论\n\n### 关键数据、指标或实验结果\n- **设备索引匹配**：通过VID和PID成功匹配到正确的摄像头索引。\n- **动态库生成**：成功生成`python_use_cpp.dll`和`python_use_cpp.lib`文件。\n\n### 主要结论和见解\n- 通过VID和PID获取摄像头索引的方法有效解决了OpenCV在多摄像头环境下的索引不稳定问题。\n- 动态库的设计使得该方法可以方便地集成到C++和Python项目中，具有较高的实用性和扩展性。\n```",
-    "metadata": {
-      "summary_type": "工具",
-      "tags": "AI, DL, Python, C++",
-      "created_at": "2025-03-14T05:52:49.709523",
-      "updated_at": "2025-03-14T05:52:49.709525",
-      "user_id": 1,
-      "source_url": "https://blog.csdn.net/qq_41043389/article/details/124664485"
-    },
-    "updated_at": "2025-04-22T20:03:03.828167"
+    "updated_at": "2025-05-26T10:25:53.645044"
   },
   "10": {
     "title": "大模型微调与部署实战",
@@ -75,7 +62,7 @@
       "user_id": 5,
       "source_url": "https://blog.csdn.net/c18213590220/article/details/146135568?spm=1000.2115.3001.10526&utm_medium=distribute.pc_feed_blog_category.none-task-blog-classify_tag-1-146135568-null-null.nonecase&depth_1-utm_source=distribute.pc_feed_blog_category.none-task-blog-classify_tag-1-146135568-null-null.nonecase"
     },
-    "updated_at": "2025-04-22T20:03:03.828494"
+    "updated_at": "2025-05-26T10:25:53.645374"
   },
   "11": {
     "title": "deepseek大模型微调与部署实战",
@@ -88,7 +75,7 @@
       "user_id": 5,
       "source_url": "https://blog.csdn.net/c18213590220/article/details/146135568?depth_1-utm_source=distribute.pc_feed_blog_category.none-task-blog-classify_tag-1-146135568-null-null.nonecase"
     },
-    "updated_at": "2025-04-22T20:03:03.828805"
+    "updated_at": "2025-05-26T10:25:53.645706"
   },
   "12": {
     "title": "技术笔记：大模型微调与部署实战",
@@ -101,7 +88,7 @@
       "user_id": 5,
       "source_url": "https://blog.csdn.net/c18213590220/article/details/146135568?depth_1-utm_source=distribute.pc_feed_blog_category.none-task-blog-classify_tag-1-146135568-null-null.nonecase"
     },
-    "updated_at": "2025-04-22T20:03:03.829217"
+    "updated_at": "2025-05-26T10:25:53.646023"
   },
   "13": {
     "title": "curl 的用法指南",
@@ -114,7 +101,7 @@
       "user_id": 5,
       "source_url": "https://www.ruanyifeng.com/blog/2019/09/curl-reference.html"
     },
-    "updated_at": "2025-04-22T20:03:03.829719"
+    "updated_at": "2025-05-26T10:25:53.646457"
   },
   "14": {
     "title": "Coding Interview University 技术笔记整理",
@@ -127,7 +114,7 @@
       "user_id": 5,
       "source_url": "https://github.com/jwasham/coding-interview-university"
     },
-    "updated_at": "2025-04-22T20:03:03.830059"
+    "updated_at": "2025-05-26T10:25:53.646831"
   },
   "15": {
     "title": "Retrieval-Augmented Generation (RAG) 技术笔记",
@@ -140,7 +127,7 @@
       "user_id": 5,
       "source_url": "https://www.oracle.com/tw/artificial-intelligence/generative-ai/retrieval-augmented-generation-rag/"
     },
-    "updated_at": "2025-04-22T20:03:03.830370"
+    "updated_at": "2025-05-26T10:25:53.647250"
   },
   "16": {
     "title": "ThreadLocal与上下文管理组件技术笔记",
@@ -153,6 +140,19 @@
       "user_id": 5,
       "source_url": "https://blog.csdn.net/xiaofeng10330111/article/details/139667074?spm=1000.2115.3001.10526&utm_medium=distribute.pc_feed_blog_category.none-task-blog-classify_tag-6-139667074-null-null.nonecase&depth_1-utm_source=distribute.pc_feed_blog_category.none-task-blog-classify_tag-6-139667074-null-null.nonecase"
     },
-    "updated_at": "2025-04-22T20:03:03.830679"
+    "updated_at": "2025-05-26T10:25:53.647949"
+  },
+  "17": {
+    "title": "Python中使用PyUSB进行USB设备操作的技术笔记",
+    "content": "# Python中使用PyUSB进行USB设备操作的技术笔记\n\n## 前言\nUSB(通用串行总线)作为一种高度通用性的硬件接口，在诸多领域均有应用。Python中通过PyUSB库提供了对libusb的封装，可以实现：\n- USB设备信息查询\n- USB设备监听\n- 与USB设备控制端点、数据端点(同步、批量、中断)进行指令和数据交互\n\n## 1. PyUSB安装\n\n```bash\npip install pyusb\n```\n\n**注意**：安装完成后直接使用可能会报\"没有可用后端\"的错误，需要额外安装后端。\n\n## 2. 后端安装配置\n\n### Windows系统\n1. 下载libusb后端(.7z压缩文件)\n2. 解压后将`MS64/dll/libusb-1.0.dll`拷贝到`C:/windows/System32/`\n\n### Linux系统\n通过包管理器安装：\n\n```bash\napt install libusb-1.0-0-dev\n# 或\nyum install libusb-1.0-0-dev\n```\n\n### 自定义路径方式\n可以将库文件放在项目目录中，使用时显式指定路径：\n\n```python\nimport usb\nfrom usb.backend import libusb1\n\nbackend = libusb1.get_backend(find_library=lambda x: \"./lib/libusb-1.0.dll\")\ndevice = usb.core.find(backend=backend, find_all=True)\n```\n\n## 3. 基本使用示例\n\n### 设备匹配\n示例使用ESP32-S2设备，其ID为：\n- idVendor=0x303a\n- idProduct=0x0002\n\n```python\nimport usb\nfrom usb.backend import libusb1\n\nbackend = libusb1.get_backend(find_library=lambda x: \"./lib/libusb-1.0.dll\")\ndevice = usb.core.find(backend=backend, idVendor=0x303a, idProduct=0x0002)\nprint(device)\n```\n\n**示例输出**：\n```\nDEVICE ID 303a:0002 on Bus 002 Address 010 =================\n bLength                :   0x12 (18 bytes)\n bDescriptorType        :    0x1 Device\n bcdUSB                 :  0x200 USB 2.0\n bDeviceClass           :   0xef Miscellaneous\n bDeviceSubClass        :    0x2\n bDeviceProtocol        :    0x1\n bMaxPacketSize0        :   0x40 (64 bytes)\n ......\n```\n\n## 注意事项\n1. 不同操作系统需要配置不同的后端\n2. Windows系统需要将DLL文件放在系统目录或项目目录中\n3. 设备查找时需要知道设备的Vendor ID和Product ID\n4. 使用自定义路径方式时，需要确保库文件路径正确",
+    "metadata": {
+      "summary_type": "其他",
+      "tags": "DL, 后端, Backend, Python, USB设备",
+      "created_at": "2025-05-26T01:03:18.445146",
+      "updated_at": "2025-05-26T01:03:18.445149",
+      "user_id": 1,
+      "source_url": "https://blog.csdn.net/weixin_44179831/article/details/142516592"
+    },
+    "updated_at": "2025-05-26T10:25:53.648301"
   }
 }

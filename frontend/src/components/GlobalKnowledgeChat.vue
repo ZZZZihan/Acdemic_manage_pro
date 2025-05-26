@@ -8,11 +8,23 @@
     <div class="chat-container">
       <div class="chat-messages" ref="messagesContainer">
         <div v-for="(message, index) in messages" :key="index" 
-             :class="['message', message.role === 'user' ? 'user-message' : 'ai-message']">
+             :class="['message', message.role === 'user' ? 'user-message' : 'ai-message', { 'error-message': message.isError }]">
           <div class="message-content">
             <markdown-renderer v-if="message.role === 'ai'" :content="message.content" />
             <div v-else>{{ message.content }}</div>
           </div>
+          
+          <!-- 显示AI回复的元信息 -->
+          <div v-if="message.role === 'ai' && !message.isError" class="message-meta">
+            <span v-if="message.provider" class="provider-tag">{{ message.provider }}</span>
+            <span v-if="message.retrievedDocs !== undefined" class="docs-tag">
+              检索了 {{ message.retrievedDocs }} 篇文档
+            </span>
+            <span v-if="message.sources && message.sources.length > 0" class="sources-tag">
+              来源: {{ message.sources.length }} 个
+            </span>
+          </div>
+          
           <div class="message-time">{{ formatTime(message.time) }}</div>
         </div>
         <div v-if="loading" class="message ai-message">
@@ -59,6 +71,7 @@
           active-text="RAG"
           inactive-text=""
           size="small"
+          class="horizontal-switch"
           style="margin-left: 10px;"
         />
       </div>
@@ -135,19 +148,41 @@ const sendMessage = async () => {
     
     if (response.data.success) {
       // 添加AI回复
-      messages.push({
+      const aiMessage = {
         role: 'ai',
         content: response.data.data.answer,
         time: new Date(),
         provider: useRag.value ? response.data.data.model : response.data.data.provider,
         sources: response.data.data.sources || []
-      })
+      }
+      
+      // 如果是RAG模式，添加检索信息
+      if (useRag.value && response.data.data.retrieved_docs !== undefined) {
+        aiMessage.retrievedDocs = response.data.data.retrieved_docs
+      }
+      
+      messages.push(aiMessage)
     } else {
       ElMessage.error(response.data.message || '获取回答失败')
+      // 添加错误消息到聊天记录
+      messages.push({
+        role: 'ai',
+        content: `抱歉，处理您的问题时出现了错误：${response.data.message || '未知错误'}`,
+        time: new Date(),
+        isError: true
+      })
     }
   } catch (error) {
     console.error('聊天请求失败:', error)
     ElMessage.error('请求失败，请稍后再试')
+    
+    // 添加错误消息到聊天记录
+    messages.push({
+      role: 'ai',
+      content: `网络请求失败，请检查网络连接后重试。错误信息：${error.message || '未知网络错误'}`,
+      time: new Date(),
+      isError: true
+    })
   } finally {
     loading.value = false
     
@@ -251,8 +286,43 @@ onMounted(() => {
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
 }
 
+.error-message {
+  background-color: #fef0f0 !important;
+  border-left: 4px solid #f56c6c;
+}
+
 .message-content {
   word-break: break-word;
+}
+
+.message-meta {
+  margin-top: 8px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.provider-tag, .docs-tag, .sources-tag {
+  display: inline-block;
+  padding: 2px 6px;
+  border-radius: 10px;
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.provider-tag {
+  background-color: #e1f3ff;
+  color: #409EFF;
+}
+
+.docs-tag {
+  background-color: #f0f9ff;
+  color: #67c23a;
+}
+
+.sources-tag {
+  background-color: #fdf6ec;
+  color: #e6a23c;
 }
 
 .message-time {
@@ -322,5 +392,22 @@ onMounted(() => {
     transform: scale(1);
     opacity: 1;
   }
+}
+
+/* 横向显示 el-switch 文字 */
+.horizontal-switch :deep(.el-switch__label) {
+  display: inline-block !important;
+  writing-mode: horizontal-tb !important;
+  text-orientation: mixed !important;
+}
+
+.horizontal-switch :deep(.el-switch__label--left) {
+  margin-right: 8px !important;
+  margin-bottom: 0 !important;
+}
+
+.horizontal-switch :deep(.el-switch__label--right) {
+  margin-left: 8px !important;
+  margin-bottom: 0 !important;
 }
 </style> 

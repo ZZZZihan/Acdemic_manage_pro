@@ -93,8 +93,13 @@ class Meeting(db.Model):
             'updated_at': self.updated_at.isoformat() if self.updated_at else None,
             'organizer_id': self.organizer_id,
             'organizer': self.organizer.to_dict() if self.organizer else None,
+            # 为了向后兼容，同时提供creator字段
+            'creator': self.organizer.to_dict() if self.organizer else None,
             'project_id': self.project_id,
-            'project': self.project.name if self.project else None
+            'project': {
+                'id': self.project.id,
+                'name': self.project.name
+            } if self.project else None
         }
         
         if with_participants:

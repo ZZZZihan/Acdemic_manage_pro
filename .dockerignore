@@ -1,0 +1,25 @@
+# Git
+.git
+.gitignore
+
+# 环境相关
+venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.env
+.pytest_cache/
+
+# 前端相关
+node_modules/
+dist/
+npm-debug.log
+.DS_Store
+
+# 数据库
+*.sqlite
+*.db
+
+# 系统相关
+.DS_Store 

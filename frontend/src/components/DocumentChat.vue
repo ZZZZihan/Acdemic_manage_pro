@@ -53,6 +53,7 @@
           active-text="使用知识库"
           inactive-text="仅当前文档"
           size="small"
+          class="horizontal-switch"
         />
       </div>
       
@@ -285,5 +286,22 @@ onMounted(() => {
     transform: scale(1);
     opacity: 1;
   }
+}
+
+/* 横向显示 el-switch 文字 */
+.horizontal-switch :deep(.el-switch__label) {
+  display: inline-block !important;
+  writing-mode: horizontal-tb !important;
+  text-orientation: mixed !important;
+}
+
+.horizontal-switch :deep(.el-switch__label--left) {
+  margin-right: 8px !important;
+  margin-bottom: 0 !important;
+}
+
+.horizontal-switch :deep(.el-switch__label--right) {
+  margin-left: 8px !important;
+  margin-bottom: 0 !important;
 }
 </style> 

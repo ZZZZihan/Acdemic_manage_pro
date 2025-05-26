@@ -15,9 +15,17 @@ export const useUserStore = defineStore('user', () => {
   // 计算属性：从auth store中获取完整的user对象
   const user = computed(() => authStore.user)
   
+  // 计算属性：从auth store中获取token
+  const token = computed(() => authStore.token)
+  
+  // 计算属性：从auth store中获取isAdmin
+  const isAdmin = computed(() => authStore.isAdmin)
+  
   return {
     userId,
     username,
-    user
+    user,
+    token,
+    isAdmin
   }
 }) 
