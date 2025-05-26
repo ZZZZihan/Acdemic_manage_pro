@@ -140,6 +140,7 @@
       "user_id": 5,
       "source_url": "https://blog.csdn.net/xiaofeng10330111/article/details/139667074?spm=1000.2115.3001.10526&utm_medium=distribute.pc_feed_blog_category.none-task-blog-classify_tag-6-139667074-null-null.nonecase&depth_1-utm_source=distribute.pc_feed_blog_category.none-task-blog-classify_tag-6-139667074-null-null.nonecase"
     },
+<<<<<<< HEAD
     "updated_at": "2025-05-26T10:25:53.647949"
   },
   "17": {
@@ -154,5 +155,47 @@
       "source_url": "https://blog.csdn.net/weixin_44179831/article/details/142516592"
     },
     "updated_at": "2025-05-26T10:25:53.648301"
+=======
+    "updated_at": "2025-05-08T11:17:21.462857"
+  },
+  "17": {
+    "title": "《深入理解计算机系统》(CS:APP3e) 技术笔记",
+    "content": "# 《深入理解计算机系统》(CS:APP3e) 技术笔记\n\n## 书籍基本信息\n- **书名**: Computer Systems: A Programmer's Perspective, 3/E (CS:APP3e)\n- **作者**: Randal E. Bryant 和 David R. O'Hallaron (卡内基梅隆大学)\n- **版本**: 第三版 (提供第二版遗留站点)\n\n## 书籍概述\n本书源自卡内基梅隆大学自1998年秋季开设的\"计算机系统导论\"(ICS)课程，基于以下教学原则编写：\n\n1. **程序员视角**：从程序员而非传统系统实现者的角度介绍计算机系统\n2. **完整系统观**：涵盖硬件、操作系统、编译器和网络的完整系统视图\n3. **实践学习**：通过在真实机器上开发和评估实际程序来学习\n\n## 主要内容\n本书涵盖以下核心主题：\n- 数据表示\n- C程序的机器级表示\n- 处理器架构\n- 程序优化\n- 内存层次结构\n- 链接\n- 异常控制流(异常、中断、进程和Unix信号)\n- 虚拟内存和内存管理\n- 系统级I/O\n- 基础网络编程\n- 并发编程\n\n## 配套资源\n1. **Web补充材料(Web Asides)**：包含超出书本范围的额外理论实践内容\n2. **学生网站**：提供学生用补充材料\n3. **教师网站**：提供完整的课程教学解决方案\n\n## 其他信息\n- 提供书籍目录和前言(TOC and Preface)\n- 包含从第二版到第三版的变化说明(Changes from 2/E)\n- 提供勘误表(Errata)\n- 包含相关研究论文(Papers)\n- 提供课程设置和教学大纲(Curriculum/Courses)\n\n## 版权信息\n© 2015, Randal E. Bryant 和 David R. O'Hallaron\n\n> 注：本书通过一系列有趣且动手实践的实验作业来支持上述概念的学习。",
+    "metadata": {
+      "summary_type": "其他",
+      "tags": "VID, 操作系统",
+      "created_at": "2025-04-24T07:50:10.779068",
+      "updated_at": "2025-04-24T07:50:10.779088",
+      "user_id": 6,
+      "source_url": "http://csapp.cs.cmu.edu/"
+    },
+    "updated_at": "2025-05-08T11:17:21.463235"
+  },
+  "18": {
+    "title": "吴恩达2022新版机器学习专项课程技术笔记",
+    "content": "# 吴恩达2022新版机器学习专项课程技术笔记\n\n## 课程概述\n- **课程名称**: Machine Learning Specialization (2022版)\n- **讲师**: 吴恩达(Andrew Ng)\n- **课程结构**: 分为3个部分\n  1. 监督式机器学习：回归与分类\n  2. 高级学习算法\n  3. 无监督学习：推荐系统与强化学习\n\n## 资源链接\n- **官方课程网站**: [Coursera](https://www.coursera.org/specializations/machine-learning-introduction)\n- **B站视频**: [BV19B4y1W76i](https://www.bilibili.com/video/BV19B4y1W76i)\n- **GitHub仓库**: [2022-Machine-Learning-Specialization](https://github.com/kaieye/2022-Machine-Learning-Specialization)\n- **交流群**: 484266833\n\n## 当前进度\n- 第二部分内容已上传\n- 第一课程的幻灯片(PPT)已更新完毕\n- 课程代码和测试内容已完成更新\n\n## 环境配置指南\n\n### 系统要求\n- Python 3.7.6 (官方推荐版本)\n\n### 安装步骤\n1. 根据操作系统安装适当版本的Python\n2. 在命令行(cmd/bash)中导航至项目文件夹\n3. 运行以下命令安装依赖:\n\n```bash\npip install -r requirements.txt\n```\n\n*注意*: Mac/Linux用户需使用`pip3`代替`pip`\n\n## 贡献指南\n欢迎通过Pull Request贡献:\n- 补充学习文件\n- 优化Markdown笔记\n\n## 课程大纲详情\n1. **监督式机器学习: 回归与分类**\n2. **高级学习算法** (当前可用部分)\n3. **无监督学习: 推荐系统与强化学习**",
+    "metadata": {
+      "summary_type": "算法",
+      "tags": "AI, 机器学习, Python, VID, HTTP",
+      "created_at": "2025-04-24T08:28:47.888691",
+      "updated_at": "2025-04-24T08:28:47.888695",
+      "user_id": 6,
+      "source_url": "https://github.com/ZZZZihan/2022-Machine-Learning-Specialization"
+    },
+    "updated_at": "2025-05-08T11:17:21.463589"
+  },
+  "19": {
+    "title": "WSL2安装与配置指南：将Ubuntu-20.04安装到D盘",
+    "content": "# WSL2安装与配置指南：将Ubuntu-20.04安装到D盘\n\n## 一、WSL2简介\n\nWSL2（Windows Subsystem for Linux 2）是Windows提供的轻量级Linux运行环境，具有以下特点：\n- 完整的Linux内核支持\n- 更好的文件系统性能和兼容性\n- 允许在Windows中直接运行Linux命令行工具和应用程序\n- 无需安装虚拟机或双系统\n\n## 二、WSL2安装方法\n\n### 方法一：PowerShell命令行安装（推荐）\n\n1. **启用Windows子系统功能**：\n   ```powershell\n   dism.exe /online /enable-feature /featurename:Microsoft-Windows-Subsystem-Linux /all /norestart\n   ```\n\n2. **启用虚拟机平台功能**：\n   ```powershell\n   dism.exe /online /enable-feature /featurename:VirtualMachinePlatform /all /norestart\n   ```\n\n3. **设置WSL2为默认版本**（Windows 10需要）：\n   ```powershell\n   wsl --set-default-version 2\n   ```\n\n4. **重启电脑**使更改生效\n\n### 方法二：Windows GUI手动安装\n\n1. 打开\"启用或关闭Windows功能\"\n2. 勾选以下选项：\n   - 适用于Linux的Windows子系统\n   - 虚拟机平台/Windows虚拟机监控程序平台\n   - （Windows 11可能需要）Windows Hypervisor Platform和Hyper-V\n\n3. 设置WSL2为默认版本（同方法一）\n\n## 三、Ubuntu-20.04安装到D盘\n\n### 方法一：官方迁移导入（推荐）\n\n1. **创建目录**：\n   - 在D盘创建`D:\\WSL\\Ubuntu-20.04`\n\n2. **安装并导出Ubuntu**：\n   ```powershell\n   wsl --install -d Ubuntu-20.04\n   wsl --export Ubuntu-20.04 D:\\WSL\\Ubuntu-20.04\\Ubuntu-20.04.tar\n   wsl --unregister Ubuntu-20.04\n   ```\n\n3. **导入到D盘**：\n   ```powershell\n   wsl --import Ubuntu-20.04 D:\\WSL\\Ubuntu-20.04 D:\\WSL\\Ubuntu-20.04\\Ubuntu-20.04.tar --version 2\n   ```\n\n4. **用户设置**：\n   - 创建普通用户：\n     ```bash\n     adduser yourusername\n     usermod -aG sudo yourusername\n     ```\n   - 设置默认用户：\n     ```powershell\n     ubuntu2004 config --default-user yourusername\n     ```\n\n### 方法二：手动下载解压安装\n\n1. **下载Ubuntu-20.04.appx**：\n   - PowerShell下载：\n     ```powershell\n     Invoke-WebRequest -Uri https://aka.ms/wslubuntu2004 -OutFile Ubuntu-20.04.appx -UseBasicParsing\n     ```\n   - 或通过浏览器/百度网盘下载\n\n2. **解压安装包**：\n   ```powershell\n   Rename-Item CanonicalGroupLimited.UbuntuonWindows_2004.2021.825.0.AppxBundle Ubuntu-20.04.zip\n   Expand-Archive Ubuntu-20.04.zip -DestinationPath D:\\WSL\\Ubuntu-20.04\\Extracted\n   ```\n\n3. **导入WSL**：\n   ```powershell\n   wsl --import Ubuntu-20.04 D:\\WSL\\Ubuntu-20.04\\ D:\\WSL\\Ubuntu-20.04\\Extracted\\Ubuntu_x64\\install.tar.gz --version 2\n   ```\n\n4. **用户设置**（同方法一）\n\n## 四、验证安装\n\n1. 检查WSL状态：\n   ```powershell\n   wsl -l -v\n   ```\n\n2. 确认D盘目录结构：\n   - `D:\\WSL\\Ubuntu-20.04\\ext4.vhdx`（虚拟磁盘映像文件）\n\n## 注意事项\n\n1. Windows 11默认已安装WSL2，可能不需要设置默认版本\n2. 手动导入的Ubuntu默认以root用户登录，需要手动创建普通用户\n3. 如果命令不识别发行版名称，使用`wsl -l`查看已安装的发行版\n4. 安装完成后建议执行`wsl --shutdown`确保完全重启\n\n## 参考资源\n\n- 原始教程来源：[CSDN博客](https://blog.csdn.net/Natsuago/article/details/145594631)\n- 百度网盘备用下载链接（提取码：es9u）",
+    "metadata": {
+      "summary_type": "工具",
+      "tags": "AI, DL, Go, HTTP, OS",
+      "created_at": "2025-05-08T03:15:09.109347",
+      "updated_at": "2025-05-08T03:15:09.109352",
+      "user_id": 1,
+      "source_url": "https://blog.csdn.net/Natsuago/article/details/145594631?spm=1000.2115.3001.10526&utm_medium=distribute.pc_feed_blog_category.none-task-blog-classify_tag-4-145594631-null-null.nonecase&depth_1-utm_source=distribute.pc_feed_blog_category.none-task-blog-classify_tag-4-145594631-null-null.nonecase"
+    },
+    "updated_at": "2025-05-08T11:17:21.463986"
+>>>>>>> 67defd6fb4a1bccad40094ce1fd92ec872e3ecfe
   }
 }
