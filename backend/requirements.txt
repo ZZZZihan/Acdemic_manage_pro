@@ -15,6 +15,7 @@ requests==2.28.1
 numpy==1.23.5
 sentence-transformers==2.2.2
 scikit-learn==1.2.0
-torch==1.13.1
+torch==2.0.0
 pydantic==1.10.8
-transformers==4.28.1 
+transformers==4.28.1
+faiss-cpu==1.7.4 

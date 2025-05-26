@@ -1,7 +1,7 @@
 # 实验室知识管理系统
 ## 基于混合AI架构的智能知识管理平台
 
-![版本](https://img.shields.io/badge/版本-1.0.0-blue)
+![版本](https://img.shields.io/badge/版本-1.1.0-blue)
 ![语言](https://img.shields.io/badge/语言-Python%20%7C%20JavaScript-yellow)
 ![框架](https://img.shields.io/badge/框架-Flask%20%7C%20Vue%203-green)
 ![许可证](https://img.shields.io/badge/许可证-MIT-red)
@@ -43,6 +43,8 @@
 - 自动文本摘要和标签推荐
 - 向量化存储和相似度检索
 - 知识关联分析
+- **Flash RAG技术**：高效知识检索与生成
+- 自动文档索引与更新
 
 ## 项目结构
 
@@ -54,7 +56,10 @@
 │   │   ├── models/       # 数据模型
 │   │   ├── utils/        # 工具类
 │   │   │   ├── chat_with_doc.py  # 文档问答工具
-│   │   │   └── knowledge_base.py # 知识库管理
+│   │   │   ├── knowledge_base.py # 知识库管理
+│   │   │   ├── flashrag_service.py # Flash RAG服务
+│   │   │   ├── llm_api.py       # LLM API封装
+│   │   │   └── ...
 │   │   └── ...
 │   ├── migrations/        # 数据库迁移文件
 │   ├── config.py          # 配置文件
@@ -87,6 +92,38 @@
 3. **统一接口**：为所有AI服务提供统一的接口，简化集成
 4. **上下文保持**：保持对话上下文，提供连贯的交互体验
 5. **知识库增强**：结合实验室知识库，提供更精准的答案
+6. **Flash RAG**：高性能检索增强生成，提升问答准确性与速度
+
+### Flash RAG 技术实现
+
+Flash RAG 是系统新增的高效知识检索与生成技术，具有以下特点：
+
+1. **高效索引**：针对技术文档创建高效索引，支持快速检索
+2. **自动分块**：智能文本分块，提高检索相关性
+3. **上下文增强**：在生成回答时自动融入相关知识，提高准确性
+4. **知识库自动更新**：当添加新技术总结时自动更新知识库
+
+```python
+# Flash RAG服务示例
+class FlashRAGService:
+    def __init__(self):
+        self.embedding_model = SentenceTransformer("...")
+        self.documents = []
+        self.index = None
+    
+    def create_index(self, documents):
+        # 处理文档并创建索引
+        self.documents = self._process_documents(documents)
+        embeddings = self._create_embeddings(self.documents)
+        self.index = self._build_index(embeddings)
+        return len(self.documents)
+    
+    async def query(self, question, top_k=3):
+        # 检索相关文档块
+        question_embedding = self._embed_query(question)
+        relevant_docs = self._search(question_embedding, top_k)
+        return relevant_docs
+```
 
 ### 技术实现示例
 
@@ -189,11 +226,20 @@ OLLAMA_BASE_URL=http://localhost:11434
 ENABLE_LOCAL_LLM=true
 ```
 
+### Flash RAG 初始化
+
+系统首次启动时会自动初始化Flash RAG索引，也可以通过API手动触发：
+
+```bash
+curl -X POST http://localhost:5000/api/v1/rag/init_flashrag
+```
+
 ## 功能特点
 
 - 🧠 混合AI架构，支持多种AI服务
 - 🔄 智能服务切换机制
 - 📚 知识库管理与检索
+- ⚡ Flash RAG 高效检索增强生成
 - 🔐 用户认证与授权
 - 📊 成果管理
 - 💡 技术总结
@@ -213,6 +259,8 @@ ENABLE_LOCAL_LLM=true
 - OpenAI API (外部AI服务)
 - DeepSeek API (外部AI服务)
 - Ollama (本地AI部署)
+- SentenceTransformer (向量嵌入)
+- FAISS (向量检索库)
 
 ### 前端
 - Vue 3 (框架)
@@ -232,6 +280,7 @@ ENABLE_LOCAL_LLM=true
 - **前端**：独立部署的单页应用(SPA)，负责用户界面和交互逻辑
 - **通信**：通过HTTP/HTTPS协议，使用JSON格式数据交换
 - **AI服务层**：包含混合AI架构，支持多种AI服务提供商
+- **知识检索层**：Flash RAG实现高效知识检索与生成
 
 ### 前后端通信
 - 采用RESTful API设计规范
@@ -288,18 +337,25 @@ ENABLE_LOCAL_LLM=true
 - POST `/api/v1/ai/switch_provider` - 切换AI服务提供商
 - GET `/api/v1/ai/status` - 获取AI服务状态
 
+### RAG接口
+- POST `/api/v1/rag/init_flashrag` - 初始化Flash RAG索引
+- POST `/api/v1/knowledge_base/init` - 初始化知识库
+- POST `/api/v1/knowledge_base/query` - 基于知识库的问答查询
+
 ## 系统截图
 
 ![系统截图](https://via.placeholder.com/800x400?text=知识管理系统截图)
 
 ## 未来规划
 
-- [ ] 添加更多AI服务提供商支持
-- [ ] 实现知识图谱可视化
-- [ ] 添加协作编辑功能
-- [ ] 优化本地模型性能
-- [ ] 实现移动端应用
+- [ ] 集成更多开源大模型支持
+- [ ] 实现基于向量数据库的高级知识图谱
+- [ ] 添加多模态文档处理能力
+- [ ] 提供API访问令牌管理功能
+- [ ] 构建移动端应用
 - [ ] 添加科研趋势分析功能
+- [ ] 集成学术文献自动摘要与检索
+- [ ] 支持多语言知识库管理
 
 ## 贡献指南
 
