@@ -196,20 +196,44 @@ def update_tech_summary(id):
 def delete_tech_summary(id):
     """删除指定ID的技术总结"""
     current_user_id = get_jwt_identity()
+    logging.info(f"删除技术总结请求 - ID: {id}, 当前用户ID: {current_user_id}, 类型: {type(current_user_id)}")
     
     # 确保user_id是整数
     if isinstance(current_user_id, str):
         try:
             current_user_id = int(current_user_id)
+            logging.info(f"用户ID转换为整数: {current_user_id}")
         except ValueError:
+            logging.error(f"无效的用户ID: {current_user_id}")
             return jsonify({"msg": "无效的用户ID"}), 400
     
     summary = TechSummary.query.get(id)
     if not summary:
+        logging.warning(f"技术总结不存在 - ID: {id}")
         return not_found('技术总结不存在')
     
-    if summary.user_id != current_user_id:
-        return unauthorized('无权删除此技术总结')
+    # 获取当前用户信息
+    current_user = User.query.get(current_user_id)
+    if not current_user:
+        logging.error(f"用户不存在 - ID: {current_user_id}")
+        return unauthorized('用户不存在')
+    
+    logging.info(f"技术总结信息 - ID: {id}, 标题: {summary.title}, 创建者ID: {summary.user_id}, 类型: {type(summary.user_id)}")
+    logging.info(f"当前用户信息 - ID: {current_user_id}, 用户名: {current_user.username}, 是否管理员: {current_user.is_administrator()}")
+    
+    # 权限检查：创建者或管理员可以删除
+    is_owner = summary.user_id == current_user_id
+    is_admin = current_user.is_administrator()
+    
+    logging.info(f"权限检查 - 是否创建者: {is_owner}, 是否管理员: {is_admin}")
+    
+    if not (is_owner or is_admin):
+        logging.warning(f"权限不足 - 用户 {current_user_id} ({current_user.username}) 尝试删除用户 {summary.user_id} 创建的技术总结 {id}")
+        return unauthorized('无权删除此技术总结，只有创建者或管理员可以删除')
+    
+    # 记录删除操作
+    if is_admin and not is_owner:
+        logging.info(f"管理员删除操作 - 管理员 {current_user.username} (ID: {current_user_id}) 删除了用户 {summary.user_id} 创建的技术总结 '{summary.title}' (ID: {id})")
     
     # 从知识库中移除技术总结
     try:
@@ -220,6 +244,7 @@ def delete_tech_summary(id):
     
     db.session.delete(summary)
     db.session.commit()
+    logging.info(f"技术总结删除成功 - ID: {id}")
     
     return jsonify({'message': '技术总结已删除'})
 
@@ -375,6 +400,60 @@ def chat_with_global_knowledge_base():
             'message': f'处理请求时出错: {str(e)}'
         }), 500
 
+@api.route('/ai/chat', methods=['POST'])
+def pure_ai_chat():
+    """纯AI聊天，不使用知识库"""
+    # 获取请求数据
+    data = request.get_json() or {}
+    
+    # 检查必填字段
+    if 'query' not in data:
+        return bad_request('问题是必填项')
+    
+    # 获取AI提供商
+    provider = data.get('provider', 'deepseek')
+    
+    try:
+        # 直接调用AI API，不使用知识库
+        from app.utils.chat_with_doc import _call_ai_api
+        
+        # 构建系统提示
+        system_prompt = """你是一个专业的AI助手。请直接回答用户的问题，提供准确、详细、有用的信息。
+
+请用中文回答，要准确、详细、全面。请提供完整的解释和具体的步骤，包括：
+1. 详细的概念解释
+2. 具体的实施步骤或方法
+3. 相关的技术细节
+4. 实际应用场景或示例
+5. 注意事项或最佳实践
+
+回答应该具有教学性质，帮助用户深入理解相关内容。"""
+        
+        # 调用AI API
+        ai_answer = _call_ai_api(data['query'], system_prompt, provider)
+        
+        if ai_answer:
+            return jsonify({
+                'success': True,
+                'data': {
+                    'answer': ai_answer,
+                    'provider': provider,
+                    'mode': 'pure_ai'
+                }
+            })
+        else:
+            return jsonify({
+                'success': False,
+                'message': f'{provider} API调用失败，请稍后重试'
+            }), 500
+            
+    except Exception as e:
+        logging.exception(f"处理纯AI聊天请求时出错: {str(e)}")
+        return jsonify({
+            'success': False,
+            'message': f'处理请求时出错: {str(e)}'
+        }), 500
+
 # 添加技术总结到知识库的钩子函数
 def add_tech_summary_to_knowledge_base(tech_summary):
     """将技术总结添加到知识库"""
@@ -419,3 +498,58 @@ def init_knowledge_base():
             'success': False,
             'message': f'初始化知识库时出错: {str(e)}'
         }), 500
+
+# 添加调试API端点
+@api.route('/tech_summaries/<int:id>/debug', methods=['GET'])
+@jwt_required()
+def debug_tech_summary_ownership(id):
+    """调试技术总结所有权信息"""
+    current_user_id = get_jwt_identity()
+    
+    # 确保user_id是整数
+    if isinstance(current_user_id, str):
+        try:
+            current_user_id = int(current_user_id)
+        except ValueError:
+            return jsonify({"msg": "无效的用户ID"}), 400
+    
+    summary = TechSummary.query.get(id)
+    if not summary:
+        return not_found('技术总结不存在')
+    
+    # 获取用户信息
+    user = User.query.get(current_user_id)
+    creator = User.query.get(summary.user_id)
+    
+    # 权限检查
+    is_owner = summary.user_id == current_user_id
+    is_admin = user.is_administrator() if user else False
+    can_delete = is_owner or is_admin
+    
+    debug_info = {
+        'current_user': {
+            'id': current_user_id,
+            'type': str(type(current_user_id)),
+            'username': user.username if user else 'Unknown',
+            'email': user.email if user else 'Unknown',
+            'is_administrator': is_admin,
+            'role': user.role.name if user and user.role else 'No Role'
+        },
+        'summary': {
+            'id': summary.id,
+            'title': summary.title,
+            'creator_id': summary.user_id,
+            'creator_type': str(type(summary.user_id)),
+            'creator_username': creator.username if creator else 'Unknown',
+            'creator_email': creator.email if creator else 'Unknown'
+        },
+        'permission_check': {
+            'is_owner': is_owner,
+            'is_admin': is_admin,
+            'can_delete': can_delete,
+            'reason': 'Owner' if is_owner else ('Admin' if is_admin else 'No Permission'),
+            'comparison': f"{summary.user_id} == {current_user_id}"
+        }
+    }
+    
+    return jsonify(debug_info)

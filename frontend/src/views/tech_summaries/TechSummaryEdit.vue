@@ -184,14 +184,31 @@ const resetForm = () => {
   }
 }
 
-const confirmDelete = () => {
+const confirmDelete = async () => {
+  // 先检查权限信息
+  try {
+    console.log('检查删除权限...')
+    const debugResponse = await axios.get(`/api/v1/tech_summaries/${id}/debug`)
+    console.log('权限调试信息:', debugResponse.data)
+    
+    const canDelete = debugResponse.data.permission_check.can_delete
+    if (!canDelete) {
+      ElMessage.error('您没有权限删除此技术总结，只有创建者或管理员才能删除')
+      return
+    }
+  } catch (error) {
+    console.error('权限检查失败:', error)
+    ElMessage.warning('无法验证删除权限，请确保您有权限删除此技术总结')
+  }
+  
   ElMessageBox.confirm(
-    '确定要删除这个技术总结吗？此操作不可恢复。',
+    '确定要删除这个技术总结吗？此操作不可恢复。\n注意：只有技术总结的创建者或管理员才能删除。',
     '删除确认',
     {
       confirmButtonText: '确定',
       cancelButtonText: '取消',
-      type: 'warning'
+      type: 'warning',
+      dangerouslyUseHTMLString: false
     }
   ).then(() => {
     deleteSummary()
@@ -208,7 +225,33 @@ const deleteSummary = async () => {
     router.push('/tech_summaries')
   } catch (error) {
     console.error('删除技术总结失败:', error)
-    ElMessage.error('删除技术总结失败')
+    
+    // 根据错误类型提供更详细的错误信息
+    if (error.response) {
+      const status = error.response.status
+      const errorData = error.response.data
+      
+      switch (status) {
+        case 401:
+          ElMessage.error('登录已过期，请重新登录后再试')
+          break
+        case 403:
+          ElMessage.error('您没有权限删除此技术总结，只有创建者或管理员才能删除')
+          break
+        case 404:
+          ElMessage.error('技术总结不存在或已被删除')
+          break
+        case 500:
+          ElMessage.error('服务器错误，删除失败，请稍后重试')
+          break
+        default:
+          ElMessage.error(errorData?.message || errorData?.msg || '删除技术总结失败')
+      }
+    } else if (error.request) {
+      ElMessage.error('网络连接失败，请检查网络后重试')
+    } else {
+      ElMessage.error('删除操作失败，请重试')
+    }
   } finally {
     loading.value = false
   }

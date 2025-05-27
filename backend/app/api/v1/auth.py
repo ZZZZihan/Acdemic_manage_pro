@@ -88,7 +88,13 @@ def get_user():
     if not user:
         return unauthorized('用户不存在')
     
-    return jsonify(user.to_dict())
+    user_data = user.to_dict()
+    # 添加角色和权限信息
+    user_data['role'] = user.role.name if user.role else 'No Role'
+    user_data['is_administrator'] = user.is_administrator()
+    user_data['permissions'] = user.role.permissions if user.role else 0
+    
+    return jsonify(user_data)
 
 @api.route('/auth/logout', methods=['POST'])
 def logout():
