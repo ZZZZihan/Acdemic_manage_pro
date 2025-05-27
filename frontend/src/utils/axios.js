@@ -3,9 +3,11 @@ import { ElMessage } from 'element-plus'
 import router from '@/router'
 
 // 创建axios实例
-console.log('创建Axios实例，baseURL:', import.meta.env.VITE_API_URL)
+// 在开发环境中，如果没有设置VITE_API_URL，则使用空字符串（依赖Vite代理）
+const baseURL = import.meta.env.VITE_API_URL || ''
+console.log('创建Axios实例，baseURL:', baseURL)
 const instance = axios.create({
-  baseURL: import.meta.env.VITE_API_URL,
+  baseURL: baseURL,
   timeout: 60000, // 默认超时时间增加到60秒
   headers: {
     'Content-Type': 'application/json'
@@ -88,25 +90,75 @@ instance.interceptors.response.use(
           ElMessage.error(error.response.data.message || error.response.data.msg || '请求参数错误')
           break
         case 401:
-          console.error('认证失败，需要重新登录')
+          console.error('认证失败，检查错误类型')
           
-          // 尝试获取当前用户状态
-          const user = localStorage.getItem('user')
-          console.log('当前用户状态:', user ? '已登录' : '未登录')
+          // 检查错误信息，区分token过期和权限不足
+          const errorMessage = error.response.data?.message || ''
+          const isPermissionDenied = errorMessage.includes('无权') || errorMessage.includes('权限') || 
+                                   errorMessage.includes('unauthorized') && !errorMessage.includes('过期') && 
+                                   !errorMessage.includes('expired') && !errorMessage.includes('invalid token')
           
-          // 清除认证数据
-          localStorage.removeItem('token')
-          localStorage.removeItem('refreshToken')
-          localStorage.removeItem('user')
+          if (isPermissionDenied) {
+            // 这是权限问题，不是token过期，直接显示错误信息
+            console.log('权限不足，不尝试刷新token')
+            ElMessage.error(errorMessage || '您没有权限执行此操作')
+            break
+          }
           
-          // 如果不是登录页面，则重定向到登录页
-          const currentPath = window.location.pathname
-          if (!currentPath.includes('/auth/login')) {
-            console.log('重定向到登录页')
-            ElMessage.error('登录已过期，请重新登录')
-            setTimeout(() => {
-              router.push('/auth/login')
-            }, 500)
+          // 可能是token过期，尝试刷新
+          console.log('可能是token过期，尝试刷新token')
+          const refreshToken = localStorage.getItem('refreshToken')
+          
+          if (refreshToken && !error.config._retry) {
+            error.config._retry = true
+            
+            try {
+              console.log('尝试刷新访问令牌')
+              const refreshResponse = await axios.post('/api/v1/auth/refresh', {}, {
+                headers: {
+                  'Authorization': `Bearer ${refreshToken}`
+                }
+              })
+              
+              const newToken = refreshResponse.data.access_token
+              localStorage.setItem('token', newToken)
+              console.log('Token刷新成功，重试原请求')
+              
+              // 更新原请求的认证头并重试
+              error.config.headers['Authorization'] = `Bearer ${newToken}`
+              return instance(error.config)
+              
+            } catch (refreshError) {
+              console.error('Token刷新失败:', refreshError)
+              // 刷新失败，清除所有认证数据并跳转登录页
+              localStorage.removeItem('token')
+              localStorage.removeItem('refreshToken')
+              localStorage.removeItem('user')
+              
+              const currentPath = window.location.pathname
+              if (!currentPath.includes('/auth/login')) {
+                console.log('Token刷新失败，重定向到登录页')
+                ElMessage.error('登录已过期，请重新登录')
+                setTimeout(() => {
+                  router.push('/auth/login')
+                }, 500)
+              }
+            }
+          } else {
+            // 没有refresh token或已经重试过，清除认证数据并跳转登录页
+            console.log('无refresh token或已重试，清除认证数据')
+            localStorage.removeItem('token')
+            localStorage.removeItem('refreshToken')
+            localStorage.removeItem('user')
+            
+            const currentPath = window.location.pathname
+            if (!currentPath.includes('/auth/login')) {
+              console.log('重定向到登录页')
+              ElMessage.error('登录已过期，请重新登录')
+              setTimeout(() => {
+                router.push('/auth/login')
+              }, 500)
+            }
           }
           break
         case 403:
