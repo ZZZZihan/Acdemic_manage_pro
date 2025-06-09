@@ -160,7 +160,7 @@
             <el-upload
               v-if="canEdit"
               class="upload-attachment"
-              :action="`/api/v1/meetings/${meetingId}/attachments`"
+              :action="`/api/v1/meetings/attachments/upload`"
               :headers="uploadHeaders"
               :on-success="handleAttachmentSuccess"
               :on-error="handleAttachmentError"

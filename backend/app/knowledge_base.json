@@ -1,56 +1,4 @@
 {
-  "1": {
-    "title": "测试",
-    "content": "测试222",
-    "metadata": {
-      "summary_type": "经验",
-      "tags": "测试",
-      "created_at": "2025-03-13T06:46:39.350511",
-      "updated_at": "2025-03-13T06:49:14.703869",
-      "user_id": 5,
-      "source_url": null
-    },
-    "updated_at": "2025-05-26T10:25:53.643048"
-  },
-  "2": {
-    "title": "222",
-    "content": "22",
-    "metadata": {
-      "summary_type": "算法",
-      "tags": "2222",
-      "created_at": "2025-03-13T06:49:31.711039",
-      "updated_at": "2025-03-13T06:49:31.711041",
-      "user_id": 5,
-      "source_url": null
-    },
-    "updated_at": "2025-05-26T10:25:53.644161"
-  },
-  "3": {
-    "title": "测试",
-    "content": "uuu",
-    "metadata": {
-      "summary_type": "工具",
-      "tags": "r",
-      "created_at": "2025-03-13T10:46:46.385760",
-      "updated_at": "2025-03-13T10:46:46.385767",
-      "user_id": 1,
-      "source_url": null
-    },
-    "updated_at": "2025-05-26T10:25:53.644662"
-  },
-  "7": {
-    "title": "Opencv根据USB摄像头PID\\VID号，获取对应摄像头索引-CSDN博客",
-    "content": "# 技术总结：通过VID和PID获取OpenCV摄像头索引\n\n## 1. 核心技术点和关键概念\n\n- **VID和PID**：VID（Vendor ID）和PID（Product ID）是USB设备的唯一标识符，由设备制造商分配，通常不会改变。\n- **OpenCV摄像头索引**：OpenCV通过索引号来访问摄像头，但索引号可能会因插拔顺序或系统启动顺序而改变。\n- **动态库（DLL）**：将C++代码编译为动态链接库（DLL），以便在Python或其他C++程序中调用。\n\n## 2. 技术原理和实现方法\n\n### 2.1 技术原理\n- **设备枚举**：通过Windows的DirectShow API枚举所有视频输入设备，获取每个设备的VID和PID。\n- **设备路径匹配**：通过设备路径中的VID和PID信息，匹配用户指定的VID和PID，从而确定对应的摄像头索引。\n- **动态库导出**：将C++代码编译为动态库，提供接口供Python或C++调用。\n\n### 2.2 实现方法\n- **C++实现**：\n  - 使用`ICreateDevEnum`和`IEnumMoniker`接口枚举视频输入设备。\n  - 通过`IPropertyBag`接口获取设备的`DevicePath`，其中包含VID和PID信息。\n  - 将VID和PID与用户指定的值进行匹配，返回对应的摄像头索引。\n  - 将C++代码编译为动态库（DLL），并导出`getCamIDFromPidVid`函数。\n\n- **Python调用**：\n  - 使用`ctypes`库加载C++生成的DLL。\n  - 调用`getCamIDFromPidVid`函数获取摄像头索引。\n  - 使用OpenCV的`cv2.VideoCapture`打开指定索引的摄像头。\n\n- **C++调用**：\n  - 直接调用DLL中的`getCamIDFromPidVid`函数获取摄像头索引。\n  - 使用OpenCV的`cv::VideoCapture`打开指定索引的摄像头。\n\n## 3. 技术优势和应用场景\n\n### 3.1 技术优势\n- **稳定性**：通过VID和PID唯一标识摄像头，避免了因插拔顺序或系统启动顺序导致的摄像头索引变化问题。\n- **跨语言支持**：通过动态库的方式，支持C++和Python等多种编程语言调用。\n- **灵活性**：用户可以根据需要指定不同的VID和PID，灵活选择摄像头。\n\n### 3.2 应用场景\n- **多摄像头系统**：在需要同时使用多个摄像头的场景中，确保每个摄像头都能被正确识别和打开。\n- **自动化测试**：在自动化测试中，确保每次测试都能正确打开指定的摄像头。\n- **视频监控**：在视频监控系统中，确保每个摄像头都能被稳定地识别和控制。\n\n## 4. 可能的局限性和解决方案\n\n### 4.1 局限性\n- **同一型号摄像头的VID和PID相同**：如果多个摄像头来自同一厂家且型号相同，它们的VID和PID可能相同，导致无法区分。\n- **依赖操作系统API**：该方案依赖于Windows的DirectShow API，可能不适用于其他操作系统。\n\n### 4.2 解决方案\n- **定制VID和PID**：在购买摄像头时，要求厂家为每个摄像头分配不同的VID和PID。\n- **跨平台支持**：对于其他操作系统（如Linux、macOS），可以使用相应的设备枚举API（如`v4l2`）来实现类似功能。\n\n---\n\n通过以上总结，可以看出该技术方案在多摄像头系统中具有较高的实用性和稳定性，尤其适用于需要精确控制摄像头的场景。",
-    "metadata": {
-      "summary_type": "方法",
-      "tags": "DL, Python, C++",
-      "created_at": "2025-03-14T01:44:49.421637",
-      "updated_at": "2025-03-14T01:44:49.421645",
-      "user_id": 5,
-      "source_url": "https://blog.csdn.net/qq_41043389/article/details/124664485"
-    },
-    "updated_at": "2025-05-26T10:25:53.645044"
-  },
   "10": {
     "title": "大模型微调与部署实战",
     "content": "# 技术总结：大模型微调与部署实战\n\n## 1. 主要内容概述\n本文详细介绍了大模型微调的概念、分类及实际应用，重点讲解了如何使用LLaMA-Factory框架对DeepSpeek R1大模型进行微调，并将其部署到本地环境中。文章还展示了如何将微调后的大模型集成到基于SpringBoot和Vue2开发的AI会话系统中。通过本文，读者可以了解大模型微调的核心技术、实现步骤以及实际应用场景。\n\n## 2. 技术要点分析\n\n### 核心技术概念和专业术语\n- **大模型微调（Fine-Tuning）**：在预训练大模型的基础上，通过特定任务或领域数据进行进一步训练，使模型适应特定任务。\n- **AI幻觉（AI Hallucination）**：模型生成的内容不符合实际需求，甚至包含错误或无关信息。\n- **有监督微调（Supervised Fine-Tuning, SFT）**：使用人工标注的数据对模型进行微调。\n- **无监督微调（Unsupervised Fine-Tuning）**：利用未标注的文本数据进行训练。\n- **半监督微调（Semi-Supervised Fine-Tuning）**：结合标注数据和未标注数据进行训练。\n- **全量微调（Full Fine-Tuning）**：更新模型的所有参数。\n- **部分微调（Low-Rank Adaptation, LoRA）**：仅更新模型的部分参数，减少计算开销。\n\n### 关键技术原理和工作机制\n- **微调的核心目标**：通过特定任务数据优化大模型，提升其在特定应用场景中的表现。\n- **LoRA技术**：通过低秩矩阵分解，仅更新模型的部分参数，显著降低计算和内存开销。\n- **LLaMA-Factory框架**：支持低代码操作，结合LoRA和QLoRA技术，提供高效的微调方法。\n\n### 实现方法和步骤\n1. **环境安装**：安装Anaconda、Git、PyTorch等工具，创建虚拟环境并安装LLaMA-Factory。\n2. **模型下载**：从HuggingFace下载DeepSpeek R1模型。\n3. **模型训练**：使用LLaMA-Factory进行有监督微调（SFT），调整训练参数（如学习率、训练轮数等）。\n4. **模型部署**：通过FastAPI将微调后的模型部署为本地服务。\n5. **系统集成**：将微调后的模型集成到SpringBoot+Vue2开发的AI会话系统中。\n\n### 代码示例或算法解析\n- **有监督微调示例**：\n  ```python\n  training_data = [\n      {\"input\": \"问题\", \"output\": \"标准答案\"},\n      # 人工标注的高质量数据对\n  ]\n  ```\n- **FastAPI部署代码**：\n  ```python\n  from fastapi import FastAPI, HTTPException\n  from transformers import AutoModelForCausalLM, AutoTokenizer\n  import torch\n\n  app = FastAPI()\n  model_path = r\"E:\\deepspeek-merged\"\n  tokenizer = AutoTokenizer.from_pretrained(model_path)\n  device = \"cuda\" if torch.cuda.is_available() else \"cpu\"\n  model = AutoModelForCausalLM.from_pretrained(model_path).to(device)\n\n  @app.get(\"/answer\")\n  async def generate_text(prompt: str):\n      inputs = tokenizer(prompt, return_tensors=\"pt\").to(device)\n      outputs = model.generate(inputs[\"input_ids\"], max_length=100)\n      generated_text = tokenizer.decode(outputs[0], skip_special_tokens=True)\n      return {\"generated_text\": generated_text}\n  ```\n\n### 实际应用场景和案例\n- **AI会话系统**：将微调后的大模型集成到SpringBoot+Vue2开发的AI会话系统中，提供定制化的对话服务。\n- **行业特定任务**：在医疗、法律、金融等领域，通过微调大模型生成符合行业需求的精准内容。\n\n## 3. 关键技术标签\n大模型微调, 有监督微调, 无监督微调, LoRA, LLaMA-Factory, DeepSpeek R1, FastAPI, SpringBoot, Vue2, AI会话系统",
@@ -62,7 +10,7 @@
       "user_id": 5,
       "source_url": "https://blog.csdn.net/c18213590220/article/details/146135568?spm=1000.2115.3001.10526&utm_medium=distribute.pc_feed_blog_category.none-task-blog-classify_tag-1-146135568-null-null.nonecase&depth_1-utm_source=distribute.pc_feed_blog_category.none-task-blog-classify_tag-1-146135568-null-null.nonecase"
     },
-    "updated_at": "2025-05-26T10:25:53.645374"
+    "updated_at": "2025-05-29T21:48:04.388061"
   },
   "11": {
     "title": "deepseek大模型微调与部署实战",
@@ -75,7 +23,7 @@
       "user_id": 5,
       "source_url": "https://blog.csdn.net/c18213590220/article/details/146135568?depth_1-utm_source=distribute.pc_feed_blog_category.none-task-blog-classify_tag-1-146135568-null-null.nonecase"
     },
-    "updated_at": "2025-05-26T10:25:53.645706"
+    "updated_at": "2025-05-29T21:48:04.393889"
   },
   "12": {
     "title": "技术笔记：大模型微调与部署实战",
@@ -88,7 +36,7 @@
       "user_id": 5,
       "source_url": "https://blog.csdn.net/c18213590220/article/details/146135568?depth_1-utm_source=distribute.pc_feed_blog_category.none-task-blog-classify_tag-1-146135568-null-null.nonecase"
     },
-    "updated_at": "2025-05-26T10:25:53.646023"
+    "updated_at": "2025-05-29T21:48:04.394974"
   },
   "13": {
     "title": "curl 的用法指南",
@@ -101,7 +49,7 @@
       "user_id": 5,
       "source_url": "https://www.ruanyifeng.com/blog/2019/09/curl-reference.html"
     },
-    "updated_at": "2025-05-26T10:25:53.646457"
+    "updated_at": "2025-05-29T21:48:04.396318"
   },
   "14": {
     "title": "Coding Interview University 技术笔记整理",
@@ -114,7 +62,7 @@
       "user_id": 5,
       "source_url": "https://github.com/jwasham/coding-interview-university"
     },
-    "updated_at": "2025-05-26T10:25:53.646831"
+    "updated_at": "2025-05-29T21:48:04.398461"
   },
   "15": {
     "title": "Retrieval-Augmented Generation (RAG) 技术笔记",
@@ -127,7 +75,7 @@
       "user_id": 5,
       "source_url": "https://www.oracle.com/tw/artificial-intelligence/generative-ai/retrieval-augmented-generation-rag/"
     },
-    "updated_at": "2025-05-26T10:25:53.647250"
+    "updated_at": "2025-05-29T21:48:04.399490"
   },
   "16": {
     "title": "ThreadLocal与上下文管理组件技术笔记",
@@ -140,62 +88,175 @@
       "user_id": 5,
       "source_url": "https://blog.csdn.net/xiaofeng10330111/article/details/139667074?spm=1000.2115.3001.10526&utm_medium=distribute.pc_feed_blog_category.none-task-blog-classify_tag-6-139667074-null-null.nonecase&depth_1-utm_source=distribute.pc_feed_blog_category.none-task-blog-classify_tag-6-139667074-null-null.nonecase"
     },
-<<<<<<< HEAD
-    "updated_at": "2025-05-26T10:25:53.647949"
+    "updated_at": "2025-05-29T21:48:04.400533"
   },
   "17": {
-    "title": "Python中使用PyUSB进行USB设备操作的技术笔记",
-    "content": "# Python中使用PyUSB进行USB设备操作的技术笔记\n\n## 前言\nUSB(通用串行总线)作为一种高度通用性的硬件接口，在诸多领域均有应用。Python中通过PyUSB库提供了对libusb的封装，可以实现：\n- USB设备信息查询\n- USB设备监听\n- 与USB设备控制端点、数据端点(同步、批量、中断)进行指令和数据交互\n\n## 1. PyUSB安装\n\n```bash\npip install pyusb\n```\n\n**注意**：安装完成后直接使用可能会报\"没有可用后端\"的错误，需要额外安装后端。\n\n## 2. 后端安装配置\n\n### Windows系统\n1. 下载libusb后端(.7z压缩文件)\n2. 解压后将`MS64/dll/libusb-1.0.dll`拷贝到`C:/windows/System32/`\n\n### Linux系统\n通过包管理器安装：\n\n```bash\napt install libusb-1.0-0-dev\n# 或\nyum install libusb-1.0-0-dev\n```\n\n### 自定义路径方式\n可以将库文件放在项目目录中，使用时显式指定路径：\n\n```python\nimport usb\nfrom usb.backend import libusb1\n\nbackend = libusb1.get_backend(find_library=lambda x: \"./lib/libusb-1.0.dll\")\ndevice = usb.core.find(backend=backend, find_all=True)\n```\n\n## 3. 基本使用示例\n\n### 设备匹配\n示例使用ESP32-S2设备，其ID为：\n- idVendor=0x303a\n- idProduct=0x0002\n\n```python\nimport usb\nfrom usb.backend import libusb1\n\nbackend = libusb1.get_backend(find_library=lambda x: \"./lib/libusb-1.0.dll\")\ndevice = usb.core.find(backend=backend, idVendor=0x303a, idProduct=0x0002)\nprint(device)\n```\n\n**示例输出**：\n```\nDEVICE ID 303a:0002 on Bus 002 Address 010 =================\n bLength                :   0x12 (18 bytes)\n bDescriptorType        :    0x1 Device\n bcdUSB                 :  0x200 USB 2.0\n bDeviceClass           :   0xef Miscellaneous\n bDeviceSubClass        :    0x2\n bDeviceProtocol        :    0x1\n bMaxPacketSize0        :   0x40 (64 bytes)\n ......\n```\n\n## 注意事项\n1. 不同操作系统需要配置不同的后端\n2. Windows系统需要将DLL文件放在系统目录或项目目录中\n3. 设备查找时需要知道设备的Vendor ID和Product ID\n4. 使用自定义路径方式时，需要确保库文件路径正确",
+    "title": "FaceNet-PyTorch 人脸识别技术笔记",
+    "content": "# FaceNet-PyTorch 人脸识别技术笔记\n\n## 一、环境配置\n\n### 1. PyTorch 安装（CPU版本）\n\n**安装步骤：**\n1. 在PyCharm中创建项目`facenet_test`和Python文件`fp.py`\n2. 使用清华镜像加速安装：\n   ```bash\n   pip install torch torchvision torchaudio -i https://pypi.tuna.tsinghua.edu.cn/simple\n   ```\n\n**验证安装：**\n```python\nimport torch\ntorch.__version__  # 查看版本号\n```\n\n### 2. facenet_pytorch 库安装\n\n**安装命令：**\n```bash\npip install facenet_pytorch\n```\n\n**预训练模型配置：**\n1. 确保存在`.cache`文件夹（路径：`C:\\Users\\用户名\\`）\n   - 若不存在，执行以下代码生成：\n     ```python\n     import torchvision.models as models\n     alexnet = models.alexnet(pretrained=True)\n     ```\n2. 下载InceptionResnetV1预训练模型（百度网盘）\n   - 链接：https://pan.baidu.com/s/1UrnggoOLL8lv2Nj4odBfWw?pwd=w6x8\n   - 解压到：`C:\\Users\\用户名\\.cache\\torch\\hub\\checkpoints` 或 `C:\\Users\\用户名\\.cache\\torch\\checkpoints`\n\n## 二、代码实现\n\n### 1. 准备工作\n- 准备两张测试图片（如`zj.jpg`和`zj2.jpg`）与代码文件放在同一目录\n\n### 2. 核心代码分析\n\n```python\nimport cv2\nimport torch\nfrom facenet_pytorch import MTCNN, InceptionResnetV1\n\n# 获取设备配置\ndevice = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')\n\n# 初始化模型\nmtcnn = MTCNN(min_face_size=12, thresholds=[0.2, 0.2, 0.3], keep_all=True, device=device)\nresnet = InceptionResnetV1(pretrained='vggface2').eval().to(device)\n\ndef load_known_faces(dstImgPath, mtcnn, resnet):\n    \"\"\"加载已知人脸并提取特征向量\"\"\"\n    aligned = []\n    knownImg = cv2.imread(dstImgPath)\n    face = mtcnn(knownImg)  # 人脸检测\n    \n    if face is not None:\n        aligned.append(face[0])\n    aligned = torch.stack(aligned).to(device)\n    \n    with torch.no_grad():\n        known_faces_emb = resnet(aligned).detach().cpu()  # 提取特征向量\n    return known_faces_emb, knownImg\n\ndef match_faces(faces_emb, known_faces_emb, threshold):\n    \"\"\"人脸匹配（基于欧氏距离）\"\"\"\n    distance = (known_faces_emb[0] - faces_emb[0]).norm().item()\n    return distance < threshold\n\nif __name__ == '__main__':\n    MatchThreshold = 0.8  # 匹配阈值\n    \n    # 加载已知人脸\n    known_faces_emb, _ = load_known_faces('zj.jpg', mtcnn, resnet)\n    \n    # 加载待检测人脸\n    faces_emb, img = load_known_faces('zj2.jpg', mtcnn, resnet)\n    \n    # 人脸匹配\n    isExistDst = match_faces(faces_emb, known_faces_emb, MatchThreshold)\n    \n    if isExistDst:\n        boxes, prob, landmarks = mtcnn.detect(img, landmarks=True)\n        print('匹配成功：是同一个人')\n    else:\n        print('匹配失败：不是同一个人')\n```\n\n### 3. 关键参数说明\n- `MTCNN`参数：\n  - `min_face_size`: 最小检测人脸尺寸（12像素）\n  - `thresholds`: 人脸检测阈值[0.2, 0.2, 0.3]\n  - `keep_all`: 是否检测多张人脸\n- `MatchThreshold`: 人脸匹配阈值（0.8）\n\n## 三、运行结果分析\n\n1. **匹配成功情况**：\n   - 欧氏距离 < 阈值（0.8）\n   - 输出：\"匹配成功：是同一个人\"\n\n2. **匹配失败情况**：\n   - 欧氏距离 > 阈值（0.8）\n   - 输出：\"匹配失败：不是同一个人\"\n\n## 四、注意事项\n\n1. 首次运行需要下载vggface预训练模型，耗时较长\n2. 输出包含：\n   - 运行设备（CPU/GPU）\n   - 人脸特征向量\n   - 欧氏距离计算结果\n   - 匹配判定结果\n3. 测试图片需与代码文件放在同一目录\n4. 可根据实际需求调整匹配阈值（`MatchThreshold`）\n\n## 五、参考链接\n- 原文链接：https://blog.csdn.net/weixin_45939929/article/details/124789487\n- PyTorch官网：https://pytorch.org/",
     "metadata": {
       "summary_type": "其他",
-      "tags": "DL, 后端, Backend, Python, USB设备",
-      "created_at": "2025-05-26T01:03:18.445146",
-      "updated_at": "2025-05-26T01:03:18.445149",
+      "tags": "AI, Python, Go, HTTP",
+      "created_at": "2025-05-27T01:55:18.949975",
+      "updated_at": "2025-05-27T01:55:18.949980",
       "user_id": 1,
-      "source_url": "https://blog.csdn.net/weixin_44179831/article/details/142516592"
+      "source_url": "https://blog.csdn.net/weixin_45939929/article/details/124789487"
     },
-    "updated_at": "2025-05-26T10:25:53.648301"
-=======
-    "updated_at": "2025-05-08T11:17:21.462857"
-  },
-  "17": {
-    "title": "《深入理解计算机系统》(CS:APP3e) 技术笔记",
-    "content": "# 《深入理解计算机系统》(CS:APP3e) 技术笔记\n\n## 书籍基本信息\n- **书名**: Computer Systems: A Programmer's Perspective, 3/E (CS:APP3e)\n- **作者**: Randal E. Bryant 和 David R. O'Hallaron (卡内基梅隆大学)\n- **版本**: 第三版 (提供第二版遗留站点)\n\n## 书籍概述\n本书源自卡内基梅隆大学自1998年秋季开设的\"计算机系统导论\"(ICS)课程，基于以下教学原则编写：\n\n1. **程序员视角**：从程序员而非传统系统实现者的角度介绍计算机系统\n2. **完整系统观**：涵盖硬件、操作系统、编译器和网络的完整系统视图\n3. **实践学习**：通过在真实机器上开发和评估实际程序来学习\n\n## 主要内容\n本书涵盖以下核心主题：\n- 数据表示\n- C程序的机器级表示\n- 处理器架构\n- 程序优化\n- 内存层次结构\n- 链接\n- 异常控制流(异常、中断、进程和Unix信号)\n- 虚拟内存和内存管理\n- 系统级I/O\n- 基础网络编程\n- 并发编程\n\n## 配套资源\n1. **Web补充材料(Web Asides)**：包含超出书本范围的额外理论实践内容\n2. **学生网站**：提供学生用补充材料\n3. **教师网站**：提供完整的课程教学解决方案\n\n## 其他信息\n- 提供书籍目录和前言(TOC and Preface)\n- 包含从第二版到第三版的变化说明(Changes from 2/E)\n- 提供勘误表(Errata)\n- 包含相关研究论文(Papers)\n- 提供课程设置和教学大纲(Curriculum/Courses)\n\n## 版权信息\n© 2015, Randal E. Bryant 和 David R. O'Hallaron\n\n> 注：本书通过一系列有趣且动手实践的实验作业来支持上述概念的学习。",
-    "metadata": {
-      "summary_type": "其他",
-      "tags": "VID, 操作系统",
-      "created_at": "2025-04-24T07:50:10.779068",
-      "updated_at": "2025-04-24T07:50:10.779088",
-      "user_id": 6,
-      "source_url": "http://csapp.cs.cmu.edu/"
-    },
-    "updated_at": "2025-05-08T11:17:21.463235"
+    "updated_at": "2025-05-29T21:48:04.402039"
   },
   "18": {
-    "title": "吴恩达2022新版机器学习专项课程技术笔记",
-    "content": "# 吴恩达2022新版机器学习专项课程技术笔记\n\n## 课程概述\n- **课程名称**: Machine Learning Specialization (2022版)\n- **讲师**: 吴恩达(Andrew Ng)\n- **课程结构**: 分为3个部分\n  1. 监督式机器学习：回归与分类\n  2. 高级学习算法\n  3. 无监督学习：推荐系统与强化学习\n\n## 资源链接\n- **官方课程网站**: [Coursera](https://www.coursera.org/specializations/machine-learning-introduction)\n- **B站视频**: [BV19B4y1W76i](https://www.bilibili.com/video/BV19B4y1W76i)\n- **GitHub仓库**: [2022-Machine-Learning-Specialization](https://github.com/kaieye/2022-Machine-Learning-Specialization)\n- **交流群**: 484266833\n\n## 当前进度\n- 第二部分内容已上传\n- 第一课程的幻灯片(PPT)已更新完毕\n- 课程代码和测试内容已完成更新\n\n## 环境配置指南\n\n### 系统要求\n- Python 3.7.6 (官方推荐版本)\n\n### 安装步骤\n1. 根据操作系统安装适当版本的Python\n2. 在命令行(cmd/bash)中导航至项目文件夹\n3. 运行以下命令安装依赖:\n\n```bash\npip install -r requirements.txt\n```\n\n*注意*: Mac/Linux用户需使用`pip3`代替`pip`\n\n## 贡献指南\n欢迎通过Pull Request贡献:\n- 补充学习文件\n- 优化Markdown笔记\n\n## 课程大纲详情\n1. **监督式机器学习: 回归与分类**\n2. **高级学习算法** (当前可用部分)\n3. **无监督学习: 推荐系统与强化学习**",
-    "metadata": {
-      "summary_type": "算法",
-      "tags": "AI, 机器学习, Python, VID, HTTP",
-      "created_at": "2025-04-24T08:28:47.888691",
-      "updated_at": "2025-04-24T08:28:47.888695",
-      "user_id": 6,
-      "source_url": "https://github.com/ZZZZihan/2022-Machine-Learning-Specialization"
-    },
-    "updated_at": "2025-05-08T11:17:21.463589"
-  },
-  "19": {
-    "title": "WSL2安装与配置指南：将Ubuntu-20.04安装到D盘",
-    "content": "# WSL2安装与配置指南：将Ubuntu-20.04安装到D盘\n\n## 一、WSL2简介\n\nWSL2（Windows Subsystem for Linux 2）是Windows提供的轻量级Linux运行环境，具有以下特点：\n- 完整的Linux内核支持\n- 更好的文件系统性能和兼容性\n- 允许在Windows中直接运行Linux命令行工具和应用程序\n- 无需安装虚拟机或双系统\n\n## 二、WSL2安装方法\n\n### 方法一：PowerShell命令行安装（推荐）\n\n1. **启用Windows子系统功能**：\n   ```powershell\n   dism.exe /online /enable-feature /featurename:Microsoft-Windows-Subsystem-Linux /all /norestart\n   ```\n\n2. **启用虚拟机平台功能**：\n   ```powershell\n   dism.exe /online /enable-feature /featurename:VirtualMachinePlatform /all /norestart\n   ```\n\n3. **设置WSL2为默认版本**（Windows 10需要）：\n   ```powershell\n   wsl --set-default-version 2\n   ```\n\n4. **重启电脑**使更改生效\n\n### 方法二：Windows GUI手动安装\n\n1. 打开\"启用或关闭Windows功能\"\n2. 勾选以下选项：\n   - 适用于Linux的Windows子系统\n   - 虚拟机平台/Windows虚拟机监控程序平台\n   - （Windows 11可能需要）Windows Hypervisor Platform和Hyper-V\n\n3. 设置WSL2为默认版本（同方法一）\n\n## 三、Ubuntu-20.04安装到D盘\n\n### 方法一：官方迁移导入（推荐）\n\n1. **创建目录**：\n   - 在D盘创建`D:\\WSL\\Ubuntu-20.04`\n\n2. **安装并导出Ubuntu**：\n   ```powershell\n   wsl --install -d Ubuntu-20.04\n   wsl --export Ubuntu-20.04 D:\\WSL\\Ubuntu-20.04\\Ubuntu-20.04.tar\n   wsl --unregister Ubuntu-20.04\n   ```\n\n3. **导入到D盘**：\n   ```powershell\n   wsl --import Ubuntu-20.04 D:\\WSL\\Ubuntu-20.04 D:\\WSL\\Ubuntu-20.04\\Ubuntu-20.04.tar --version 2\n   ```\n\n4. **用户设置**：\n   - 创建普通用户：\n     ```bash\n     adduser yourusername\n     usermod -aG sudo yourusername\n     ```\n   - 设置默认用户：\n     ```powershell\n     ubuntu2004 config --default-user yourusername\n     ```\n\n### 方法二：手动下载解压安装\n\n1. **下载Ubuntu-20.04.appx**：\n   - PowerShell下载：\n     ```powershell\n     Invoke-WebRequest -Uri https://aka.ms/wslubuntu2004 -OutFile Ubuntu-20.04.appx -UseBasicParsing\n     ```\n   - 或通过浏览器/百度网盘下载\n\n2. **解压安装包**：\n   ```powershell\n   Rename-Item CanonicalGroupLimited.UbuntuonWindows_2004.2021.825.0.AppxBundle Ubuntu-20.04.zip\n   Expand-Archive Ubuntu-20.04.zip -DestinationPath D:\\WSL\\Ubuntu-20.04\\Extracted\n   ```\n\n3. **导入WSL**：\n   ```powershell\n   wsl --import Ubuntu-20.04 D:\\WSL\\Ubuntu-20.04\\ D:\\WSL\\Ubuntu-20.04\\Extracted\\Ubuntu_x64\\install.tar.gz --version 2\n   ```\n\n4. **用户设置**（同方法一）\n\n## 四、验证安装\n\n1. 检查WSL状态：\n   ```powershell\n   wsl -l -v\n   ```\n\n2. 确认D盘目录结构：\n   - `D:\\WSL\\Ubuntu-20.04\\ext4.vhdx`（虚拟磁盘映像文件）\n\n## 注意事项\n\n1. Windows 11默认已安装WSL2，可能不需要设置默认版本\n2. 手动导入的Ubuntu默认以root用户登录，需要手动创建普通用户\n3. 如果命令不识别发行版名称，使用`wsl -l`查看已安装的发行版\n4. 安装完成后建议执行`wsl --shutdown`确保完全重启\n\n## 参考资源\n\n- 原始教程来源：[CSDN博客](https://blog.csdn.net/Natsuago/article/details/145594631)\n- 百度网盘备用下载链接（提取码：es9u）",
+    "title": "Qt5 开发环境安装指南",
+    "content": "# Qt5 开发环境安装指南\n\n## 安装前准备\n\n### 1. 检查并安装 GCC\n- **检查命令**：`gcc -v`\n- **安装命令**（如未安装）：\n  ```bash\n  sudo apt install gcc\n  ```\n\n### 2. 检查并安装 G++\n- **检查命令**：`g++ -v`\n- **安装命令**（如未安装）：\n  ```bash\n  sudo apt install g++\n  ```\n\n### 3. 检查并安装 Clang 编译器\n- **检查命令**：`clang -v`\n- **安装命令**（如未安装）：\n  ```bash\n  sudo apt install clang\n  ```\n\n### 4. 检查并安装 Clang++\n- **检查命令**：`clang++ -v`\n- **安装命令**（如未安装）：\n  ```bash\n  sudo apt install clang++\n  ```\n\n### 5. 检查并安装 Make\n- **检查命令**：`make -v`\n- **安装命令**（如未安装）：\n  ```bash\n  sudo apt install make\n  ```\n\n### 6. 安装 Make-guile\n- **安装命令**：\n  ```bash\n  sudo apt install make-guile\n  ```\n\n### 7. 安装最新版 CMake\n- **安装命令**（耗时较长）：\n  ```bash\n  sudo snap install cmake --classic\n  ```\n\n## Qt5 安装步骤\n\n### 1. 安装 Qt5 组件\n```bash\nsudo apt-get install build-essential\n```\n\n### 2. 安装 Qt 开发工具\n```bash\nsudo apt-get install qtbase5-dev qtchooser qt5-qmake qtbase5-dev-tools\n```\n\n### 3. 安装 Qt Creator\n```bash\nsudo apt-get install qtcreator\n```\n\n### 4. 安装 Qt5 完整套件\n```bash\nsudo apt-get install qt5*\n```\n\n## 注意事项\n1. 如果下载速度较慢，建议更换软件源（Ubuntu 默认使用国外源）\n2. 安装 CMake 时可能需要较长时间\n3. 所有命令均需要管理员权限（使用 sudo）\n4. 建议按照顺序执行安装步骤\n\n安装完成后，Qt5 开发环境即配置完成。",
     "metadata": {
       "summary_type": "工具",
-      "tags": "AI, DL, Go, HTTP, OS",
-      "created_at": "2025-05-08T03:15:09.109347",
-      "updated_at": "2025-05-08T03:15:09.109352",
+      "tags": "OS",
+      "created_at": "2025-05-27T01:57:26.843106",
+      "updated_at": "2025-05-27T01:57:26.843111",
       "user_id": 1,
-      "source_url": "https://blog.csdn.net/Natsuago/article/details/145594631?spm=1000.2115.3001.10526&utm_medium=distribute.pc_feed_blog_category.none-task-blog-classify_tag-4-145594631-null-null.nonecase&depth_1-utm_source=distribute.pc_feed_blog_category.none-task-blog-classify_tag-4-145594631-null-null.nonecase"
+      "source_url": "https://blog.csdn.net/weixin_48560325/article/details/124373125"
     },
-    "updated_at": "2025-05-08T11:17:21.463986"
->>>>>>> 67defd6fb4a1bccad40094ce1fd92ec872e3ecfe
+    "updated_at": "2025-05-29T21:48:04.402988"
+  },
+  "19": {
+    "title": "Linux开发环境配置与工具使用指南",
+    "content": "# Linux开发环境配置与工具使用指南\n\n## 1. Linux软件包管理器yum\n\n### 1.1 软件包概念\n- 软件包是预编译好的程序集合，类似于Windows的安装程序\n- yum(Yellow dog Updater, Modified)是Linux常用包管理器，用于Fedora/RedHat/Centos等发行版\n\n### 1.2 rzsz工具\n- 用于Windows与Linux间通过XShell传输文件\n- 安装后可通过拖拽方式上传文件\n- 命令：\n  - `rz`：从本地电脑上传文件到服务器\n  - `sz 文件名`：从服务器下载文件到本地\n\n### 1.3 yum基本操作\n- **查看软件包**：\n  ```bash\n  yum list | grep 包名  # 如 yum list | grep lrzsz\n  ```\n  \n- **安装软件**：\n  ```bash\n  sudo yum install 包名  # 如 sudo yum install lrzsz\n  ```\n  \n- **卸载软件**：\n  ```bash\n  sudo yum remove 包名  # 如 sudo yum remove lrzsz\n  sudo yum remove -y 包名  # 不询问直接卸载\n  ```\n\n### 1.4 注意事项\n- 使用yum必须保证网络畅通\n- 安装软件通常需要sudo权限\n- yum一次只能安装一个软件，不能并行操作\n- 软件包命名格式：`名称.架构 版本号 软件源`\n  - 如：`lrzsz.x86_64 0.12.20-36.el7 @base`\n\n## 2. vim编辑器使用\n\n### 2.1 三种基本模式\n1. **命令模式(Normal mode)**：移动光标、删除、复制等操作\n2. **插入模式(Insert mode)**：输入文本\n3. **底行模式(Last line mode)**：保存、退出、查找等\n\n### 2.2 模式切换\n- 命令模式 → 插入模式：`i`(当前位置)、`a`(下一位置)、`o`(新行)\n- 插入模式 → 命令模式：`ESC`\n- 命令模式 → 底行模式：`Shift+;`(即`:`) \n\n### 2.3 常用命令\n#### 命令模式操作\n- **移动光标**：\n  - `h/j/k/l`：左/下/上/右\n  - `G`：文件末尾\n  - `gg`：文件开头\n  - `$`：行尾\n  - `^`：行首\n\n- **编辑操作**：\n  - `dd`：删除当前行\n  - `yy`：复制当前行\n  - `p`：粘贴\n  - `u`：撤销\n  - `Ctrl+r`：重做\n\n#### 底行模式操作\n- `:w`：保存\n- `:q`：退出\n- `:wq`：保存并退出\n- `:q!`：强制退出不保存\n- `:set nu`：显示行号\n- `:/关键词`：向下搜索\n- `:?关键词`：向上搜索\n\n### 2.4 vim配置\n- 系统配置文件：`/etc/vimrc`\n- 用户配置文件：`~/.vimrc`\n- 常用配置：\n  ```vim\n  syntax on       \" 语法高亮\n  set nu          \" 显示行号\n  set shiftwidth=4 \" 缩进4空格\n  ```\n\n## 3. gcc/g++编译器\n\n### 3.1 编译过程\n1. **预处理**：宏替换、去注释等\n   ```bash\n   gcc -E hello.c -o hello.i\n   ```\n2. **编译**：生成汇编代码\n   ```bash\n   gcc -S hello.i -o hello.s\n   ```\n3. **汇编**：生成机器码\n   ```bash\n   gcc -c hello.s -o hello.o\n   ```\n4. **链接**：生成可执行文件\n   ```bash\n   gcc hello.o -o hello\n   ```\n\n### 3.2 常用选项\n- `-o`：指定输出文件名\n- `-static`：静态链接\n- `-g`：生成调试信息\n- `-shared`：使用动态库\n- `-O0/-O1/-O2/-O3`：优化级别\n- `-Wall`：显示所有警告\n\n## 4. gdb调试器\n\n### 4.1 基本使用\n- 编译时需加`-g`选项生成调试信息\n- 启动调试：\n  ```bash\n  gdb 可执行文件\n  ```\n\n### 4.2 常用命令\n- `list/l`：查看源代码\n- `run/r`：运行程序\n- `break/b`：设置断点\n- `next/n`：单步执行\n- `step/s`：进入函数\n- `print/p`：打印变量\n- `continue/c`：继续执行\n- `quit`：退出gdb\n\n## 5. Makefile使用\n\n### 5.1 基本规则\n```makefile\n目标文件:依赖文件\n[TAB]命令\n```\n\n### 5.2 示例\n```makefile\nhello:hello.c\n    gcc hello.c -o hello\n\nclean:\n    rm -f hello\n```\n\n### 5.3 伪目标\n```makefile\n.PHONY:clean\nclean:\n    rm -f hello.o hello\n```\n\n### 5.4 工作原理\n1. 查找当前目录下的Makefile/makefile\n2. 查找第一个目标文件作为最终目标\n3. 检查依赖关系，按需编译\n\n## 6. sudo配置\n1. 切换到root用户\n2. 编辑`/etc/sudoers`文件\n3. 添加用户到信任列表：\n   ```\n   username ALL=(ALL) ALL\n   ```\n4. 保存退出(`wq!`强制保存)\n\n## 7. 第一个Linux程序：进度条\n（内容需根据实际代码补充）\n\n## 8. git基本操作\n（内容需根据实际需求补充）",
+    "metadata": {
+      "summary_type": "工具",
+      "tags": "动态库, OS, Linux, Windows",
+      "created_at": "2025-05-27T02:07:40.575934",
+      "updated_at": "2025-05-27T02:07:40.575943",
+      "user_id": 1,
+      "source_url": "https://blog.csdn.net/hy____123/article/details/146921095?spm=1000.2115.3001.10524"
+    },
+    "updated_at": "2025-05-29T21:48:04.403635"
+  },
+  "20": {
+    "title": "Docker与Ollama本地大模型部署指南",
+    "content": "# Docker与Ollama本地大模型部署指南\n\n## 一、引言\n\n### 1. Docker概述\n\n**Docker**是一个容器化平台，它通过以下方式解决软件部署问题：\n\n- **标准化打包**：将应用程序及其所有依赖项打包到一个容器中\n- **环境一致性**：确保应用在不同环境中运行结果相同\n- **隔离性**：每个容器拥有独立的运行环境\n\n**类比说明**：\n- 传统运输（传统部署）：货物需要不同包装，易损坏，装卸麻烦\n- 集装箱运输（Docker部署）：标准化容器，内容不变，易于装卸\n\n### 2. Ollama概述\n\n**Ollama**是一个本地运行大语言模型(LLM)的工具，主要特点包括：\n\n- **本地运行**：无需云端服务器，保护隐私\n- **多模型支持**：可运行Llama、Mistral、Gemma等开源模型\n- **易用性**：简单命令即可下载和运行AI模型\n- **性能优化**：支持GPU加速，适配多种操作系统\n\n## 二、准备工作\n\n### 1. 操作系统要求\n\n- 推荐系统：CentOS 7.9\n- 最低配置：4核CPU，8GB内存\n- 替代方案：其他Linux发行版或Windows\n\n### 2. 镜像准备\n\n- 已安装Docker的用户可预先拉取镜像：\n  ```bash\n  docker pull ollama/ollama\n  ```\n- 注意：镜像较大，下载需要时间\n\n## 三、安装步骤\n\n### 1. Docker安装\n\n1. **关闭防火墙**\n   ```bash\n   systemctl stop firewalld && systemctl disable firewalld\n   ```\n\n2. **关闭SELinux**\n   ```bash\n   setenforce 0\n   ```\n\n3. **更换yum源**\n   ```bash\n   rm -f /etc/yum.repos.d/*\n   curl -o /etc/yum.repos.d/CentOS-Base.repo http://mirrors.aliyun.com/repo/Centos-7.repo\n   yum clean all && yum makecache\n   ```\n\n4. **安装依赖项**\n   ```bash\n   yum install -y yum-utils device-mapper-persistent-data lvm2\n   ```\n\n5. **添加Docker源**\n   ```bash\n   yum-config-manager --add-repo http://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo\n   ```\n\n6. **安装Docker**\n   ```bash\n   yum install docker-ce -y\n   ```\n\n7. **配置镜像加速器**\n   ```bash\n   vim /etc/docker/daemon.json\n   ```\n   添加以下内容：\n   ```json\n   {\n     \"registry-mirrors\": [\n       \"https://docker.m.daocloud.io\",\n       \"https://noohub.ru\",\n       \"https://huecker.io\",\n       \"https://dockerhub.timeweb.cloud\",\n       \"https://0c105db5188026850f80c001def654a0.mirror.swr.myhuaweicloud.com\",\n       \"https://5tqw56kt.mirror.aliyuncs.com\",\n       \"https://docker.1panel.live\",\n       \"http://mirrors.ustc.edu.cn/\",\n       \"http://mirror.azure.cn/\",\n       \"https://hub.rat.dev/\",\n       \"https://docker.ckyl.me/\",\n       \"https://docker.chenby.cn\",\n       \"https://docker.hpcloud.cloud\",\n       \"https://docker.m.daocloud.io\"\n     ]\n   }\n   ```\n\n8. **启动Docker**\n   ```bash\n   systemctl start docker\n   ```\n\n### 2. 启动Ollama\n\n1. **启动容器（CPU版本）**\n   ```bash\n   docker run -itd -v ollama:/root/.ollama -p 11434:11434 --name ollama ollama/ollama\n   ```\n   - `-itd`：交互式终端+后台运行\n   - `-v`：数据卷挂载，持久化模型数据\n   - `-p`：端口映射\n\n2. **GPU版本启动**\n   ```bash\n   docker run -itd --name ollama --gpus=all -v ollama:/root/.ollama -p 11434:11434 ollama/ollama\n   ```\n\n3. **查看运行状态**\n   ```bash\n   docker ps\n   ```\n\n### 3. 拉取Deepseek模型\n\n1. **进入容器**\n   ```bash\n   docker exec -it ollama /bin/bash\n   ```\n\n2. **拉取模型**\n   ```bash\n   ollama pull deepseek-r1:7b\n   ```\n   - 演示使用较小模型`deepseek-r1:7b`\n   - 更多模型参考[Deepseek官网](https://deepseek.com)\n\n3. **查看已下载模型**\n   ```bash\n   ollama list\n   ```\n\n### 4. 启动Deepseek\n\n```bash\nollama run deepseek-r1:7b\n```\n\n## 注意事项\n\n1. Docker安装前需确保系统环境干净\n2. 拉取镜像和模型需要稳定网络连接\n3. GPU版本需要正确安装NVIDIA驱动\n4. 大模型运行需要足够的内存和计算资源",
+    "metadata": {
+      "summary_type": "工具",
+      "tags": "AI, Cloud, 容器, Docker, VID",
+      "created_at": "2025-05-27T02:42:17.692602",
+      "updated_at": "2025-05-27T02:42:17.692607",
+      "user_id": 1,
+      "source_url": "https://blog.csdn.net/weixin_53269650/article/details/146457200?spm=1000.2115.3001.10525"
+    },
+    "updated_at": "2025-05-29T21:48:04.406182"
+  },
+  "21": {
+    "title": "树莓派初始化配置技术笔记",
+    "content": "# 树莓派初始化配置技术笔记\n\n## 1. 树莓派简介\n\n### 1.1 基本概念\n- **Raspberry Pi**(树莓派)：基于ARM的微型电脑主板，信用卡大小\n- 特点：\n  - 基于Linux系统\n  - 以SD/MicroSD卡为内存硬盘\n  - 具备USB、以太网、HDMI等接口\n  - 具备PC基本功能（电子表格、文字处理、游戏、视频播放等）\n\n### 1.2 适合用户\n- 建议先掌握基础编程知识（C/C++或Python）\n- 不适合完全零基础的编程学习者\n- 适合用于进阶学习和项目开发\n\n## 2. 初始化配置步骤\n\n### 2.1 准备工作\n- **硬件准备**：\n  - 树莓派开发板\n  - 5V3A电源\n  - microSD卡（16G起步，建议32GB）\n  - 能上网的Windows电脑\n\n- **软件准备**：\n  - Putty (SSH远程连接工具)\n  - Advanced_IP_Scanner（局域网IP查找工具）\n  - balenaEtcher（镜像烧录工具）\n  - FileZilla（文件传输工具）\n  - VNC-Viewer（远程桌面软件）\n  - notepad++（编辑文本）\n\n### 2.2 系统烧录\n1. 格式化SD卡（使用Windows自带工具）\n2. 使用balenaEtcher烧录系统镜像：\n   ```markdown\n   1. 选择.img镜像文件\n   2. 选择目标SD卡\n   3. 等待烧录完成\n   ```\n3. **注意**：烧录后SD卡显示容量变小是正常现象，不要格式化\n\n### 2.3 网络配置\n- WiFi配置（编辑wpa_supplicant.conf）：\n  ```conf\n  country=CN\n  ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev\n  update_config=1\n\n  network={\n      ssid=\"wifi名称\"\n      psk=\"密码\"\n      priority=5\n  }\n  ```\n- 将配置文件放入boot盘\n- 使用Advanced_IP_Scanner查找树莓派IP\n\n### 2.4 远程连接\n#### 2.4.1 Putty连接\n1. 输入树莓派IP（默认端口22）\n2. 登录信息：\n   - 用户名：pi\n   - 密码：盲打输入（默认raspberry）\n3. 启用VNC服务：\n   ```bash\n   sudo raspi-config\n   # 选择5 Interfacing Options > VNC > Enable\n   sudo reboot\n   ```\n\n#### 2.4.2 VNC连接\n1. 使用VNC-Viewer输入树莓派IP\n2. 使用相同凭据登录\n3. 获得图形化桌面环境\n\n#### 2.4.3 文件传输（FileZilla）\n- 连接后通过拖拽方式传输文件\n- 注意：新建文件夹操作称为\"创建目录\"\n\n## 3. 使用Xshell作为替代方案\n\n### 3.1 下载安装\n- 官网提供免费个人版（需填写邮箱获取下载链接）\n- 集成SSH连接和文件传输功能\n\n### 3.2 连接配置\n1. 新建会话，输入树莓派IP\n2. 使用相同凭据登录\n3. 编码设置：确保使用UTF-8（防止中文乱码）\n\n### 3.3 Xftp使用\n- 快捷键CTRL+ALT+F打开文件传输界面\n- 拖拽方式传输文件\n\n## 4. 硬件连接（面包板）\n\n### 4.1 所需部件\n- 40p软排线\n- T型转接板\n- 面包板\n\n### 4.2 连接步骤\n1. 40p排线连接树莓派（注意三角标记方向）\n2. 另一端连接T型转接板（对准凹槽）\n3. 将转接板插入面包板中央孔位\n\n## 注意事项\n1. 树莓派IP可能会变化，连接失败时需重新扫描\n2. WiFi名称和密码不要使用中文\n3. 烧录后不要格式化SD卡显示的其他分区\n4. VNC使用时建议设置合适的分辨率（通过config.txt）\n5. 硬件连接时注意排线方向，避免损坏接口\n\n## 进阶学习\n- 建议参考专栏中的30+经典实验\n- 学习Linux命令行操作\n- 探索GPIO外设开发",
+    "metadata": {
+      "summary_type": "工具",
+      "tags": "Python, C++, OS, Linux, Windows",
+      "created_at": "2025-05-28T03:08:30.694925",
+      "updated_at": "2025-05-28T03:08:30.694930",
+      "user_id": 1,
+      "source_url": "https://blog.csdn.net/muxuen/article/details/124129993?ops_request_misc=%257B%2522request%255Fid%2522%253A%25222afea972102ecfba4926162cbf953dc3%2522%252C%2522scm%2522%253A%252220140713.130102334..%2522%257D&request_id=2afea972102ecfba4926162cbf953dc3&biz_id=0&utm_medium=distribute.pc_search_result.none-task-blog-2~all~top_positive~default-1-124129993-null-null.142%5Ev102%5Epc_search_result_base6&utm_term=%E6%A0%91%E8%8E%93%E6%B4%BE&spm=1018.2226.3001.4187"
+    },
+    "updated_at": "2025-05-29T21:48:04.407157"
+  },
+  "22": {
+    "title": "Raspberry Pi 流水灯项目技术笔记",
+    "content": "# Raspberry Pi 流水灯项目技术笔记\n\n## 所需物料清单\n- 1 × Raspberry Pi (树莓派)\n- 1 × 面包板\n- 8 × LED灯\n- 8 × 200Ω电阻\n- 跳线若干\n- 1 × T型扩展板\n- 1 × 40针排线\n\n## 硬件连接原理\n- LED正极通过200Ω电阻连接VCC\n- LED负极分别连接以下BCM编码的GPIO引脚：\n  - B17, B18, B22, B23, B24, B25, B4\n- 工作原理：当GPIO口输出低电平(0V)时，LED点亮\n\n## C语言实现步骤\n\n### 1. 创建源文件\n```bash\ncd ~\nsudo nano flow_led.c\n```\n\n### 2. 代码解析\n```c\n#include <wiringPi.h>\n#include <stdio.h>\n\n// 自定义LED控制函数\nvoid turn_on(int channel){\n    digitalWrite(channel,LOW); // 点亮LED\n}\n\nvoid turn_off(int channel){\n    digitalWrite(channel,HIGH); // 熄灭LED\n}\n\n// GPIO初始化\nvoid setup(){\n    for(int i=0;i<8;i++){\n        pinMode(i,OUTPUT);\n        digitalWrite(i,HIGH); // 初始化为高电平(熄灭)\n    }\n}\n\nint main(){\n    if(wiringPiSetup()==-1){ // 初始化wiringPi库\n        printf(\"初始化失败\\n\");\n        return -1;\n    }\n    \n    setup();\n    while(1){\n        // 从左到右流水效果\n        for(int i=0;i<8;i++){\n            turn_on(i);\n            delay(150);\n            turn_off(i);\n        }\n        \n        // 从右到左流水效果\n        for(int i=7;i>=0;i--){\n            turn_on(i);\n            delay(150);\n            turn_off(i);\n        }\n    }\n    return 0;\n}\n```\n\n### 3. 编译与运行\n```bash\ngcc -Wall -o flow_led flow_led.c -lwiringPi\nsudo ./flow_led\n```\n\n## Python实现步骤\n\n### 1. 创建Python文件\n```bash\ncd ~\nsudo nano flow_led.py\n```\n\n### 2. 代码解析\n```python\nimport RPi.GPIO as GPIO\nimport time\n\n# 定义LED引脚(BCM编码)\nLedPins = [17,18,27,22,23,24,25,4]\n\n# GPIO初始化\ndef setup():\n    GPIO.setwarnings(False)\n    GPIO.setmode(GPIO.BCM) # 使用BCM编码\n    GPIO.setup(LedPins, GPIO.OUT, initial=GPIO.HIGH) # 初始化为高电平\n\ndef main():\n    setup()\n    while True:\n        # 从左到右流水效果\n        for pin in LedPins:\n            GPIO.output(pin, GPIO.LOW)\n            time.sleep(0.2)\n            GPIO.output(pin, GPIO.HIGH)\n        \n        # 从右到左流水效果\n        for pin in reversed(LedPins):\n            GPIO.output(pin, GPIO.LOW)\n            time.sleep(0.2)\n            GPIO.output(pin, GPIO.HIGH)\n\nif __name__ == '__main__':\n    main()\n```\n\n### 3. 运行程序\n```bash\nsudo python ./flow_led.py\n```\n\n## 注意事项\n1. 两种实现方式都使用BCM编码方式\n2. LED初始状态设置为高电平(熄灭)\n3. C语言实现依赖wiringPi库，Python实现依赖RPi.GPIO库\n4. 运行程序需要root权限(使用sudo)\n5. 如果安装了servoblaster服务，需要先停止该服务\n\n## 参考资源\n1. wiringPi库API文档\n2. RPi.GPIO库使用文档\n3. Python标准库文档(reversed函数等)\n\n## 效果说明\n程序运行后，8个LED灯会先从左到右依次点亮，再从右到左依次点亮，形成流水灯效果。",
+    "metadata": {
+      "summary_type": "其他",
+      "tags": "AI, Python, API",
+      "created_at": "2025-05-28T03:38:16.113899",
+      "updated_at": "2025-05-28T03:38:16.113902",
+      "user_id": 1,
+      "source_url": "https://blog.csdn.net/algorithm_lixuan/article/details/76640468?ops_request_misc=%257B%2522request%255Fid%2522%253A%25220f79fa5c395667885f4ec4fdf8dc2470%2522%252C%2522scm%2522%253A%252220140713.130102334..%2522%257D&request_id=0f79fa5c395667885f4ec4fdf8dc2470&biz_id=0&utm_medium=distribute.pc_search_result.none-task-blog-2~all~sobaiduend~default-2-76640468-null-null.142%5Ev102%5Epc_search_result_base6&utm_term=%E6%A0%91%E8%8E%93%E6%B4%BE%20%E6%B5%81%E6%B0%B4%E7%81%AF&spm=1018.2226.3001.4187"
+    },
+    "updated_at": "2025-05-29T21:48:04.407861"
+  },
+  "23": {
+    "title": "树莓派WS2812B跑马灯实验笔记",
+    "content": "# 树莓派WS2812B跑马灯实验笔记\n\n## 实验概述\n本实验使用树莓派控制WS2812B LED灯带实现跑马灯效果，包括基础点亮、颜色渐变和动态效果等功能。\n\n## 实验元件\n- 带有8颗RGB灯珠的WS2812元器件板\n- GPIO扩展板一块或面包板一块\n\n## WS2812B原理与接线\n### 工作原理\n- WS2812B是集成了控制电路和发光电路的智能LED\n- 每个灯珠串联连接，数据从DI输入，DO输出到下一个灯珠\n\n### 接线方式\n| 引脚 | 连接位置 |\n|------|----------|\n| VCC  | 树莓派3.3V供电GPIO |\n| GND  | 树莓派共地接口 |\n| 控制脚 | GPIO12 (PWM引脚) |\n\n**注意事项**：\n- 在VCC和GND间需要添加100μF滤波电容\n- 必须使用PWM引脚(如GPIO12)或SPI引脚(如GPIO10)\n\n## 代码实现\n\n### 1. 安装必要库\n```bash\nsudo pip install rpi_ws281x\n```\n\n### 2. 基础配置\n```python\n# LED strip configuration:\nLED_COUNT = 8        # 灯珠数量\nLED_PIN = 12         # 控制引脚(使用PWM)\nLED_FREQ_HZ = 800000 # PWM频率(800kHz)\nLED_DMA = 10         # DMA通道\nLED_BRIGHTNESS = 255 # 亮度(0-255)\nLED_INVERT = False   # 信号反转\nLED_CHANNEL = 0      # PWM通道\n```\n\n### 3. 核心功能函数\n\n#### 单色填充\n```python\ndef colorWipe(strip, color, wait_ms=50):\n    \"\"\"逐个点亮LED\"\"\"\n    for i in range(strip.numPixels()):\n        strip.setPixelColor(i, color)\n        strip.show()\n        time.sleep(wait_ms / 1000.0)\n```\n\n#### 彩虹渐变效果\n```python\ndef rainbow(strip, wait_ms=20, iterations=1):\n    \"\"\"整体彩虹渐变效果\"\"\"\n    for j in range(256 * iterations):\n        for i in range(strip.numPixels()):\n            strip.setPixelColor(i, wheel((i + j) & 255))\n        strip.show()\n        time.sleep(wait_ms / 1000.0)\n```\n\n#### 跑马灯效果\n```python\ndef theaterChaseRainbow(strip, wait_ms=50):\n    \"\"\"彩虹跑马灯效果\"\"\"\n    for j in range(256):\n        for q in range(3):\n            for i in range(0, strip.numPixels(), 3):\n                strip.setPixelColor(i + q, wheel((i + j) % 255))\n            strip.show()\n            time.sleep(wait_ms / 1000.0)\n            for i in range(0, strip.numPixels(), 3):\n                strip.setPixelColor(i + q, 0)\n```\n\n### 4. 颜色生成函数\n```python\ndef wheel(pos):\n    \"\"\"生成彩虹颜色(0-255)\"\"\"\n    if pos < 85:\n        return Color(pos * 3, 255 - pos * 3, 0)\n    elif pos < 170:\n        pos -= 85\n        return Color(255 - pos * 3, 0, pos * 3)\n    else:\n        pos -= 170\n        return Color(0, pos * 3, 255 - pos * 3)\n```\n\n## 完整测试代码\n```python\n# NeoPixel库示例代码\nimport time\nfrom rpi_ws281x import Color, PixelStrip, ws\n\n# LED配置(同上)\n\n# 定义动画函数(同上)\n\nif __name__ == '__main__':\n    strip = PixelStrip(LED_COUNT, LED_PIN, LED_FREQ_HZ, \n                      LED_DMA, LED_INVERT, LED_BRIGHTNESS, \n                      LED_CHANNEL)\n    strip.begin()\n\n    print('Press Ctrl-C to quit.')\n    while True:\n        # 基础颜色填充\n        colorWipe(strip, Color(255, 0, 0))   # 红色\n        colorWipe(strip, Color(0, 255, 0))   # 绿色\n        colorWipe(strip, Color(0, 0, 255))   # 蓝色\n        \n        # 彩虹效果\n        rainbow(strip)\n        rainbowCycle(strip)\n        \n        # 跑马灯效果\n        theaterChaseRainbow(strip)\n```\n\n## 注意事项\n1. 确保使用正确的GPIO引脚(PWM或SPI)\n2. 电源稳定是关键，建议添加滤波电容\n3. 亮度不要设置过高(特别是多灯珠时)，以免电源过载\n4. 代码中LED_COUNT必须与实际灯珠数量一致\n5. 树莓派GPIO电压为3.3V，确保WS2812B支持此电压\n\n## 参考资源\n- WS2812B库GitHub地址: [https://github.com/rpi-ws281x/rpi-ws281x-python](https://github.com/rpi-ws281x/rpi-ws281x-python)\n\n通过本实验可以掌握树莓派控制WS2812B灯带的基本方法，并实现多种灯光效果。",
+    "metadata": {
+      "summary_type": "方法",
+      "tags": "AI, Python, HTTP, OS",
+      "created_at": "2025-05-28T03:40:23.388892",
+      "updated_at": "2025-05-28T03:40:23.388900",
+      "user_id": 1,
+      "source_url": "https://blog.csdn.net/tt212/article/details/122727786?ops_request_misc=%257B%2522request%255Fid%2522%253A%2522c89871e72c05d43c0e876c9afe9c8980%2522%252C%2522scm%2522%253A%252220140713.130102334..%2522%257D&request_id=c89871e72c05d43c0e876c9afe9c8980&biz_id=0&utm_medium=distribute.pc_search_result.none-task-blog-2~all~sobaiduend~default-1-122727786-null-null.142%5Ev102%5Epc_search_result_base6&utm_term=%E6%A0%91%E8%8E%93%E6%B4%BE%20%E8%B7%91%E9%A9%AC%E7%81%AF&spm=1018.2226.3001.4187"
+    },
+    "updated_at": "2025-05-29T21:48:04.408451"
+  },
+  "24": {
+    "title": "ROS启动程序配置方法总结",
+    "content": "# ROS启动程序配置方法总结\n\n## 1. ROS自带启动程序\n- ROS系统本身提供了一些自启动机制（原文未详细说明具体方法）\n\n## 2. 图形界面配置启动项\n\n### 配置步骤：\n1. 创建启动脚本\n   - 在`/etc/init.d/`路径下创建`start.sh`文件\n   - 编辑文件内容，添加需要自启动的指令\n\n2. 设置文件权限\n   ```bash\n   sudo chmod 777 start.sh\n   ```\n\n3. 添加至启动项\n   - 运行命令打开配置界面：\n     ```bash\n     gnome-session-properties\n     ```\n   - 将`start.sh`文件的完整路径添加到配置界面中\n\n## 3. rc.local启动方式\n\n### 配置步骤：\n1. 编辑rc-local.service文件\n   - 文件位置：`/lib/systemd/system/rc-local.service`\n   - 文件内容：\n     ```ini\n     [Unit]\n     Description=/etc/rc.local Compatibility\n     Documentation=man:systemd-rc-local-generator(8)\n     ConditionFileIsExecutable=/etc/rc.local\n     After=network.target\n\n     [Service]\n     Type=forking\n     ExecStart=/etc/rc.local start\n     TimeoutSec=0\n     RemainAfterExit=yes\n     GuessMainPID=no\n\n     [Install]\n     WantedBy=multi-user.target\n     ```\n\n2. 编辑rc.local文件\n   - 添加需要执行的指令（注意使用绝对路径）\n\n3. 设置文件权限\n   - 原文此处不完整，应为：\n     ```bash\n     sudo chmod +x /etc/rc.local\n     ```\n\n## 注意事项\n1. 使用rc.local方式时，必须确保：\n   - rc-local.service文件配置正确\n   - rc.local文件具有可执行权限\n   - 所有路径都使用绝对路径\n\n2. 图形界面方式更直观，适合不熟悉命令行的用户\n\n3. 修改系统文件需要管理员权限，记得使用sudo",
+    "metadata": {
+      "summary_type": "方法",
+      "tags": "AI, PID, OS",
+      "created_at": "2025-05-28T05:54:41.905866",
+      "updated_at": "2025-05-28T05:54:41.905871",
+      "user_id": 1,
+      "source_url": "https://blog.csdn.net/saixuncha6897/article/details/125388186"
+    },
+    "updated_at": "2025-05-29T21:48:04.409131"
+  },
+  "25": {
+    "title": "大型模型微调技术全面解析",
+    "content": "# 大型模型微调技术全面解析\n\n## 一、大型模型微调基础理论\n\n### 1. 大型语言模型(LLM)训练两阶段\n\n**阶段一：预训练阶段**\n- 在大规模无标签数据集上训练\n- 目标：掌握语言统计特征和基础知识\n- 属于无监督学习过程\n- 产出：基座模型(Base Model)，如GLM-130B、OpenAI主要模型\n\n**阶段二：微调阶段**\n- 在针对性任务数据集上进一步训练\n- 对模型权重进行细微调整\n- 产出：具备特定能力的模型，如gpt code系列、ChatGLM-6B等\n\n### 2. 微调定义与重要性\n\n**定义**：\n- 向模型输入特定领域数据集\n- 优化模型在特定领域NLP任务中的表现(如情感分析、实体识别等)\n\n**重要性**：\n- 装备大模型更精细化功能\n- 可整合本地知识库、构建领域问答系统\n- 类似机器学习模型的超参数优化\n- 支持多轮微调，持续优化模型能力\n\n## 二、Transformer架构基础\n\n### 1. 主要模块组成\n\n1. **输入嵌入层**\n   - 输入嵌入(Input Embedding)：将输入序列转化为嵌入表示\n   - 位置编码(Positional Encoding)：提供序列位置信息\n\n2. **编码器层(Encoder)**\n   - 多头自注意力(Multi-Head Attention)\n   - 残差连接和归一化(Add & Norm)\n   - 前馈神经网络(Feed Forward)\n\n3. **解码器层(Decoder)**\n   - 掩蔽多头自注意力(Masked Multi-Head Attention)\n   - 前馈神经网络(Feed Forward)\n\n4. **输出处理**\n   - 线性层(Linear)和Softmax层\n\n## 三、大型模型微调技术手段\n\n### 1. 全面微调(Fine-tuning)\n- 调整所有层和参数\n- 采用较小学习率和特定任务数据\n- 优点：充分利用预训练特征\n- 缺点：计算资源需求高\n\n### 2. 参数高效微调(PEFT)\n\n**特点**：\n- 最小化微调参数数量和计算复杂度\n- 资源受限情况下仍能有效适应新任务\n- 缩短训练时间和计算成本\n\n**主要方法**：\n\n#### (1) LoRA (Low-Rank Adaptation)\n- **原理**：\n  - 在关键权重矩阵中引入小型低秩矩阵\n  - 新权重 = 原始权重 + AB (A和B为低秩矩阵)\n- **优点**：\n  - 不显著增加计算负担\n  - 保留模型原有性能\n\n#### (2) QLoRA (Quantized Low-Rank Adaptation)\n- **特点**：\n  - 结合LoRA与4位量化技术\n  - 使用4-bit NormalFloat(NF4)存储和16-bit BrainFloat计算\n- **优势**：\n  - 大幅减少显存需求(如33B模型可在24GB显卡训练)\n\n#### (3) 适配器调整(Adapter Tuning)\n- **实现方式**：\n  - 在模型层间插入小型神经网络模块(适配器)\n  - 仅训练适配器参数，保持原始参数不变\n- **优势**：\n  - 高效灵活，快速适应新任务\n\n#### (4) 前缀调整(Prefix Tuning)\n- **特点**：\n  - 在输入序列前添加可训练的任务特定前缀\n  - 前缀为连续可微的虚拟标记(Soft Prompt)\n- **优势**：\n  - 节省存储空间和微调成本\n  - 单一模型适应多种任务\n\n#### (5) 提示调整(Prompt Tuning)\n- **实现**：\n  - 在输入中引入可学习嵌入向量作为提示\n  - 训练过程中更新提示向量\n- **与前缀调整区别**：\n  - 更倾向于模仿自然语言提示形式\n  - 使用较少向量作为任务引导\n\n#### (6) P-Tuning\n- **特点**：\n  - 使用可训练LSTM作为提示编码器\n  - 动态生成虚拟标记嵌入\n- **优势**：\n  - 更好的适应性和上下文理解\n  - 适合复杂任务和细粒度控制\n\n#### (7) P-Tuning v2\n- **改进**：\n  - 在多层插入连续提示(非仅输入层)\n  - 层间提示相互独立\n- **优势**：\n  - 增加可训练参数量\n  - 提升复杂NLU任务和小型模型表现\n\n### 3. 其他微调方法\n- **PILL**：通过插入可训练模块提升任务适应性\n- **SSF**：对模型特征进行缩放(Scaling)和位移(Shifting)\n\n## 四、微调策略与应用建议\n\n1. **微调与迁移学习**\n   - 微调是迁移学习的实例\n   - 即使小数据集也能实现高效学习\n\n2. **策略选择考量因素**\n   - 任务复杂性\n   - 可用数据量\n   - 计算资源\n   - 期望性能\n\n3. **保持泛化能力**\n   - 避免过度微调导致过拟合\n   - 平衡特定任务性能与通用能力\n\n## 五、学习资源与路径\n\n1. **学习路线**：从基础到前沿的AGI大模型学习路径\n2. **研究报告**：640套AI大模型研究报告合集\n3. **经典书籍**：GPT-3、BERT等大模型的PDF资料\n4. **商业应用**：AI大模型商业化落地方案\n\n> 注：本文内容基于技术原理总结，实际应用需结合具体场景和资源条件进行评估选择。",
+    "metadata": {
+      "summary_type": "方法",
+      "tags": "AI, 机器学习, OS",
+      "created_at": "2025-05-28T06:48:07.602018",
+      "updated_at": "2025-05-28T06:48:07.602021",
+      "user_id": 1,
+      "source_url": "https://blog.csdn.net/python123456_/article/details/138955495?ops_request_misc=%257B%2522request%255Fid%2522%253A%2522e3f4807ee912eab25c14884b10728e71%2522%252C%2522scm%2522%253A%252220140713.130102334..%2522%257D&request_id=e3f4807ee912eab25c14884b10728e71&biz_id=0&utm_medium=distribute.pc_search_result.none-task-blog-2~all~top_positive~default-1-138955495-null-null.142%5Ev102%5Epc_search_result_base6&utm_term=%E5%A4%A7%E6%A8%A1%E5%9E%8B%E5%BE%AE%E8%B0%83&spm=1018.2226.3001.4187"
+    },
+    "updated_at": "2025-05-29T21:48:04.410736"
+  },
+  "26": {
+    "title": "Vue与React核心区别技术笔记",
+    "content": "# Vue与React核心区别技术笔记\n\n## 相同点\n1. 都使用Virtual DOM\n2. 都采用组件化思想，开发流程基本一致\n3. 都是响应式设计，推崇单向数据流\n4. 都有成熟的社区生态，支持服务端渲染\n\n## 核心实现流程\n```text\nvue template/react jsx -> render函数 -> 生成VNode -> \n当有变化时，新老VNode diff -> diff算法对比 -> 更新真实DOM\n```\n\n## Virtual DOM的优势\n1. 减少直接DOM操作，提高性能\n2. 实现数据驱动视图\n3. 为函数式UI编程提供可能\n4. 支持跨平台渲染(如ReactNative, Weex)\n\n## 核心区别\n\n### 1. 设计思想不同\n| 特性        | Vue                          | React                        |\n|-------------|------------------------------|------------------------------|\n| 定位        | 渐进式开发，降低门槛         | 重新思考最佳实践             |\n| 编程范式    | 数据可变+双向绑定            | 函数式编程+数据不可变        |\n| 数据流      | 依赖收集                     | 单向数据流                   |\n| 适用场景    | 快速开发                     | 大型应用                     |\n\n### 2. 组件实现差异\n- **Vue**:\n  - 基于Options API\n  - `this`指向内部Vue实例\n  - 插件通过`Vue.install`注册\n\n- **React**:\n  - 基于类组件或函数组件\n  - `this`指向用户自定义类\n  - 四大组件类包装VNode\n\n### 3. 响应式原理\n| 特性        | Vue                          | React                        |\n|-------------|------------------------------|------------------------------|\n| 机制        | 依赖收集，自动优化           | 状态机，手动优化             |\n| 数据可变性  | 数据可变                     | 数据不可变(需setState)       |\n| 更新方式    | 自动追踪变化                 | 以组件为根默认全部重新渲染   |\n| 实现        | 递归监听data属性(Proxy)      | 新旧State替换                |\n\n### 4. Diff算法差异\n- **共同假设**:\n  1. 不同类型组件产生不同DOM结构\n  2. 同层子节点通过唯一key区分\n\n- **Vue**:\n  - 基于snabbdom库\n  - 使用双向链表\n  - 边对比边更新DOM\n\n- **React**:\n  - 使用diff队列\n  - 生成patch树\n  - 统一批量更新DOM\n\n### 5. 事件机制\n| 特性            | Vue                          | React                        |\n|-----------------|------------------------------|------------------------------|\n| 原生事件        | 标准Web事件                  | 包装后冒泡到document         |\n| 自定义事件      | 父子组件通信基础             | 无组件事件，通过props通信    |\n| 跨端支持        | 与Web DOM强绑定              | 事件机制可跨平台             |\n\n## 未来发展\n- **Vue**:\n  - 保持简单易用定位\n  - 继续依赖收集实现数据可变\n  - Vue3更新：Proxy响应式、Composition API\n\n- **React**:\n  - 坚持函数式编程\n  - 推动纯函数组件(Hooks)\n  - 减少副作用(淘汰class组件)\n\n## 总结对比\n| 维度       | Vue优势                      | React优势                    |\n|------------|-----------------------------|-----------------------------|\n| 学习曲线   | 更平缓                      | 更陡峭                      |\n| 开发效率   | 快速上手                    | 适合复杂应用                |\n| 灵活性     | 官方大包大揽                | 社区方案丰富                |\n| 性能优化   | 自动依赖追踪                | 需要手动优化                |\n| 跨平台     | Weex                        | React Native                |\n\n> 注：两者都是优秀框架，选择应基于项目需求、团队熟悉度和长期维护考虑",
+    "metadata": {
+      "summary_type": "算法",
+      "tags": "React, Vue, API, 算法, OS",
+      "created_at": "2025-05-28T07:16:09.251293",
+      "updated_at": "2025-05-28T07:16:09.251296",
+      "user_id": 1,
+      "source_url": "https://lq782655835.github.io/blogs/vue/diff-vue-vs-react.html"
+    },
+    "updated_at": "2025-05-29T21:48:04.411579"
+  },
+  "27": {
+    "title": "Node.js 内存溢出问题分析与解决方案",
+    "content": "# Node.js 内存溢出问题分析与解决方案\n\n## 问题概述\n- **错误信息**：`\"FATAL ERROR: Ineffective mark-compacts near heap limit Allocation failed - JavaScript\"`\n- **含义**：Node.js 应用内存使用量接近或超过 V8 引擎的堆内存限制\n\n## 主要原因\n1. **内存泄漏**：未释放不再使用的内存\n2. **大型数据处理**：一次性处理数据量过大\n3. **不当缓存策略**：缓存数据过多导致内存占用过高\n\n## 内存泄漏检测与修复\n\n### 常见内存泄漏原因\n- **全局变量滥用**：意外创建的全局变量无法被回收\n- **闭包使用不当**：导致某些对象无法被回收\n- **未移除的事件监听器**\n- **DOM引用**（在服务器端渲染场景中可能出现）\n\n### 检测工具\n- **Chrome DevTools**：进行堆快照分析\n- **Node.js专用工具**：\n  - `node-memwatch`\n  - `heapdump`\n\n### 代码审查要点\n1. 定期检查全局变量和事件监听器的使用\n2. 重构问题代码确保对象能被垃圾回收\n3. 避免已知会导致内存泄漏的编码模式\n\n### 运行时监控\n- 使用 `pm2` 等工具监控内存使用\n- 在代码中添加内存使用日志\n\n## 解决方案\n\n### 1. 增加内存限制\n```bash\nnode --max-old-space-size=4096 yourApp.js  # 将内存限制增加到4GB\n```\n\n### 2. 代码优化\n- 修复内存泄漏\n- 优化数据处理逻辑（分批处理大数据）\n- 使用更高效的数据结构和算法\n\n### 3. 使用内存分析工具\n- Chrome开发者工具的堆快照功能\n- 识别内存问题根源\n\n### 4. 垃圾回收策略\n- 谨慎使用手动触发垃圾回收\n\n## 预防措施\n1. **定期内存审计**：监控应用内存使用情况\n2. **代码审查**：确保代码质量，避免常见内存问题\n3. **性能测试**：部署前进行充分压力测试\n\n## 注意事项\n- 增加内存限制只是临时解决方案，应优先解决根本问题\n- 手动垃圾回收可能影响性能，需谨慎使用\n- 生产环境应建立长期内存监控机制",
+    "metadata": {
+      "summary_type": "算法",
+      "tags": "AI, Java, JavaScript, Node.js, 大数据",
+      "created_at": "2025-05-28T07:20:35.716124",
+      "updated_at": "2025-05-28T07:20:35.716129",
+      "user_id": 1,
+      "source_url": "https://blog.csdn.net/didibaba1520/article/details/135984132"
+    },
+    "updated_at": "2025-05-29T21:48:04.413980"
+  },
+  "28": {
+    "title": "异步爬虫技术笔记：多线程、多进程与协程",
+    "content": "# 异步爬虫技术笔记：多线程、多进程与协程\n\n## 一、线程与进程基础\n\n### 基本概念\n- **进程**：操作系统运行程序时开辟的内存区域，是资源分配单位（类比公司资源）\n- **线程**：进程内的执行单位（类比员工），CPU实际执行的是线程\n- 每个进程至少包含一个线程（主线程）\n\n### （一）单线程示例\n```python\ndef func():\n    for i in range(5):\n        print('i:',i)\n\nif __name__=='__main__':\n    func()\n    for k in range(5):\n        print('k:',k)\n```\n输出顺序固定，先执行func()，再执行主线程循环\n\n### （二）多线程实现\n\n#### 写法1：使用Thread类\n```python\nfrom threading import Thread\n\ndef func():\n    for i in range(5):\n        print('i:',i)\n\nif __name__=='__main__':\n    t = Thread(target=func)  # 创建线程对象\n    t.start()  # 启动线程\n    for k in range(5):\n        print('k:',k)\n```\n输出结果无序，因为主线程和新线程并发执行\n\n#### 写法2：继承Thread类\n```python\nfrom threading import Thread\n\nclass MyThread(Thread):\n    def run(self):  # 重写run方法\n        for i in range(5):\n            print('i',i)\n\nif __name__=='__main__':\n    t = MyThread()\n    t.start()  # 注意不能直接调用t.run()\n    for k in range(5):\n        print('k',k)\n```\n\n### （三）多进程实现\n```python\nfrom multiprocessing import Process\n\ndef func():\n    for i in range(1000):\n        print('进程B', i)\n\nif __name__ == '__main__':\n    p = Process(target=func)\n    p.start()\n    for k in range(1000):\n        print('进程A', k)\n```\n注意：多进程比多线程消耗更多资源\n\n## 二、线程池与进程池\n\n### （一）线程池\n```python\nfrom concurrent.futures import ThreadPoolExecutor\n\ndef mission(name):\n    for i in range(10000):\n        print(name, i)\n\nif __name__ == '__main__':\n    with ThreadPoolExecutor(50) as t:  # 50个线程的池\n        for k in range(100):\n            t.submit(mission, name='线程%s' % k)  # 提交100个任务\n```\n\n### （二）进程池\n```python\nfrom concurrent.futures import ProcessPoolExecutor\n\n# 使用方式与线程池相同，只需替换ThreadPoolExecutor为ProcessPoolExecutor\n```\n\n## 三、协程实现\n\n### 基本概念\n- 在单线程条件下实现多任务异步操作\n- 当遇到IO操作时切换到其他任务，提高CPU利用率\n\n### （一）async基础\n```python\nimport asyncio\n\nasync def func():\n    print('hello')\n\nif __name__ == '__main__':\n    asyncio.run(func())  # 必须使用asyncio运行协程\n```\n\n### 多任务协程示例\n```python\nimport asyncio\nimport time\n\nasync def func1():\n    print('你好')\n    await asyncio.sleep(3)  # 使用await挂起异步操作\n    print('你不好')\n\nasync def func2():\n    print('我好')\n    await asyncio.sleep(5)\n    print('我不好')\n\nasync def func3():\n    print('大家好')\n    await asyncio.sleep(7)\n    print('大家不好')\n\nasync def main():\n    tasks = [\n        asyncio.create_task(func1()),\n        asyncio.create_task(func2()),\n        asyncio.create_task(func3())\n    ]\n    await asyncio.wait(tasks)\n\nif __name__ == '__main__':\n    t1 = time.time()\n    asyncio.run(main())\n    t2 = time.time()\n    print(t2-t1)  # 总时间约7秒（最长任务的时间）\n```\n\n### 关键注意事项\n1. 必须使用`async`定义协程函数\n2. IO操作需要使用`await`挂起（如`await asyncio.sleep()`）\n3. 不能使用同步的`time.sleep()`，否则会破坏异步效果\n4. 通过`asyncio.create_task()`创建任务对象\n5. 使用`asyncio.wait()`将任务加入事件循环\n\n## 性能对比总结\n| 方式 | 资源消耗 | 适用场景 | 特点 |\n|------|---------|---------|------|\n| 多线程 | 中等 | IO密集型任务 | 受GIL限制 |\n| 多进程 | 高 | CPU密集型任务 | 可充分利用多核 |\n| 协程 | 低 | IO密集型任务 | 单线程内高效切换 |",
+    "metadata": {
+      "summary_type": "方法",
+      "tags": "AI, Python, 操作系统",
+      "created_at": "2025-05-28T07:29:36.654785",
+      "updated_at": "2025-05-28T07:29:36.654797",
+      "user_id": 1,
+      "source_url": "https://blog.csdn.net/m0_73716246/article/details/132214296"
+    },
+    "updated_at": "2025-05-29T21:48:04.414812"
+  },
+  "29": {
+    "title": "大型模型微调技术全面解析",
+    "content": "# 大型模型微调技术全面解析\n\n## 一、大型模型微调基础理论\n\n### 1. 训练两阶段\n- **预训练阶段**：\n  - 在大规模无标签数据集上训练\n  - 目标是掌握语言统计特征和基础知识\n  - 属于无监督学习过程\n  - 产出基座模型(Base Model)，如GLM-130B、OpenAI系列模型\n\n- **微调阶段**：\n  - 在特定任务数据集上进一步训练\n  - 对模型权重进行细微调整\n  - 产出专用模型，如gpt code系列、gpt text系列、ChatGLM-6B\n\n### 2. 微调定义与重要性\n- **定义**：通过输入特定领域数据集，优化模型在特定领域NLP任务中的表现\n- **重要性**：\n  - 为模型装备精细化功能\n  - 可整合本地知识库、构建领域问答系统\n  - 类比机器学习中的超参数优化\n  - 支持多轮微调持续优化模型能力\n\n## 二、Transformer架构基础\n\n### 核心模块组成\n1. **输入嵌入层**\n   - 输入嵌入(Input Embedding)：将单词转化为语义向量\n   - 位置编码(Positional Encoding)：提供序列位置信息\n\n2. **编码器层(Encoder)**\n   - 多头自注意力(Multi-Head Attention)\n   - 残差连接和归一化(Add & Norm)\n   - 前馈神经网络(Feed Forward)\n\n3. **解码器层(Decoder)**\n   - 掩蔽多头自注意力(Masked Multi-Head Attention)\n   - 前馈神经网络(Feed Forward)\n\n4. **输出处理**\n   - 线性层(Linear)和Softmax层\n\n## 三、微调技术手段\n\n### 1. 全面微调(Fine-tuning)\n- 调整所有层和参数\n- 采用较小学习率和特定任务数据\n- 优点：充分利用预训练特征\n- 缺点：计算资源需求高\n\n### 2. 参数高效微调(PEFT)\n- **目标**：最小化微调参数和计算复杂度\n- **优势**：\n  - 资源受限情况下快速适应新任务\n  - 缩短训练时间和计算成本\n\n#### 主流PEFT方法：\n\n**1. LoRA (Low-Rank Adaptation)**\n- 核心思想：引入小型低秩矩阵微调关键权重\n- 操作流程：\n  1. 确定目标权重矩阵\n  2. 引入低秩矩阵A(d×r)和B(r×d)\n  3. 计算低秩更新AB\n  4. 新权重 = 原始权重 + AB\n- 优势：计算负担小，保留原性能\n\n**2. QLoRA (Quantized LoRA)**\n- 核心创新：\n  - 4位量化(4-bit NormalFloat)\n  - 计算时反量化为bf16\n- 优势：显著减少显存需求(如33B模型可在24GB显卡训练)\n\n**3. 适配器调整(Adapter Tuning)**\n- 实现方式：在模型层间插入小型可训练适配器\n- 训练特点：\n  - 保持原始参数不变\n  - 仅训练适配器参数\n- 优势：高效灵活，快速适应新任务\n\n**4. 前缀调整(Prefix Tuning)**\n- 核心思想：在输入序列前添加可训练虚拟标记\n- 优势：\n  - 节省存储空间(保存前缀而非完整模型)\n  - 单一模型适应多任务\n\n**5. 提示调整(Prompt Tuning)**\n- 实现方式：引入可学习嵌入向量作为提示\n- 与前缀调整区别：\n  - 提示调整模仿自然语言提示\n  - 前缀调整提供直接上下文信息\n\n**6. P-Tuning**\n- 核心组件：使用LSTM作为提示编码器\n- LSTM优势：\n  - 捕捉时序特征\n  - 更好理解复杂上下文\n  - 参数共享提高泛化能力\n\n**7. P-Tuning v2**\n- 改进点：\n  - 多层插入连续提示\n  - 层间提示相互独立\n- 优势：\n  - 增加可训练参数量\n  - 提升复杂NLU任务表现\n\n### 其他PEFT方法\n- **PILL**：通过可训练插件提升任务适应性\n- **SSF**：对模型特征进行缩放和位移优化\n\n## 四、微调策略选择\n\n### 关键考量因素\n1. **任务复杂性**：复杂任务适合P-Tuning v2\n2. **数据量**：小数据集适合迁移学习\n3. **计算资源**：受限时选择LoRA/适配器调整\n4. **性能需求**：平衡精度与效率\n\n### 注意事项\n- 避免过度微调导致过拟合\n- 保持模型泛化能力\n- 根据实际需求权衡方法选择\n\n## 五、学习资源建议\n1. **学习路线**：从基础到前沿系统学习\n2. **技术报告**：研究640+份大模型报告\n3. **经典文献**：深入理解GPT/BERT等模型\n4. **商业实践**：学习落地应用方案\n\n> 注：本文内容基于原始技术文章整理，保留了核心技术术语和关键方法论，未添加原文外信息。微调方法选择应结合实际应用场景和资源条件进行评估。",
+    "metadata": {
+      "summary_type": "方法",
+      "tags": "AI, 机器学习, OS",
+      "created_at": "2025-05-28T13:23:18.906897",
+      "updated_at": "2025-05-28T13:23:18.906902",
+      "user_id": 1,
+      "source_url": "https://blog.csdn.net/python123456_/article/details/138955495?ops_request_misc=%257B%2522request%255Fid%2522%253A%2522790f09b4b97b78fb0ded314bf64dc0e6%2522%252C%2522scm%2522%253A%252220140713.130102334..%2522%257D&request_id=790f09b4b97b78fb0ded314bf64dc0e6&biz_id=0&utm_medium=distribute.pc_search_result.none-task-blog-2~all~top_positive~default-1-138955495-null-null.142%5Ev102%5Epc_search_result_base6&utm_term=%E5%A4%A7%E6%A8%A1%E5%9E%8B%E5%BE%AE%E8%B0%83&spm=1018.2226.3001.4187"
+    },
+    "updated_at": "2025-05-29T21:48:04.415378"
   }
 }

@@ -147,7 +147,7 @@
         <el-form-item label="文件附件" prop="attachments">
           <el-upload
             class="attachment-uploader"
-            :action="`/api/v1/meetings/attachments`"
+            :action="`/api/v1/meetings/attachments/upload`"
             :headers="uploadHeaders"
             :on-success="handleUploadSuccess"
             :on-error="handleUploadError"

@@ -128,6 +128,14 @@ def update_project(id):
     """更新项目信息"""
     # 获取当前用户
     current_user_id = get_jwt_identity()
+    
+    # 确保用户ID是整数类型
+    try:
+        if isinstance(current_user_id, str) and current_user_id.isdigit():
+            current_user_id = int(current_user_id)
+    except (ValueError, TypeError):
+        print(f"用户ID类型转换失败: {current_user_id}, 类型: {type(current_user_id)}")
+    
     user = User.query.get(current_user_id)
     if not user:
         return bad_request('用户不存在')
@@ -135,11 +143,18 @@ def update_project(id):
     # 查找项目
     project = Project.query.get_or_404(id)
     
+    # 添加调试信息
+    print(f"更新项目权限检查 - 项目ID: {id}, 用户ID: {current_user_id}, 项目创建者ID: {project.creator_id}")
+    print(f"用户ID类型: {type(current_user_id)}, 创建者ID类型: {type(project.creator_id)}")
+    
     # 验证权限（只有创建者或项目成员可以修改）
     is_creator = project.creator_id == current_user_id
     is_member = any(member.user_id == current_user_id for member in project.members)
     
+    print(f"是否为创建者: {is_creator}, 是否为成员: {is_member}")
+    
     if not (is_creator or is_member):
+        print(f"权限验证失败: 用户 {current_user_id} 尝试更新项目 {id}，但创建者是 {project.creator_id}")
         return jsonify({'msg': '无权限修改此项目'}), 403
     
     # 解析请求数据
