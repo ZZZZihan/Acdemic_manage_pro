@@ -12,6 +12,9 @@ from .knowledge_base import knowledge_base
 # 配置日志
 logger = logging.getLogger(__name__)
 
+# 设置Hugging Face镜像源
+os.environ['HF_ENDPOINT'] = 'https://hf-mirror.com'
+
 class FlashRAGService:
     """
     FlashRAG服务类：基于中国人民大学NLPIR实验室开发的轻量高效RAG框架思路实现
@@ -24,16 +27,32 @@ class FlashRAGService:
         self.knowledge_base = knowledge_base
         
         # 初始化向量模型
-        try:
-            # 我们使用多语言模型以支持中英文
-            self.model = SentenceTransformer('paraphrase-multilingual-MiniLM-L12-v2')
-            self.dimension = self.model.get_sentence_embedding_dimension()
-            logger.info(f"成功加载FlashRAG向量模型，维度: {self.dimension}")
-        except Exception as e:
-            logger.error(f"加载FlashRAG向量模型失败: {str(e)}")
-            self.model = None
-            self.dimension = 384  # 默认维度
-            raise RuntimeError(f"加载FlashRAG向量模型失败，服务无法正常工作: {str(e)}")
+        self.model = None
+        self.dimension = 384  # 默认维度
+        
+        # 尝试多个模型，按优先级顺序
+        model_candidates = [
+            
+            'paraphrase-multilingual-MiniLM-L12-v2',  # 多语言模型
+            'all-mpnet-base-v2',  # 备选模型
+            'all-MiniLM-L6-v2'  # 备选模型
+        ]
+        
+        for model_name in model_candidates:
+            try:
+                logger.info(f"尝试加载模型: {model_name}")
+                self.model = SentenceTransformer(model_name)
+                self.dimension = self.model.get_sentence_embedding_dimension()
+                logger.info(f"成功加载FlashRAG向量模型: {model_name}，维度: {self.dimension}")
+                break
+            except Exception as e:
+                logger.warning(f"加载模型 {model_name} 失败: {str(e)}")
+                continue
+        
+        if self.model is None:
+            logger.error("所有向量模型加载失败")
+            logger.warning("FlashRAG服务将在降级模式下运行，仅支持基本的文本匹配搜索")
+            # 不抛出异常，允许服务在降级模式下运行
         
         # 初始化FAISS索引
         self.index = None
@@ -47,9 +66,6 @@ class FlashRAGService:
     def _init_index(self):
         """初始化FAISS索引"""
         try:
-            # 创建FAISS索引（使用L2距离）
-            self.index = faiss.IndexFlatL2(self.dimension)
-            
             # 从知识库加载文档并索引
             documents = self.knowledge_base.get_all_documents()
             
@@ -73,18 +89,27 @@ class FlashRAGService:
                             'metadata': doc.get('metadata', {})
                         }
                 
-                # 如果有文档，创建向量嵌入
-                if chunks and self.model:
-                    embeddings = self._create_embeddings(chunks)
-                    if len(embeddings) > 0:
-                        self.index.add(embeddings)
-                        logger.info(f"已为{len(chunks)}个文档块创建索引")
+                # 如果有向量模型，创建FAISS索引和向量嵌入
+                if self.model:
+                    # 创建FAISS索引（使用L2距离）
+                    self.index = faiss.IndexFlatL2(self.dimension)
+                    
+                    if chunks:
+                        embeddings = self._create_embeddings(chunks)
+                        if len(embeddings) > 0:
+                            self.index.add(embeddings)
+                            logger.info(f"已为{len(chunks)}个文档块创建索引")
+                else:
+                    # 在降级模式下，不使用向量索引
+                    self.index = None
+                    logger.info(f"在降级模式下处理了{len(chunks)}个文档块")
             
             logger.info("FlashRAG索引初始化完成")
         except Exception as e:
             logger.exception(f"初始化FlashRAG索引时出错: {str(e)}")
             self.index = None
-            raise RuntimeError(f"初始化FlashRAG索引失败，服务无法正常工作: {str(e)}")
+            # 不抛出异常，允许服务在降级模式下运行
+            logger.warning("FlashRAG索引初始化失败，将使用基本文本搜索")
     
     def _create_embeddings(self, texts):
         """为文本列表创建向量嵌入"""
@@ -164,8 +189,8 @@ class FlashRAGService:
     
     def search(self, query, top_k=5):
         """搜索与查询最相关的文档"""
-        if not query or not self.index:
-            raise ValueError("查询为空或索引未初始化")
+        if not query:
+            raise ValueError("查询为空")
         
         # 检查缓存
         cache_key = self._generate_cache_key(query, top_k)
@@ -175,39 +200,42 @@ class FlashRAGService:
             return cached_result
         
         try:
-            # 生成查询的向量表示
-            if not self.model:
-                raise RuntimeError("向量模型未初始化，无法执行搜索")
-            
-            query_vector = self.model.encode([query], convert_to_tensor=False, show_progress_bar=False)
-            query_vector = np.array(query_vector).astype(np.float32)
-            
-            # 搜索最近的向量
-            distances, indices = self.index.search(query_vector, top_k)
-            
-            # 获取搜索结果
-            results = []
-            for i, idx in enumerate(indices[0]):
-                if idx != -1 and idx < len(self.document_map):  # 确保索引有效
-                    chunk_id = list(self.document_map.keys())[idx]
-                    doc = self.document_map[chunk_id]
-                    
-                    # 计算相似度分数（从L2距离转换为相似度）
-                    max_distance = 100  # 假设的最大距离值
-                    similarity = max(0, 1 - (distances[0][i] / max_distance))
-                    
-                    result = {
-                        'id': doc['original_id'],
-                        'chunk_id': chunk_id,
-                        'title': doc['title'],
-                        'content': doc['content'],
-                        'similarity': float(similarity),
-                        'metadata': doc.get('metadata', {})
-                    }
-                    results.append(result)
-            
-            # 使用相似度进行排序
-            results = sorted(results, key=lambda x: x['similarity'], reverse=True)
+            # 如果有向量模型和索引，使用向量搜索
+            if self.model and self.index:
+                # 生成查询的向量表示
+                query_vector = self.model.encode([query], convert_to_tensor=False, show_progress_bar=False)
+                query_vector = np.array(query_vector).astype(np.float32)
+                
+                # 搜索最近的向量
+                distances, indices = self.index.search(query_vector, top_k)
+                
+                # 获取搜索结果
+                results = []
+                for i, idx in enumerate(indices[0]):
+                    if idx != -1 and idx < len(self.document_map):  # 确保索引有效
+                        chunk_id = list(self.document_map.keys())[idx]
+                        doc = self.document_map[chunk_id]
+                        
+                        # 计算相似度分数（从L2距离转换为相似度）
+                        max_distance = 100  # 假设的最大距离值
+                        similarity = max(0, 1 - (distances[0][i] / max_distance))
+                        
+                        result = {
+                            'id': doc['original_id'],
+                            'chunk_id': chunk_id,
+                            'title': doc['title'],
+                            'content': doc['content'],
+                            'similarity': float(similarity),
+                            'metadata': doc.get('metadata', {})
+                        }
+                        results.append(result)
+                
+                # 使用相似度进行排序
+                results = sorted(results, key=lambda x: x['similarity'], reverse=True)
+            else:
+                # 降级模式：使用基本的文本匹配搜索
+                logger.info("使用降级模式进行文本搜索")
+                results = self._fallback_search(query, top_k)
             
             # 添加到缓存
             self._add_to_cache(cache_key, results)
@@ -215,7 +243,59 @@ class FlashRAGService:
             return results
         except Exception as e:
             logger.exception(f"FlashRAG搜索时出错: {str(e)}")
-            raise RuntimeError(f"搜索执行失败: {str(e)}")
+            # 在出错时尝试降级搜索
+            try:
+                logger.info("尝试使用降级搜索")
+                return self._fallback_search(query, top_k)
+            except Exception as fallback_error:
+                logger.exception(f"降级搜索也失败: {str(fallback_error)}")
+                return []
+    
+    def _fallback_search(self, query, top_k=5):
+        """降级搜索：使用基本的文本匹配"""
+        query_lower = query.lower()
+        keywords = query_lower.split()
+        
+        results = []
+        
+        for chunk_id, doc in self.document_map.items():
+            content_lower = doc['content'].lower()
+            title_lower = doc['title'].lower()
+            
+            # 计算匹配分数
+            score = 0
+            
+            # 检查完整查询是否在文档中
+            if query_lower in title_lower:
+                score += 5
+            if query_lower in content_lower:
+                score += 3
+            
+            # 检查关键词匹配
+            for keyword in keywords:
+                if len(keyword) > 1:  # 忽略单字符关键词
+                    if keyword in title_lower:
+                        score += 2
+                    if keyword in content_lower:
+                        score += 1
+            
+            if score > 0:
+                # 将分数转换为相似度（0-1之间）
+                similarity = min(1.0, score / 10.0)
+                
+                result = {
+                    'id': doc['original_id'],
+                    'chunk_id': chunk_id,
+                    'title': doc['title'],
+                    'content': doc['content'],
+                    'similarity': float(similarity),
+                    'metadata': doc.get('metadata', {})
+                }
+                results.append(result)
+        
+        # 按相似度排序并返回前top_k个结果
+        results = sorted(results, key=lambda x: x['similarity'], reverse=True)
+        return results[:top_k]
     
     def _generate_cache_key(self, query, top_k):
         """生成缓存键"""
