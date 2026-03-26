@@ -110,7 +110,7 @@ const rules = {
     { required: true, message: '请输入描述', trigger: 'blur' }
   ],
   url: [
-    { pattern: /^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})([\/\w .-]*)*\/?$/, message: '请输入有效的URL', trigger: 'blur' }
+    { pattern: /^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})([/\w .-]*)*\/?$/, message: '请输入有效的URL', trigger: 'blur' }
   ]
 }
 
