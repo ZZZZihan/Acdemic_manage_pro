@@ -107,7 +107,11 @@ const handleRegister = async () => {
       loading.value = true
       try {
         // 移除确认密码字段
-        const { confirmPassword, ...userData } = registerData
+        const userData = {
+          username: registerData.username,
+          email: registerData.email,
+          password: registerData.password
+        }
         
         await authStore.register(userData)
         ElMessage.success('注册成功，请登录')

@@ -63,7 +63,6 @@
 <script setup>
 import { computed } from 'vue'
 import { useRoute } from 'vue-router'
-import { useAuthStore } from '@/stores/auth'
 import {
   HomeFilled,
   Trophy,
@@ -75,7 +74,6 @@ import {
 } from '@element-plus/icons-vue'
 
 const route = useRoute()
-const authStore = useAuthStore()
 
 const activeMenu = computed(() => {
   return route.path

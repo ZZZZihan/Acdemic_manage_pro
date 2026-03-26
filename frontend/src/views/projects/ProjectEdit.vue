@@ -404,7 +404,7 @@ export default {
         const token = localStorage.getItem('token')
         
         // 发送更新请求
-        const response = await axios.put(`/api/v1/projects/${projectId}`, updateData, {
+        await axios.put(`/api/v1/projects/${projectId}`, updateData, {
           headers: {
             'Authorization': `Bearer ${token}`
           }
