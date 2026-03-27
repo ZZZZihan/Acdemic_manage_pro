@@ -34,7 +34,7 @@
               <el-tag type="info">{{ selectedProfile?.tier || '-' }} tier</el-tag>
             </div>
           </template>
-          <el-select v-model="selectedProvider" class="full-width">
+          <el-select v-model="selectedProvider" class="full-width" data-testid="provider-select">
             <el-option
               v-for="provider in providers"
               :key="provider.name"
@@ -105,12 +105,19 @@
           </template>
 
           <div class="message-stack">
-            <div v-for="message in messages" :key="message.id" class="message-item" :class="message.role">
+            <div
+              v-for="message in messages"
+              :key="message.id"
+              class="message-item"
+              :class="message.role"
+              data-testid="thread-message"
+              :data-role="message.role"
+            >
               <div class="message-meta">
                 <span>{{ message.role === 'assistant' ? 'Copilot' : 'You' }}</span>
-                <small>{{ message.provider || 'workspace' }}</small>
+                <small data-testid="message-provider">{{ message.provider || 'workspace' }}</small>
               </div>
-              <p>{{ message.content }}</p>
+              <p data-testid="message-content">{{ message.content }}</p>
             </div>
             <div v-if="!messages.length" class="message-empty">
               这里会汇总线程消息、工具动作和审批结果。先发送一条指令试运行 2.0 骨架。
