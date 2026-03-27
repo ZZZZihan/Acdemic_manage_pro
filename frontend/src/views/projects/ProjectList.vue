@@ -192,7 +192,7 @@
 import { ref, reactive, onMounted } from 'vue'
 import axios from '@/utils/axios'
 import { ElMessage } from 'element-plus'
-import { useRouter, useRoute } from 'vue-router'
+import { useRoute } from 'vue-router'
 import { Loading } from '@element-plus/icons-vue'
 
 export default {
@@ -202,7 +202,6 @@ export default {
   },
   setup() {
     // 获取路由实例
-    const router = useRouter()
     const route = useRoute()
     
     // 数据状态

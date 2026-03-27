@@ -92,7 +92,6 @@
 import { ref, reactive, onMounted } from 'vue'
 import { ElMessage } from 'element-plus'
 import { useAuthStore } from '@/stores/auth'
-import axios from '@/utils/axios'
 
 const authStore = useAuthStore()
 const activeTab = ref('info')

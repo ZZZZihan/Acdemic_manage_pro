@@ -15,17 +15,27 @@ def register():
     
     if not all(k in data for k in ('email', 'username', 'password')):
         return bad_request('缺少必要字段')
+
+    if not all(isinstance(data.get(k), str) for k in ('email', 'username', 'password')):
+        return bad_request('邮箱、用户名和密码必须是字符串')
+
+    email = data.get('email', '').strip()
+    username = data.get('username', '').strip()
+    password = data.get('password', '')
+
+    if not email or not username or not password.strip():
+        return bad_request('邮箱、用户名和密码不能为空')
     
-    if User.query.filter_by(email=data['email']).first():
+    if User.query.filter_by(email=email).first():
         return bad_request('邮箱已被注册')
     
-    if User.query.filter_by(username=data['username']).first():
+    if User.query.filter_by(username=username).first():
         return bad_request('用户名已被使用')
     
     user = User(
-        email=data['email'],
-        username=data['username'],
-        password=data['password'],
+        email=email,
+        username=username,
+        password=password,
         name=data.get('name', ''),
         location=data.get('location', '')
     )
@@ -46,8 +56,13 @@ def login():
     
     email = data.get('email')
     password = data.get('password')
+
+    if not isinstance(email, str) or not isinstance(password, str):
+        return bad_request('邮箱和密码必须是字符串')
+
+    email = email.strip()
     
-    if not email or not password:
+    if not email or not password.strip():
         return bad_request('邮箱和密码不能为空')
     
     user = User.query.filter_by(email=email).first()
