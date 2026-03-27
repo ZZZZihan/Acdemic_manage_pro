@@ -171,35 +171,45 @@ class AppServices:
             lock_to_requested=lock_to_requested,
         )
         routing_trace: list[dict[str, str]] = []
-        if requires_external_write and not requested_profile.supports_external_write and not lock_to_requested:
+        resolved_provider = provider
+        if requires_external_write and lock_to_requested and not requested_profile.supports_external_write:
             routing_trace.append(
                 {
                     'provider': provider,
-                    'action': 'skip',
-                    'reason': 'capability_mismatch_external_write',
+                    'action': 'select',
+                    'reason': 'local_only_lock_no_external_write',
                 }
             )
-        resolved_provider = provider
-        for candidate in chain:
-            candidate_profile = self.provider_registry.get(candidate)
-            if requires_external_write and not candidate_profile.supports_external_write:
+        else:
+            if requires_external_write and not requested_profile.supports_external_write and not lock_to_requested:
                 routing_trace.append(
                     {
-                        'provider': candidate,
+                        'provider': provider,
                         'action': 'skip',
                         'reason': 'capability_mismatch_external_write',
                     }
                 )
-                continue
-            resolved_provider = candidate
-            routing_trace.append(
-                {
-                    'provider': candidate,
-                    'action': 'select',
-                    'reason': 'first_capable',
-                }
-            )
-            break
+
+            for candidate in chain:
+                candidate_profile = self.provider_registry.get(candidate)
+                if requires_external_write and not candidate_profile.supports_external_write:
+                    routing_trace.append(
+                        {
+                            'provider': candidate,
+                            'action': 'skip',
+                            'reason': 'capability_mismatch_external_write',
+                        }
+                    )
+                    continue
+                resolved_provider = candidate
+                routing_trace.append(
+                    {
+                        'provider': candidate,
+                        'action': 'select',
+                        'reason': 'first_capable',
+                    }
+                )
+                break
 
         resolved_profile = self.provider_registry.get(resolved_provider)
         user_message = ConversationMessage(

@@ -91,6 +91,25 @@ class TestV2Api(unittest.TestCase):
         self.assertTrue(payload['routing']['requires_external_write'])
         self.assertGreaterEqual(len(payload['routing']['trace']), 2)
 
+    def test_ollama_external_write_stays_local_without_approval(self):
+        thread_id = self.client.post('/api/v2/chat/threads', json={'title': '本地锁定路由测试'}).json()['thread']['id']
+        response = self.client.post(
+            '/api/v2/chat/messages',
+            json={
+                'thread_id': thread_id,
+                'provider': 'ollama',
+                'content': '请在 Google Calendar 创建一个明天下午两点的项目评审会议。',
+            },
+        )
+
+        self.assertEqual(response.status_code, 200)
+        payload = response.json()
+        self.assertEqual(payload['routing']['requested_provider'], 'ollama')
+        self.assertEqual(payload['routing']['resolved_provider'], 'ollama')
+        self.assertTrue(payload['routing']['lock_to_requested'])
+        self.assertFalse(payload['approval_requested'])
+        self.assertIn('本地/只读能力', payload['assistant']['content'])
+
     def test_approval_decision_updates_state_and_generates_activity(self):
         thread_id = self.client.post('/api/v2/chat/threads', json={'title': '审批测试'}).json()['thread']['id']
         message_response = self.client.post(
