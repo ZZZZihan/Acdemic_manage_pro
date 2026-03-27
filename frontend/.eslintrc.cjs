@@ -1,5 +1,6 @@
 module.exports = {
   root: true,
+  parser: 'vue-eslint-parser',
   env: {
     browser: true,
     es2021: true,
@@ -10,6 +11,7 @@ module.exports = {
     'plugin:vue/vue3-essential',
   ],
   parserOptions: {
+    parser: '@typescript-eslint/parser',
     ecmaVersion: 'latest',
     sourceType: 'module',
   },

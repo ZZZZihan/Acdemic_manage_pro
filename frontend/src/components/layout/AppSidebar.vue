@@ -5,9 +5,14 @@
       class="sidebar-menu"
       :router="true"
     >
-      <el-menu-item index="/">
+      <el-menu-item index="/workspace">
         <el-icon><HomeFilled /></el-icon>
-        <span>首页</span>
+        <span>智能工作台</span>
+      </el-menu-item>
+
+      <el-menu-item index="/overview">
+        <el-icon><Grid /></el-icon>
+        <span>系统总览</span>
       </el-menu-item>
       
       <el-sub-menu index="/achievements">
@@ -65,6 +70,7 @@ import { computed } from 'vue'
 import { useRoute } from 'vue-router'
 import {
   HomeFilled,
+  Grid,
   Trophy,
   Document,
   Histogram,
