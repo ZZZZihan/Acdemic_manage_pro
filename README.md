@@ -204,6 +204,27 @@ npm install
 npm run dev
 ```
 
+### 工作台端到端测试（真实浏览器）
+
+新增了 Playwright E2E 流程，覆盖 `/workspace` 的关键链路（发送消息、触发审批、任务动作、审批通过）。
+
+```bash
+cd frontend
+npm run e2e -- tests/e2e/workspace-copilot.spec.ts
+```
+
+该命令会自动：
+1. 启动 `backend v1 + backend v2 + frontend`
+2. 执行真实浏览器自动化测试
+3. 测试结束后自动关闭服务
+
+默认要求当前没有已运行的本地栈（确保测试隔离和可重复）。如确实要复用现有运行中的服务，可显式执行：
+
+```bash
+cd frontend
+E2E_ALLOW_REUSE=1 npm run e2e -- tests/e2e/workspace-copilot.spec.ts
+```
+
 ### 本地AI服务配置（可选）
 
 1. 安装Ollama

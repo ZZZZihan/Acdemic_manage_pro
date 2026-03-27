@@ -6,7 +6,9 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs --fix --ignore-path .gitignore"
+    "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs --fix --ignore-path .gitignore",
+    "e2e": "bash ./scripts/run-e2e.sh",
+    "e2e:headed": "bash ./scripts/run-e2e.sh --headed"
   },
   "dependencies": {
     "@wangeditor/editor": "^5.1.23",
@@ -22,6 +24,7 @@
     "vue-toastification": "^2.0.0-rc.5"
   },
   "devDependencies": {
+    "@playwright/test": "^1.55.0",
     "@typescript-eslint/parser": "^8.24.1",
     "@vitejs/plugin-vue": "^4.0.0",
     "eslint": "^8.36.0",
