@@ -77,7 +77,7 @@
             </div>
           </template>
           <div class="quick-actions">
-            <el-button class="action-button" plain @click="seedKnowledge">
+            <el-button class="action-button" plain data-testid="quick-action-seed-knowledge" @click="seedKnowledge">
               预置一条 MCP 知识
             </el-button>
             <el-button class="action-button" plain @click="applyPrompt('请安排下周二下午三点的项目评审会议，并通知大家。')">

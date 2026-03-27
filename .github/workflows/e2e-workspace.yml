@@ -39,4 +39,4 @@ jobs:
 
       - name: Run workspace E2E
         working-directory: frontend
-        run: npm run e2e -- tests/e2e/workspace-copilot.spec.ts tests/e2e/provider-routing.spec.ts tests/e2e/ollama-local-only.spec.ts
+        run: npm run e2e -- tests/e2e/workspace-copilot.spec.ts tests/e2e/provider-routing.spec.ts tests/e2e/ollama-local-only.spec.ts tests/e2e/knowledge-ingest.spec.ts
