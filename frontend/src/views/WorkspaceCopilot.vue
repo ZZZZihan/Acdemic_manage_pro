@@ -3,7 +3,7 @@
     <section class="hero">
       <div class="hero-copy">
         <p class="eyebrow">Acdemic Manage Pro 2.0</p>
-        <h1>智能工作台</h1>
+        <h1 data-testid="workspace-title">智能工作台</h1>
         <p class="subtitle">
           用一个线程统筹任务、会议、知识和外部协同。当前骨架已经接上多 provider
           目录、审批流、知识入库和 MCP 能力目录。
@@ -83,7 +83,12 @@
             <el-button class="action-button" plain @click="applyPrompt('请安排下周二下午三点的项目评审会议，并通知大家。')">
               会议安排
             </el-button>
-            <el-button class="action-button" plain @click="applyPrompt('请把这周需要推进的项目任务整理成行动项。')">
+            <el-button
+              class="action-button"
+              plain
+              data-testid="quick-action-task"
+              @click="applyPrompt('请把这周需要推进的项目任务整理成行动项。')"
+            >
               任务梳理
             </el-button>
           </div>
@@ -122,7 +127,7 @@
             />
             <div class="composer-actions">
               <span class="composer-hint">当前 provider: {{ selectedProvider }}</span>
-              <el-button type="primary" :loading="sending" @click="sendMessage">
+              <el-button type="primary" :loading="sending" data-testid="send-message-button" @click="sendMessage">
                 发送到工作台
               </el-button>
             </div>
@@ -139,12 +144,19 @@
             </div>
           </template>
           <div v-if="approvals.length" class="approval-list">
-            <div v-for="approval in approvals" :key="approval.id" class="approval-card">
+            <div v-for="approval in approvals" :key="approval.id" class="approval-card" data-testid="approval-card">
               <strong>{{ approval.tool_name }}</strong>
               <p>{{ approval.rationale }}</p>
               <small>{{ approval.provider }} · {{ approval.status }}</small>
               <div class="approval-actions">
-                <el-button size="small" type="primary" @click="decideApproval(approval.id, 'approved')">批准</el-button>
+                <el-button
+                  size="small"
+                  type="primary"
+                  data-testid="approval-approve-button"
+                  @click="decideApproval(approval.id, 'approved')"
+                >
+                  批准
+                </el-button>
                 <el-button size="small" plain @click="decideApproval(approval.id, 'rejected')">拒绝</el-button>
               </div>
             </div>
