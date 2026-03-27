@@ -5,3 +5,10 @@ venv/
 *.log
 .DS_Store
 .env
+.runtime_logs/
+.runtime_pids/
+.venv_v2/
+backend_env/
+e2e-workspace.png
+frontend/playwright-report/
+frontend/test-results/

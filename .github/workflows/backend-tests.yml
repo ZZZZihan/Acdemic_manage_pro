@@ -1,0 +1,56 @@
+name: backend-tests
+
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
+
+jobs:
+  backend-v1:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install backend v1 dependencies
+        run: |
+          python -m venv .venv_v1
+          .venv_v1/bin/pip install --upgrade pip
+          .venv_v1/bin/pip install -r backend/requirements.txt
+
+      - name: Run backend v1 tests
+        run: |
+          .venv_v1/bin/python -m unittest backend/tests/test_auth_api.py backend/tests/test_mock_data.py -v
+
+  backend-v2:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install backend v2 dependencies
+        run: |
+          python -m venv .venv_v2_ci
+          .venv_v2_ci/bin/pip install --upgrade pip
+          .venv_v2_ci/bin/pip install -r backend/requirements-v2.txt
+
+      - name: Run backend v2 tests
+        run: |
+          .venv_v2_ci/bin/python -m unittest backend/tests/test_v2_services.py backend/tests/test_v2_api.py -v

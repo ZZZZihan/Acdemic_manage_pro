@@ -89,7 +89,7 @@ instance.interceptors.response.use(
         case 400:
           ElMessage.error(error.response.data.message || error.response.data.msg || '请求参数错误')
           break
-        case 401:
+        case 401: {
           console.error('认证失败，检查错误类型')
           
           // 检查错误信息，区分token过期和权限不足
@@ -161,12 +161,14 @@ instance.interceptors.response.use(
             }
           }
           break
-        case 403:
+        }
+        case 403: {
           // 详细说明权限问题
           const errorMsg = error.response.data.msg || '没有权限执行此操作'
           console.error('权限错误:', errorMsg)
           ElMessage.error(errorMsg)
           break
+        }
         case 404:
           ElMessage.error('请求的资源不存在')
           break

@@ -44,7 +44,7 @@
           type="textarea"
           :rows="2"
           placeholder="输入您的问题..."
-          @keyup.enter.native="sendMessage"
+          @keyup.enter="sendMessage"
           :disabled="loading"
         />
         <el-button 
@@ -66,14 +66,10 @@
           <el-option label="Ollama" value="ollama" />
         </el-select>
         
-        <el-switch
-          v-model="useRag"
-          active-text="RAG"
-          inactive-text=""
-          size="small"
-          class="horizontal-switch"
-          style="margin-left: 10px;"
-        />
+        <el-select v-model="chatMode" placeholder="选择模式" size="small" style="min-width: 120px; margin-left: 10px;">
+          <el-option label="RAG模式" value="rag" />
+          <el-option label="普通模式" value="normal" />
+        </el-select>
       </div>
       
       <el-button size="small" type="danger" @click="clearChat">清空对话</el-button>
@@ -91,11 +87,11 @@ const messagesContainer = ref(null)
 const userInput = ref('')
 const loading = ref(false)
 const provider = ref('deepseek')
-const useRag = ref(true)  // 默认启用RAG功能
+const chatMode = ref('rag')  // 默认使用RAG模式
 const messages = reactive([
   {
     role: 'ai',
-    content: '您好！我是您的知识库助手，您可以向我提问关于所有技术总结的任何问题。',
+    content: '您好！我是您的智能助手，支持两种问答模式：\n\n🔍 **RAG模式**：基于知识库的智能检索问答\n💬 **普通模式**：通用AI问答\n\n请选择合适的模式开始对话！',
     time: new Date()
   }
 ])
@@ -136,10 +132,10 @@ const sendMessage = async () => {
   // 发送请求
   loading.value = true
   try {
-    // 根据是否启用RAG选择不同的API端点
-    const endpoint = useRag.value 
-      ? '/api/v1/rag/chat' 
-      : '/api/v1/knowledge_base/chat'
+    // 根据模式选择不同的API端点
+    const endpoint = chatMode.value === 'rag' 
+      ? '/api/v1/rag/chat'     // RAG模式：使用混合检索（向量+关键词）
+      : '/api/v1/ai/chat'      // 普通模式：直接AI问答
     
     const response = await axios.post(endpoint, {
       query: input,
@@ -152,12 +148,12 @@ const sendMessage = async () => {
         role: 'ai',
         content: response.data.data.answer,
         time: new Date(),
-        provider: useRag.value ? response.data.data.model : response.data.data.provider,
+        provider: response.data.data.model || response.data.data.provider,
         sources: response.data.data.sources || []
       }
       
       // 如果是RAG模式，添加检索信息
-      if (useRag.value && response.data.data.retrieved_docs !== undefined) {
+      if (chatMode.value === 'rag' && response.data.data.retrieved_docs !== undefined) {
         aiMessage.retrievedDocs = response.data.data.retrieved_docs
       }
       

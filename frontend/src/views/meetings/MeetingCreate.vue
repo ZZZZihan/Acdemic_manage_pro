@@ -147,7 +147,7 @@
         <el-form-item label="文件附件" prop="attachments">
           <el-upload
             class="attachment-uploader"
-            :action="`/api/v1/meetings/attachments`"
+            :action="`/api/v1/meetings/attachments/upload`"
             :headers="uploadHeaders"
             :on-success="handleUploadSuccess"
             :on-error="handleUploadError"
@@ -168,9 +168,8 @@
 <script>
 import { ref, reactive, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import { ElMessage, ElLoading } from 'element-plus'
+import { ElMessage } from 'element-plus'
 import axios from '@/utils/axios'
-import _ from 'lodash'
 import { useUserStore } from '@/stores/user'
 
 export default {
