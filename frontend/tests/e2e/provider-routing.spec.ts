@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test'
+import { expect, test } from './authenticated-test'
 
 test.describe('Provider Routing', () => {
   test('escalates deepseek external write request to openai', async ({ page }) => {

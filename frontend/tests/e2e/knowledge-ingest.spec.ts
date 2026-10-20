@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test'
+import { expect, test } from './authenticated-test'
 
 test.describe('Knowledge Ingest', () => {
   test('seeds MCP note and can retrieve it through knowledge.search', async ({ page, request }) => {
@@ -9,6 +9,7 @@ test.describe('Knowledge Ingest', () => {
     await expect(page.getByText('已写入一条示例知识')).toBeVisible()
 
     const response = await request.post('http://127.0.0.1:8003/mcp/tools/call', {
+      headers: { Authorization: `Bearer ${await page.evaluate(() => localStorage.getItem('token'))}` },
       data: {
         name: 'knowledge.search',
         arguments: {

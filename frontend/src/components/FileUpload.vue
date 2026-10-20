@@ -3,7 +3,7 @@
     <el-upload
       class="file-uploader"
       :action="uploadUrl"
-      :headers="headers"
+      :http-request="uploadFile"
       :on-success="handleSuccess"
       :on-error="handleError"
       :on-exceed="handleExceed"
@@ -27,7 +27,7 @@
 <script setup>
 import { ref, computed, onMounted, watch } from 'vue'
 import { ElMessage } from 'element-plus'
-import { useAuthStore } from '@/stores/auth'
+import api from '@/utils/axios'
 
 const props = defineProps({
   initialFiles: {
@@ -38,22 +38,22 @@ const props = defineProps({
 
 const emit = defineEmits(['file-uploaded', 'file-removed'])
 
-const authStore = useAuthStore()
 const fileList = ref([])
 const allowedExtensions = ['pdf', 'doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx', 'txt', 'zip', 'rar', 'jpg', 'jpeg', 'png']
 const maxSize = 10 // MB
 
 // 计算上传URL
 const uploadUrl = computed(() => {
-  return `${import.meta.env.VITE_API_URL}/api/v1/files/upload`
+  return `${import.meta.env.VITE_API_URL || ''}/api/v1/files/upload`
 })
 
-// 计算请求头，包含认证信息
-const headers = computed(() => {
-  return {
-    Authorization: `Bearer ${authStore.token}`
-  }
-})
+// Use the shared client so expired tokens and concurrent uploads share refresh handling.
+const uploadFile = async (options) => {
+  const body = new FormData()
+  body.append('file', options.file)
+  const response = await api.post('/api/v1/files/upload', body)
+  return response.data
+}
 
 // 监听初始文件变化
 watch(() => props.initialFiles, (newFiles) => {
@@ -61,7 +61,7 @@ watch(() => props.initialFiles, (newFiles) => {
     // 将初始文件转换为fileList格式
     fileList.value = newFiles.map(file => ({
       name: file.original_name || '附件',
-      url: `${import.meta.env.VITE_API_URL}/api/v1/files/download/${encodeURIComponent(file.file_path)}`,
+      url: `${import.meta.env.VITE_API_URL || ''}/api/v1/files/download/${encodeURIComponent(file.file_path)}`,
       // 保存原始文件信息，用于后续处理
       raw: file
     }))
@@ -75,7 +75,7 @@ onMounted(() => {
   if (props.initialFiles && props.initialFiles.length > 0) {
     fileList.value = props.initialFiles.map(file => ({
       name: file.original_name || '附件',
-      url: `${import.meta.env.VITE_API_URL}/api/v1/files/download/${encodeURIComponent(file.file_path)}`,
+      url: `${import.meta.env.VITE_API_URL || ''}/api/v1/files/download/${encodeURIComponent(file.file_path)}`,
       raw: file
     }))
   }

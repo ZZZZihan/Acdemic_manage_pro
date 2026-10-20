@@ -37,6 +37,7 @@ services:
       - "8003:8003"
     environment:
       - V2_PORT=8003
+      - AUTH_SERVICE_URL=http://backend:5003
       - V2_DATABASE_URL=sqlite+pysqlite:////app/instance/data-v2.sqlite
     healthcheck:
       test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8003/health', timeout=3)"]

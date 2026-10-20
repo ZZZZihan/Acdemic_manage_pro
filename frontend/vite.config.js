@@ -13,15 +13,15 @@ export default defineConfig({
   server: {
     proxy: {
       '/api/v2': {
-        target: 'http://localhost:8003',
+        target: process.env.V2_PROXY_TARGET || 'http://localhost:8003',
         changeOrigin: true,
       },
       '/mcp': {
-        target: 'http://localhost:8003',
+        target: process.env.V2_PROXY_TARGET || 'http://localhost:8003',
         changeOrigin: true,
       },
       '/api': {
-        target: 'http://localhost:5003',
+        target: process.env.V1_PROXY_TARGET || 'http://localhost:5003',
         changeOrigin: true,
       }
     }

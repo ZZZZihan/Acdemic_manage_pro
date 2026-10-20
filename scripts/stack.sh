@@ -67,7 +67,7 @@ ensure_v1_env() {
     echo "Creating backend v1 env: $V1_ENV"
     python3 -m venv "$V1_ENV"
     "$V1_PY" -m pip install --upgrade pip
-    "$V1_PY" -m pip install -r "$ROOT_DIR/backend/requirements.txt"
+    "$V1_PY" -m pip install -r "${V1_REQUIREMENTS:-$ROOT_DIR/backend/requirements.txt}"
   fi
 }
 

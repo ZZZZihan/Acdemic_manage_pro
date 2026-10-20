@@ -19,7 +19,7 @@ from app.api.v1.errors import bad_request, not_found
 def get_meetings():
     """获取会议列表"""
     # 获取当前用户ID
-    current_user_id = get_jwt_identity()
+    current_user_id = int(get_jwt_identity())
     
     # 分页参数
     page = request.args.get('page', 1, type=int)
@@ -108,7 +108,7 @@ def get_meeting(id):
 def create_meeting():
     """创建新会议"""
     # 获取当前用户ID
-    current_user_id = get_jwt_identity()
+    current_user_id = int(get_jwt_identity())
     user = User.query.get(current_user_id)
     if not user:
         return bad_request('用户不存在')
@@ -183,7 +183,7 @@ def create_meeting():
 def update_meeting(id):
     """更新会议信息"""
     # 获取当前用户
-    current_user_id = get_jwt_identity()
+    current_user_id = int(get_jwt_identity())
     user = User.query.get(current_user_id)
     if not user:
         return bad_request('用户不存在')
@@ -266,12 +266,15 @@ def update_meeting(id):
 def delete_meeting(id):
     """删除会议"""
     # 获取当前用户
-    current_user_id = get_jwt_identity()
+    current_user_id = int(get_jwt_identity())
     
     # 查找会议
     meeting = Meeting.query.get_or_404(id)
     
-    # 删除权限检查已移除，允许所有用户删除会议
+    # Only the organizer or an administrator can delete a meeting.
+    user = User.query.get(current_user_id)
+    if meeting.organizer_id != current_user_id and not user.is_administrator():
+        return jsonify({'msg': '无权删除此会议'}), 403
     
     # 删除会议
     db.session.delete(meeting)
@@ -283,7 +286,7 @@ def delete_meeting(id):
 @jwt_required()
 def get_user_meetings():
     """获取当前用户的会议"""
-    current_user_id = get_jwt_identity()
+    current_user_id = int(get_jwt_identity())
     
     # 查询时间范围（默认查询未来的会议）
     show_past = request.args.get('show_past', 'false').lower() == 'true'
@@ -323,7 +326,7 @@ def get_user_meetings():
 def get_meeting_files(meeting_id):
     """获取会议的文件列表"""
     # 获取当前用户ID
-    current_user_id = get_jwt_identity()
+    current_user_id = int(get_jwt_identity())
     
     # 查找会议
     meeting = Meeting.query.get_or_404(meeting_id)
@@ -345,7 +348,7 @@ def get_meeting_files(meeting_id):
 def add_meeting_file(meeting_id):
     """添加文件到会议"""
     # 获取当前用户ID
-    current_user_id = get_jwt_identity()
+    current_user_id = int(get_jwt_identity())
     
     # 查找会议
     meeting = Meeting.query.get_or_404(meeting_id)
@@ -385,7 +388,7 @@ def add_meeting_file(meeting_id):
 def delete_meeting_file(meeting_id, file_id):
     """从会议中删除文件"""
     # 获取当前用户ID
-    current_user_id = get_jwt_identity()
+    current_user_id = int(get_jwt_identity())
     
     # 查找会议
     meeting = Meeting.query.get_or_404(meeting_id)
@@ -415,7 +418,7 @@ def delete_meeting_file(meeting_id, file_id):
 def update_attendance(meeting_id):
     """更新参会状态"""
     # 获取当前用户ID
-    current_user_id = get_jwt_identity()
+    current_user_id = int(get_jwt_identity())
     
     # 查找会议
     meeting = Meeting.query.get_or_404(meeting_id)
@@ -450,7 +453,7 @@ def update_attendance(meeting_id):
 @jwt_required()
 def get_upcoming_meetings():
     """获取即将到来的会议"""
-    current_user_id = get_jwt_identity()
+    current_user_id = int(get_jwt_identity())
     
     # 查询参数
     days = request.args.get('days', 7, type=int)  # 默认查询未来7天的会议
@@ -478,7 +481,7 @@ def upload_meeting_attachment():
     logging.info(f"会议附件上传请求: {request.files}")
     logging.info(f"表单数据: {request.form}")
     
-    current_user_id = get_jwt_identity()
+    current_user_id = int(get_jwt_identity())
     
     # 确保user_id是整数
     if isinstance(current_user_id, str):
