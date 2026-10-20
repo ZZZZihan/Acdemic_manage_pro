@@ -41,11 +41,12 @@
 
 <script setup>
 import { ref, reactive } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { useAuthStore } from '@/stores/auth'
 
 const route = useRoute()
+const router = useRouter()
 const authStore = useAuthStore()
 const loginForm = ref(null)
 const loading = ref(false)
@@ -67,53 +68,22 @@ const rules = {
 }
 
 const handleLogin = async () => {
-  if (!loginForm.value) return
-  
-  await loginForm.value.validate(async (valid) => {
-    if (valid) {
-      loading.value = true
-      try {
-        console.log('开始登录请求，数据:', loginData)
-        const response = await authStore.login(loginData)
-        console.log('登录成功，响应数据:', response)
-        ElMessage.success('登录成功')
-        
-        // 检查登录状态
-        console.log('登录后状态检查:', {
-          isLoggedIn: authStore.isLoggedIn,
-          token: !!authStore.token,
-          user: authStore.user
-        })
-        
-        // 如果有重定向地址，则跳转到该地址
-        const redirectPath = route.query.redirect || '/'
-        console.log('准备跳转到:', redirectPath)
-        
-        // 添加延迟，确保数据已经保存到localStorage
-        setTimeout(() => {
-          console.log('执行路由跳转前再次检查登录状态:', {
-            isLoggedIn: authStore.isLoggedIn,
-            token: !!authStore.token,
-            user: authStore.user,
-            localStorage: {
-              token: localStorage.getItem('token'),
-              user: localStorage.getItem('user')
-            }
-          })
-          console.log('执行路由跳转到:', redirectPath)
-          
-          // 使用 window.location.href 而不是 router.push
-          window.location.href = redirectPath
-        }, 1000) // 增加延迟时间到1秒
-      } catch (error) {
-        console.error('登录失败:', error)
-        console.error('错误详情:', error.response?.data)
-        ElMessage.error(error.response?.data?.message || '登录失败，请检查您的凭证')
-      } finally {
-        loading.value = false
-      }
-    }
-  })
+  if (!loginForm.value || loading.value) return
+  const valid = await loginForm.value.validate().catch(() => false)
+  if (!valid) return
+  loading.value = true
+  try {
+    await authStore.login(loginData)
+    ElMessage.success('登录成功')
+    const candidate = route.query.redirect
+    const redirect = typeof candidate === 'string' && candidate.startsWith('/') &&
+      !candidate.startsWith('//') && !candidate.includes('\\') ? candidate : '/workspace'
+    await router.replace(redirect)
+  } catch (error) {
+    ElMessage.error(error.response?.data?.message || '登录失败，请检查邮箱、密码或网络')
+  } finally {
+    loading.value = false
+  }
 }
 </script>
 

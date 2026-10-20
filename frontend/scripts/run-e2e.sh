@@ -27,10 +27,13 @@ if echo "$status_output" | grep -Eq '(running|unmanaged process detected)'; then
   fi
 else
   E2E_TMP_DIR="$(mktemp -d "$ROOT_DIR/.runtime_e2e_db.XXXXXX")"
+  export JWT_SECRET_KEY="$(python3 -c 'import secrets; print(secrets.token_hex(32))')"
+  export V1_REQUIREMENTS="$ROOT_DIR/backend/requirements-web.txt"
   export DATABASE_URL="sqlite:///$E2E_TMP_DIR/data-v1-e2e.sqlite"
   export V2_DATABASE_URL="sqlite+pysqlite:///$E2E_TMP_DIR/data-v2-e2e.sqlite"
   "$ROOT_DIR/scripts/stack.sh" start --frontend
   STARTED_BY_RUNNER=1
+  FLASK_CONFIG=production "$ROOT_DIR/backend_env/bin/python" "$ROOT_DIR/backend/init_db.py"
 fi
 
 cd "$FRONTEND_DIR"

@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test'
+import { expect, test } from './authenticated-test'
 
 test.describe('Workspace Copilot', () => {
   test('creates approval and task flow from real UI actions', async ({ page }) => {
@@ -15,7 +15,7 @@ test.describe('Workspace Copilot', () => {
     await page.getByTestId('send-message-button').click()
     await expect(page.getByText('task.create')).toBeVisible()
 
-    const newlyCreatedApprovalCard = approvalCards.nth(approvalCountBefore)
+    const newlyCreatedApprovalCard = approvalCards.first()
     await newlyCreatedApprovalCard.getByTestId('approval-approve-button').click()
     await expect(newlyCreatedApprovalCard).toContainText('approved')
   })

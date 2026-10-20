@@ -56,6 +56,10 @@
         <span>知识库聊天</span>
       </el-menu-item>
       
+      <el-menu-item v-if="auth.isAdmin" index="/admin/users">
+        <el-icon><User /></el-icon>
+        <span>角色管理</span>
+      </el-menu-item>
       <el-menu-item index="/profile">
         <el-icon><User /></el-icon>
         <span>个人中心</span>
@@ -68,6 +72,7 @@
 <script setup>
 import { computed } from 'vue'
 import { useRoute } from 'vue-router'
+import { useAuthStore } from '@/stores/auth'
 import {
   HomeFilled,
   Grid,
@@ -80,6 +85,7 @@ import {
 } from '@element-plus/icons-vue'
 
 const route = useRoute()
+const auth = useAuthStore()
 
 const activeMenu = computed(() => {
   return route.path

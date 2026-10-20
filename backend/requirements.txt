@@ -18,4 +18,6 @@ scikit-learn==1.2.0
 torch==2.0.0
 pydantic==1.10.8
 transformers==4.28.1
-faiss-cpu==1.7.4 
+faiss-cpu==1.7.4
+beautifulsoup4==4.12.3
+openai>=1,<2
