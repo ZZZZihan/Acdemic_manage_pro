@@ -1,0 +1,74 @@
+INFO:app.utils.knowledge_base:已从/workspace/scratch/8b433347c75b/Acdemic_manage_pro/backend/app/knowledge_base.json加载知识库，共20篇文档
+test_admin_assigns_role_and_existing_token_sees_live_permissions (backend.tests.test_auth_api.TestAuthAPI.test_admin_assigns_role_and_existing_token_sees_live_permissions) ... /workspace/scratch/8b433347c75b/Acdemic_manage_pro/backend/app/models/user.py:77: RemovedIn20Warning: Deprecated API features detected! These feature(s) are not compatible with SQLAlchemy 2.0. To prevent incompatible upgrades prior to updating applications, ensure requirements files are pinned to "sqlalchemy<2.0". Set environment variable SQLALCHEMY_WARN_20=1 to show all deprecation warnings.  Set environment variable SQLALCHEMY_SILENCE_UBER_WARNING=1 to silence this message. (Background on SQLAlchemy 2.0 at: https://sqlalche.me/e/b8d9)
+  super(User, self).__init__(**kwargs)
+INFO:app:role_changed actor_id=1 user_id=2 previous=User role=Moderator
+ok
+test_all_roles_are_returned_at_login (backend.tests.test_auth_api.TestAuthAPI.test_all_roles_are_returned_at_login) ... ok
+test_anonymous_cannot_read_members_or_assign_role (backend.tests.test_auth_api.TestAuthAPI.test_anonymous_cannot_read_members_or_assign_role) ... ok
+test_auth_initialization_is_idempotent_and_repairs_unassigned_users (backend.tests.test_auth_api.TestAuthAPI.test_auth_initialization_is_idempotent_and_repairs_unassigned_users) ... ok
+test_business_permission_denial_is_403_and_does_not_invalidate_session (backend.tests.test_auth_api.TestAuthAPI.test_business_permission_denial_is_403_and_does_not_invalidate_session) ... ok
+test_cannot_demote_self_or_assign_unknown_role (backend.tests.test_auth_api.TestAuthAPI.test_cannot_demote_self_or_assign_unknown_role) ... ok
+test_current_user_endpoint_returns_role_metadata (backend.tests.test_auth_api.TestAuthAPI.test_current_user_endpoint_returns_role_metadata) ... ok
+test_deleted_user_cannot_refresh (backend.tests.test_auth_api.TestAuthAPI.test_deleted_user_cannot_refresh) ... ok
+test_demoted_administrator_loses_permission_with_same_jwt (backend.tests.test_auth_api.TestAuthAPI.test_demoted_administrator_loses_permission_with_same_jwt) ... INFO:app:role_changed actor_id=1 user_id=2 previous=Administrator role=User
+ok
+test_demotion_applies_to_existing_business_token_and_refresh (backend.tests.test_auth_api.TestAuthAPI.test_demotion_applies_to_existing_business_token_and_refresh) ... INFO:app:role_changed actor_id=1 user_id=2 previous=Administrator role=User
+ok
+test_expired_access_can_refresh_but_expired_refresh_is_rejected (backend.tests.test_auth_api.TestAuthAPI.test_expired_access_can_refresh_but_expired_refresh_is_rejected) ... ok
+test_explicit_admin_bootstrap_has_no_default_password (backend.tests.test_auth_api.TestAuthAPI.test_explicit_admin_bootstrap_has_no_default_password) ... ok
+test_health_endpoint_reports_backend_v1 (backend.tests.test_auth_api.TestAuthAPI.test_health_endpoint_reports_backend_v1) ... ok
+test_login_accepts_trimmed_email_input (backend.tests.test_auth_api.TestAuthAPI.test_login_accepts_trimmed_email_input) ... ok
+test_login_rejects_invalid_password (backend.tests.test_auth_api.TestAuthAPI.test_login_rejects_invalid_password) ... ok
+test_login_returns_access_and_refresh_tokens (backend.tests.test_auth_api.TestAuthAPI.test_login_returns_access_and_refresh_tokens) ... ok
+test_logout_revokes_both_tokens_and_preserves_other_device (backend.tests.test_auth_api.TestAuthAPI.test_logout_revokes_both_tokens_and_preserves_other_device) ... ok
+test_member_and_moderator_cannot_assign_roles (backend.tests.test_auth_api.TestAuthAPI.test_member_and_moderator_cannot_assign_roles) ... ok
+test_non_object_payload_is_bad_request (backend.tests.test_auth_api.TestAuthAPI.test_non_object_payload_is_bad_request) ... ok
+test_production_requires_secret_and_reads_late_environment (backend.tests.test_auth_api.TestAuthAPI.test_production_requires_secret_and_reads_late_environment) ... ok
+test_project_attachment_detach_with_string_jwt_keeps_uploaded_bytes (backend.tests.test_auth_api.TestAuthAPI.test_project_attachment_detach_with_string_jwt_keeps_uploaded_bytes) ... ok
+test_project_physical_delete_preserves_untrusted_paths_and_references (backend.tests.test_auth_api.TestAuthAPI.test_project_physical_delete_preserves_untrusted_paths_and_references) ... ok
+test_refresh_rejects_access_token_and_user_endpoint_rejects_refresh_token (backend.tests.test_auth_api.TestAuthAPI.test_refresh_rejects_access_token_and_user_endpoint_rejects_refresh_token) ... ok
+test_refresh_returns_new_access_token (backend.tests.test_auth_api.TestAuthAPI.test_refresh_returns_new_access_token) ... ok
+test_register_rejects_blank_required_fields (backend.tests.test_auth_api.TestAuthAPI.test_register_rejects_blank_required_fields) ... ok
+test_register_rejects_duplicate_email (backend.tests.test_auth_api.TestAuthAPI.test_register_rejects_duplicate_email) ... ok
+test_register_rejects_non_string_credentials (backend.tests.test_auth_api.TestAuthAPI.test_register_rejects_non_string_credentials) ... ok
+test_register_returns_created_user (backend.tests.test_auth_api.TestAuthAPI.test_register_returns_created_user) ... ok
+test_session_and_revocation_survive_app_recreation (backend.tests.test_auth_api.TestAuthAPI.test_session_and_revocation_survive_app_recreation) ... ok
+test_session_migration_preserves_existing_accounts (backend.tests.test_auth_api.TestAuthAPI.test_session_migration_preserves_existing_accounts) ... INFO:alembic.runtime.plugins:setup plugin alembic.autogenerate.schemas
+INFO:alembic.runtime.plugins:setup plugin alembic.autogenerate.tables
+INFO:alembic.runtime.plugins:setup plugin alembic.autogenerate.types
+INFO:alembic.runtime.plugins:setup plugin alembic.autogenerate.constraints
+INFO:alembic.runtime.plugins:setup plugin alembic.autogenerate.defaults
+INFO:alembic.runtime.plugins:setup plugin alembic.autogenerate.comments
+INFO:alembic.runtime.plugins:setup plugin alembic.ext.checkconstraint_byname
+INFO:alembic.runtime.migration:Context impl SQLiteImpl.
+INFO:alembic.runtime.migration:Will assume non-transactional DDL.
+ok
+test_special_admin_email_and_role_injection_are_normal_members (backend.tests.test_auth_api.TestAuthAPI.test_special_admin_email_and_role_injection_are_normal_members) ... ok
+test_string_jwt_subject_can_access_own_meeting_files_and_cannot_delete_others (backend.tests.test_auth_api.TestAuthAPI.test_string_jwt_subject_can_access_own_meeting_files_and_cannot_delete_others) ... ok
+test_tampered_and_legacy_tokens_are_rejected (backend.tests.test_auth_api.TestAuthAPI.test_tampered_and_legacy_tokens_are_rejected) ... ok
+test_mock_chat_response (backend.tests.test_mock_data.TestMockData.test_mock_chat_response)
+测试模拟聊天响应 ... ok
+test_mock_chat_response_uses_custom_provider (backend.tests.test_mock_data.TestMockData.test_mock_chat_response_uses_custom_provider)
+测试模拟聊天响应支持自定义服务商 ... ok
+test_mock_tech_summaries (backend.tests.test_mock_data.TestMockData.test_mock_tech_summaries)
+测试模拟技术总结数据 ... ok
+
+----------------------------------------------------------------------
+Ran 36 tests in 5.406s
+
+OK
+添加文件权限验证 - 用户ID: 1, 项目ID: 1
+创建者: True, 成员: False
+项目创建者ID: 1
+添加文件权限验证 - 用户ID: 1, 项目ID: 1
+创建者: True, 成员: False
+项目创建者ID: 1
+添加文件权限验证 - 用户ID: 1, 项目ID: 1
+创建者: True, 成员: False
+项目创建者ID: 1
+添加文件权限验证 - 用户ID: 1, 项目ID: 1
+创建者: True, 成员: False
+项目创建者ID: 1
+添加文件权限验证 - 用户ID: 1, 项目ID: 1
+创建者: True, 成员: False
+项目创建者ID: 1

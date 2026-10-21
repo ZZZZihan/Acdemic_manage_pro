@@ -31,9 +31,15 @@ else
   export V1_REQUIREMENTS="$ROOT_DIR/backend/requirements-web.txt"
   export DATABASE_URL="sqlite:///$E2E_TMP_DIR/data-v1-e2e.sqlite"
   export V2_DATABASE_URL="sqlite+pysqlite:///$E2E_TMP_DIR/data-v2-e2e.sqlite"
-  "$ROOT_DIR/scripts/stack.sh" start --frontend
+  export AUTH_SERVICE_URL="http://127.0.0.1:5003"
+  export V1_PROXY_TARGET="http://127.0.0.1:5003"
+  export V2_PROXY_TARGET="http://127.0.0.1:8003"
+  export FRONTEND_HOST="127.0.0.1"
+  # Also clean up a partially started stack if a later service fails to start.
   STARTED_BY_RUNNER=1
+  "$ROOT_DIR/scripts/stack.sh" start --frontend
   FLASK_CONFIG=production "$ROOT_DIR/backend_env/bin/python" "$ROOT_DIR/backend/init_db.py"
+  "$ROOT_DIR/scripts/stack.sh" check
 fi
 
 cd "$FRONTEND_DIR"

@@ -1,0 +1,245 @@
+{
+  "observed_date_shanghai": "2026-10-21",
+  "repository": "ZZZZihan/Acdemic_manage_pro",
+  "scope": "Read-only GitHub API and local git/code inspection; no workflow dispatch, merge, or external writes.",
+  "pull_requests": [
+    {
+      "number": 2,
+      "url": "https://github.com/ZZZZihan/Acdemic_manage_pro/pull/2",
+      "state": "open",
+      "draft": true,
+      "base": {
+        "ref": "main",
+        "sha": "97af286754dfca752ed73813f814b255210cd04c"
+      },
+      "head": {
+        "ref": "codex/lint-test-stabilization",
+        "sha": "e45f38a7d6b5d6d8327431a678b37a2b4c842f02"
+      },
+      "mergeable": true,
+      "mergeable_state": "unstable",
+      "merge_commit_sha": "6e5db146079da02989393343f8e9cb4cbec75be6",
+      "commits": 8
+    },
+    {
+      "number": 3,
+      "url": "https://github.com/ZZZZihan/Acdemic_manage_pro/pull/3",
+      "state": "open",
+      "draft": true,
+      "base": {
+        "ref": "codex/lint-test-stabilization",
+        "sha": "e45f38a7d6b5d6d8327431a678b37a2b4c842f02"
+      },
+      "head": {
+        "ref": "codex/jwt-role-repair",
+        "sha": "2a8da185e64ce71a105a7c96357efd487339da86"
+      },
+      "mergeable": true,
+      "mergeable_state": "clean",
+      "merge_commit_sha": "ba6b13f512d3afd5d5946d85f6fe98aaf0360cc7",
+      "commits": 1
+    }
+  ],
+  "dependency": {
+    "main": "97af286754dfca752ed73813f814b255210cd04c",
+    "pr2_head": "e45f38a7d6b5d6d8327431a678b37a2b4c842f02",
+    "pr3_parent": "e45f38a7d6b5d6d8327431a678b37a2b4c842f02",
+    "pr3_head": "2a8da185e64ce71a105a7c96357efd487339da86",
+    "pr3_head_tree": "c4fc0cf38878748c98acbf10ad19fcfcfbb04b0d",
+    "pr3_ci_checkout": "ba6b13f512d3afd5d5946d85f6fe98aaf0360cc7",
+    "pr3_ci_checkout_tree": "c4fc0cf38878748c98acbf10ad19fcfcfbb04b0d",
+    "tree_equal": true
+  },
+  "runs": [
+    {
+      "id": 39412261343,
+      "url": "https://github.com/ZZZZihan/Acdemic_manage_pro/actions/runs/39412261343",
+      "jobs": [
+        {
+          "id": 118592646683,
+          "name": "login-roles",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-20T11:03:35Z",
+          "completed_at": "2026-10-20T11:04:45Z",
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1,
+              "started_at": "2026-10-20T11:03:36Z",
+              "completed_at": "2026-10-20T11:03:36Z"
+            },
+            {
+              "name": "Run actions/checkout@v4",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2,
+              "started_at": "2026-10-20T11:03:36Z",
+              "completed_at": "2026-10-20T11:03:39Z"
+            },
+            {
+              "name": "Run actions/setup-python@v5",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3,
+              "started_at": "2026-10-20T11:03:39Z",
+              "completed_at": "2026-10-20T11:03:39Z"
+            },
+            {
+              "name": "Run actions/setup-node@v4",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4,
+              "started_at": "2026-10-20T11:03:39Z",
+              "completed_at": "2026-10-20T11:03:44Z"
+            },
+            {
+              "name": "Run npm ci",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 5,
+              "started_at": "2026-10-20T11:03:44Z",
+              "completed_at": "2026-10-20T11:03:51Z"
+            },
+            {
+              "name": "Run npx playwright install --with-deps chromium",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 6,
+              "started_at": "2026-10-20T11:03:51Z",
+              "completed_at": "2026-10-20T11:04:10Z"
+            },
+            {
+              "name": "Run bash scripts/test-auth-e2e.sh",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 7,
+              "started_at": "2026-10-20T11:04:10Z",
+              "completed_at": "2026-10-20T11:04:41Z"
+            },
+            {
+              "name": "Post Run actions/setup-node@v4",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 12,
+              "started_at": "2026-10-20T11:04:41Z",
+              "completed_at": "2026-10-20T11:04:43Z"
+            },
+            {
+              "name": "Post Run actions/setup-python@v5",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 13,
+              "started_at": "2026-10-20T11:04:43Z",
+              "completed_at": "2026-10-20T11:04:43Z"
+            },
+            {
+              "name": "Post Run actions/checkout@v4",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 14,
+              "started_at": "2026-10-20T11:04:43Z",
+              "completed_at": "2026-10-20T11:04:43Z"
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 15,
+              "started_at": "2026-10-20T11:04:43Z",
+              "completed_at": "2026-10-20T11:04:43Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 23631441131,
+      "url": "https://github.com/ZZZZihan/Acdemic_manage_pro/actions/runs/23631441131",
+      "jobs": [
+        {
+          "id": 68831430989,
+          "name": "backend-v2",
+          "status": "completed",
+          "conclusion": "failure",
+          "started_at": "2026-03-27T04:39:07Z",
+          "completed_at": "2026-03-27T04:39:23Z",
+          "steps": []
+        },
+        {
+          "id": 68831431020,
+          "name": "backend-v1",
+          "status": "completed",
+          "conclusion": "failure",
+          "started_at": "2026-03-27T04:39:07Z",
+          "completed_at": "2026-03-27T04:40:47Z",
+          "steps": []
+        }
+      ]
+    },
+    {
+      "id": 23631441136,
+      "url": "https://github.com/ZZZZihan/Acdemic_manage_pro/actions/runs/23631441136",
+      "jobs": [
+        {
+          "id": 68831431040,
+          "name": "workspace-flow",
+          "status": "completed",
+          "conclusion": "failure",
+          "started_at": "2026-03-27T04:39:07Z",
+          "completed_at": "2026-03-27T04:42:51Z",
+          "steps": []
+        }
+      ]
+    }
+  ],
+  "auth_log_evidence": [
+    "2026-10-20T11:03:37.2022384Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +ba6b13f512d3afd5d5946d85f6fe98aaf0360cc7:refs/remotes/pull/3/merge",
+    "2026-10-20T11:03:39.0869564Z  * [new ref]         ba6b13f512d3afd5d5946d85f6fe98aaf0360cc7 -> pull/3/merge",
+    "2026-10-20T11:03:39.7172794Z HEAD is now at ba6b13f Merge 2a8da185e64ce71a105a7c96357efd487339da86 into e45f38a7d6b5d6d8327431a678b37a2b4c842f02",
+    "2026-10-20T11:03:39.7249363Z ba6b13f512d3afd5d5946d85f6fe98aaf0360cc7",
+    "2026-10-20T11:04:30.6489065Z Running 8 tests using 1 worker",
+    "2026-10-20T11:04:41.4838437Z   8 passed (11.8s)"
+  ],
+  "old_failed_jobs_log_retrieval": {
+    "jobs": [
+      68831431040,
+      68831431020,
+      68831430989
+    ],
+    "http_status": 410,
+    "steps_returned": [],
+    "conclusion": "Failure is established, but failure step and cause cannot be recovered from available logs."
+  },
+  "coverage_at_original_pr3_head": {
+    "check_runs": 1,
+    "successful_workflow": "auth-regression",
+    "not_run": [
+      "backend-tests",
+      "e2e-workspace"
+    ],
+    "reason": "Both workflows filter pull_request base branches to main, whereas PR #3 base is codex/lint-test-stabilization.",
+    "legacy_commit_status": {
+      "pr2": {
+        "state": "pending",
+        "total_count": 0
+      },
+      "pr3": {
+        "state": "pending",
+        "total_count": 0
+      },
+      "meaning": "No legacy status contexts, not an in-progress workflow or evidence of success."
+    }
+  },
+  "source_urls": [
+    "https://api.github.com/repos/ZZZZihan/Acdemic_manage_pro/pulls/2",
+    "https://api.github.com/repos/ZZZZihan/Acdemic_manage_pro/pulls/3",
+    "https://api.github.com/repos/ZZZZihan/Acdemic_manage_pro/actions/runs?head_sha=2a8da185e64ce71a105a7c96357efd487339da86&per_page=100",
+    "https://api.github.com/repos/ZZZZihan/Acdemic_manage_pro/actions/runs?head_sha=e45f38a7d6b5d6d8327431a678b37a2b4c842f02&per_page=100",
+    "https://github.com/ZZZZihan/Acdemic_manage_pro/actions/runs/39412261343/job/118592646683",
+    "https://github.com/ZZZZihan/Acdemic_manage_pro/blob/2a8da185e64ce71a105a7c96357efd487339da86/.github/workflows/backend-tests.yml",
+    "https://github.com/ZZZZihan/Acdemic_manage_pro/blob/2a8da185e64ce71a105a7c96357efd487339da86/.github/workflows/e2e-workspace.yml"
+  ]
+}

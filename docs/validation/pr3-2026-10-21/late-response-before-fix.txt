@@ -1,0 +1,48 @@
+curl: (7) Failed to connect to 127.0.0.1 port 5103 after 0 ms: Couldn't connect to server
+curl: (7) Failed to connect to 127.0.0.1 port 5103 after 0 ms: Couldn't connect to server
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+[WebServer] (node:46) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+[WebServer] (node:59) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 1 test using 1 worker
+
+(node:79) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:79) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] (node:59) [DEP0060] DeprecationWarning: The `util._extend` API is deprecated. Please use Object.assign() instead.
+  ✘  1 tests/auth/session-response.spec.ts:14:3 › discards a late successful /api/v1/auth/user response after logout (2.1s)
+
+
+  1) tests/auth/session-response.spec.ts:14:3 › discards a late successful /api/v1/auth/user response after logout
+
+    Error: expect(received).toBe(expected) // Object.is equality
+
+    Expected: "discarded"
+    Received: "accepted"
+
+      43 |     })
+      44 |     release()
+    > 45 |     expect(await page.evaluate(() => window.pendingSessionResponse)).toBe('discarded')
+         |                                                                      ^
+      46 |     await expect(page).toHaveURL(/auth\/login/)
+      47 |   })
+      48 | }
+        at /workspace/scratch/8b433347c75b/Acdemic_manage_pro/frontend/tests/auth/session-response.spec.ts:45:70
+
+    Error Context: test-results/session-response-discards--2e3b3--user-response-after-logout/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/session-response-discards--2e3b3--user-response-after-logout/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/session-response-discards--2e3b3--user-response-after-logout/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    tests/auth/session-response.spec.ts:14:3 › discards a late successful /api/v1/auth/user response after logout
+Auth test runtime: /tmp/tmp.hSThkbbAVd

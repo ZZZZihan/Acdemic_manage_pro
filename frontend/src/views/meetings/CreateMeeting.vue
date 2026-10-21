@@ -144,7 +144,7 @@
         
         <el-upload
           :action="`${baseUrl}/api/v1/meetings/attachments/upload`"
-          :headers="uploadHeaders"
+          :http-request="uploadMeetingAttachment"
           :on-success="handleUploadSuccess"
           :on-error="handleUploadError"
           :before-upload="beforeUpload"
@@ -207,6 +207,7 @@ import { ref, reactive, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import axios from '@/utils/axios'  // 导入配置好的axios实例
+import { uploadMeetingAttachment } from '@/utils/meetingUpload'
 import { useUserStore } from '@/stores/user'
 
 export default {
@@ -244,9 +245,6 @@ export default {
     
     // 上传相关
     const baseUrl = import.meta.env.VITE_API_URL || ''  // 使用和axios相同的baseURL
-    const uploadHeaders = computed(() => ({
-      Authorization: `Bearer ${userStore.token}`
-    }))
     
     // 表单规则
     const rules = {
@@ -500,7 +498,7 @@ export default {
       participantDialogVisible,
       participantForm,
       baseUrl,
-      uploadHeaders,
+      uploadMeetingAttachment,
       availableUsers,
       
       disablePastDates,
