@@ -1,0 +1,32 @@
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+> lab-knowledge-management-frontend@0.1.0 e2e
+> bash ./scripts/run-e2e.sh tests/e2e/workspace-copilot.spec.ts tests/e2e/provider-routing.spec.ts tests/e2e/ollama-local-only.spec.ts tests/e2e/knowledge-ingest.spec.ts
+
+Starting backend v1 on :5003
+Starting backend v2 on :8003
+Starting frontend dev server on :5173
+backend v1: running (pid 43, health=up)
+backend v2: running (pid 50, health=up)
+frontend: running (pid 57, health=up)
+INFO:app.utils.knowledge_base:已从/workspace/scratch/8b433347c75b/Acdemic_manage_pro/backend/app/knowledge_base.json加载知识库，共20篇文档
+Auth schema and roles are ready; existing assigned roles were preserved.
+Checking health endpoints...
+v1: {"service":"backend-v1","status":"ok"}
+
+v2: {"status":"ok","version":"2.0.0"}
+v2-arch: authentication required (401)
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+Running 4 tests using 1 worker
+
+(node:139) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:139) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 tests/e2e/knowledge-ingest.spec.ts:4:7 › Knowledge Ingest › seeds MCP note and can retrieve it through knowledge.search (2.3s)
+  ✓  2 tests/e2e/ollama-local-only.spec.ts:4:7 › Ollama Local Mode › keeps external-write request in local read-only mode (2.5s)
+  ✓  3 tests/e2e/provider-routing.spec.ts:4:7 › Provider Routing › escalates deepseek external write request to openai (2.7s)
+  ✓  4 tests/e2e/workspace-copilot.spec.ts:4:7 › Workspace Copilot › creates approval and task flow from real UI actions (3.2s)
+
+  4 passed (11.7s)

@@ -52,7 +52,13 @@ export function createAuthenticatedClient(baseURL, timeout = 60000) {
     }
     return config
   })
-  client.interceptors.response.use((response) => response, async (error) => {
+  client.interceptors.response.use((response) => {
+    const config = response.config
+    if (!config.skipAuth && config._sessionEpoch !== sessionEpoch()) {
+      return Promise.reject(new Error('登录会话已经改变，已丢弃旧响应'))
+    }
+    return response
+  }, async (error) => {
     const config = error.config || {}
     const status = error.response?.status
     const payload = error.response?.data || {}

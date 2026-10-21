@@ -148,7 +148,7 @@
           <el-upload
             class="attachment-uploader"
             :action="`/api/v1/meetings/attachments/upload`"
-            :headers="uploadHeaders"
+            :http-request="uploadMeetingAttachment"
             :on-success="handleUploadSuccess"
             :on-error="handleUploadError"
             :on-remove="handleFileRemove"
@@ -166,17 +166,16 @@
 </template>
 
 <script>
-import { ref, reactive, computed, onMounted } from 'vue'
+import { ref, reactive, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import axios from '@/utils/axios'
-import { useUserStore } from '@/stores/user'
+import { uploadMeetingAttachment } from '@/utils/meetingUpload'
 
 export default {
   name: 'MeetingCreate',
   setup() {
     const router = useRouter()
-    const userStore = useUserStore()
     const formRef = ref(null)
     const loading = ref(false)
     const submitting = ref(false)
@@ -219,12 +218,6 @@ export default {
     
     const users = ref([])
     const projects = ref([])
-    
-    const uploadHeaders = computed(() => {
-      return {
-        Authorization: `Bearer ${userStore.token}`
-      }
-    })
     
     // 获取用户创建的项目列表
     const loadProjects = async () => {
@@ -354,7 +347,7 @@ export default {
       users,
       projects,
       searchingUsers,
-      uploadHeaders,
+      uploadMeetingAttachment,
       submitForm,
       searchUsers,
       disablePastDates,

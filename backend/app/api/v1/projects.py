@@ -406,11 +406,10 @@ def delete_project_file(project_id, file_id):
     
     return jsonify({'msg': '文件已从项目中删除'})
 
-# 可以考虑添加物理删除文件的API，但请确保有足够的安全检查
 @api.route('/projects/<int:project_id>/files/<int:file_id>/physical', methods=['DELETE'])
 @jwt_required()
 def delete_project_file_physical(project_id, file_id):
-    """物理删除项目文件（同时删除文件记录和实际文件）"""
+    """Reject physical deletion until uploads have server-verified ownership."""
     # 获取当前用户ID
     current_user_id = int(get_jwt_identity())
     
@@ -431,20 +430,15 @@ def delete_project_file_physical(project_id, file_id):
     if not (is_creator or is_uploader):
         return jsonify({'msg': '无权删除此文件'}), 403
     
-    # 尝试物理删除文件
-    try:
-        file_path = os.path.join(current_app.config['UPLOAD_FOLDER'], project_file.file_path)
-        if os.path.exists(file_path):
-            os.remove(file_path)
-    except Exception as e:
-        current_app.logger.error(f"删除文件时出错: {str(e)}")
-        # 即使文件删除失败，我们仍然可以继续删除数据库记录
-    
-    # 删除文件记录
-    db.session.delete(project_file)
-    db.session.commit()
-    
-    return jsonify({'msg': '文件已完全删除'})
+    # file_path and uploader_id on this relation are not evidence of file ownership:
+    # clients supply the path when attaching it. Even a path inside UPLOAD_FOLDER
+    # may name another user's upload, or a file shared by another project.
+    # Keep the relation and bytes unchanged. The ordinary DELETE endpoint above
+    # remains available to detach the file without deleting shared physical data.
+    return jsonify(
+        msg='暂不支持物理删除；可从项目中移除附件，原始文件将保留',
+        code='physical_delete_requires_verified_upload',
+    ), 409
 
 @api.route('/projects/<int:project_id>/members', methods=['GET'])
 def get_project_members(project_id):

@@ -1,0 +1,32 @@
+curl: (7) Failed to connect to 127.0.0.1 port 5103 after 0 ms: Couldn't connect to server
+curl: (7) Failed to connect to 127.0.0.1 port 5103 after 0 ms: Couldn't connect to server
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+[WebServer] (node:46) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+[WebServer] (node:59) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 13 tests using 1 worker
+
+(node:79) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:79) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] (node:59) [DEP0060] DeprecationWarning: The `util._extend` API is deprecated. Please use Object.assign() instead.
+  ✓   1 tests/auth/login-roles.spec.ts:27:1 › login survives reload; ordinary member cannot enter role management (2.3s)
+  ✓   2 tests/auth/login-roles.spec.ts:36:1 › wrong password stays at login without attempting refresh (1.0s)
+  ✓   3 tests/auth/login-roles.spec.ts:48:1 › administrator assigns Moderator through the real UI and server (3.0s)
+  ✓   4 tests/auth/login-roles.spec.ts:63:1 › concurrent expired requests share one refresh and sync state; 403 keeps login (1.2s)
+  ✓   5 tests/auth/login-roles.spec.ts:83:1 › upload uses renewed access token and multipart request (1.3s)
+  ✓   6 tests/auth/login-roles.spec.ts:96:1 › logout revokes refresh and access on both APIs (1.9s)
+  ✓   7 tests/auth/login-roles.spec.ts:110:1 › corrupt stored user is recovered from server without blank screen (1.0s)
+  ✓   8 tests/auth/login-roles.spec.ts:121:1 › invalid refresh clears reactive state and sends user to login (1.4s)
+  ✓   9 tests/auth/meeting-upload.spec.ts:18:3 › meeting create upload refreshes an expired access token (1.4s)
+  ✓  10 tests/auth/meeting-upload.spec.ts:18:3 › meeting edit upload refreshes an expired access token (1.4s)
+  ✓  11 tests/auth/meeting-upload.spec.ts:18:3 › meeting detail upload refreshes an expired access token (1.2s)
+  ✓  12 tests/auth/session-response.spec.ts:15:3 › discards a late successful /api/v1/auth/user response after logout (1.7s)
+  ✓  13 tests/auth/session-response.spec.ts:51:1 › administrator demotion takes effect for old tokens and the role-management UI (2.6s)
+
+  13 passed (23.7s)
+Auth test runtime: /tmp/tmp.bN4V6eE3FK

@@ -52,7 +52,7 @@ wait_http() {
   local timeout="${2:-60}"
   local waited=0
   while (( waited < timeout )); do
-    if curl -fsS "$url" >/dev/null 2>&1; then
+    if curl -fsS --max-time 3 "$url" >/dev/null 2>&1; then
       return 0
     fi
     sleep 1
@@ -141,7 +141,7 @@ start_frontend() {
     if [[ ! -d node_modules ]]; then
       npm install
     fi
-    nohup npm run dev -- --host 0.0.0.0 --port 5173 >"$FE_LOG_FILE" 2>&1 &
+    nohup npm run dev -- --host "${FRONTEND_HOST:-0.0.0.0}" --port 5173 --strictPort >"$FE_LOG_FILE" 2>&1 &
     echo $! > "$FE_PID_FILE"
   )
   wait_http "http://127.0.0.1:5173" 120
@@ -218,10 +218,15 @@ check() {
     echo "v2: health check failed"
     failed=1
   fi
-  if curl -fsS "http://127.0.0.1:8003/api/v2/interview/architecture" | sed -e 's/^/v2-arch: /'; then
-    echo
+  # Business endpoints now require V1 authentication. An anonymous health probe
+  # must be rejected, not falsely report a healthy protected stack as broken.
+  local protected_status
+  protected_status="$(curl -sS --max-time 5 -o /dev/null -w '%{http_code}' \
+    "http://127.0.0.1:8003/api/v2/interview/architecture")" || protected_status=000
+  if [[ "$protected_status" == 401 ]]; then
+    echo "v2-arch: authentication required (401)"
   else
-    echo "v2-arch: endpoint check failed"
+    echo "v2-arch: expected anonymous 401, got $protected_status"
     failed=1
   fi
   return "$failed"

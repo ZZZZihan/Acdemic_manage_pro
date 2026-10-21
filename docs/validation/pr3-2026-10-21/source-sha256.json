@@ -1,0 +1,25 @@
+{
+  "base_head": "2a8da185e64ce71a105a7c96357efd487339da86",
+  "files": {
+    ".github/workflows/auth-regression.yml": "35e6a54b91af3b55c21dd984252bc5fa95613c40639652ebf365b986c4ccc7f5",
+    ".github/workflows/backend-tests.yml": "5b7b9cba8c3e5a8ec826e44ce816cbb0f168a669162f4d186084c6d70477793b",
+    ".github/workflows/e2e-workspace.yml": "e293193cd9a6ca610608f3a94df8b50ef6a6150dc5e0f5147536a9529616b392",
+    "backend/app/api/v1/projects.py": "022a16ee553207ff044e8e06fe6e61092fbc0266c16e52e3aa8cfddfc0e93a3e",
+    "backend/tests/test_auth_api.py": "b15b5fd4f088ede000313b7ec2473abd653db406ab3f27d15021252b6e94f814",
+    "frontend/playwright.config.ts": "7c9ff8d718452347e32afe128c1151da45c7cc49b5960b6a13f315d782e3dea8",
+    "frontend/scripts/run-e2e.sh": "d44117111c83e16afdb2811d89464798ca355f383f36991a3a8878892f84dcb3",
+    "frontend/src/utils/axios.js": "18e31d0fca9f37561cbc947b6d2a84866ccee5156c2060dee9ad556f17b1226b",
+    "frontend/src/utils/meetingUpload.js": "eeaaa23e935330f94ac93a27e5be94698daa98927c60428b8b83def044075500",
+    "frontend/src/views/WorkspaceCopilot.vue": "eea2599bb7c18d4173e7394c73ce377327e4fedb0a9caee6ae0938c92ecb9585",
+    "frontend/src/views/meetings/CreateMeeting.vue": "c1bbdb238cb223dfeed9337ce988843e005c67651b272251e0fa0f5b65d4b179",
+    "frontend/src/views/meetings/MeetingCreate.vue": "5e7b6fcdfad838b33d02b4a9bc0a3b1d282744ddfb2664cac033cb9486ca4e69",
+    "frontend/src/views/meetings/MeetingDetail.vue": "98582bd598b824b75ee05c0a64d09a230678422191e440117d958f8b0ba37f38",
+    "frontend/src/views/meetings/MeetingEdit.vue": "7bf2c35c2153fdb09ae52cf3e157076fb683701ab96fe059107a30a12a9e8080",
+    "frontend/tests/auth/meeting-upload.spec.ts": "a121dff98b9e42f033a80808f4087af3f3889de64a2898617a4d24a93c60e8bf",
+    "frontend/tests/auth/session-response.spec.ts": "89ccc29bf55604d506a25ccd82925d02b3e263df30581c32595a3a686144eaae",
+    "frontend/tests/e2e/authenticated-test.ts": "7f740709bf1e1a5c40028a2283a58f57f26f680cfb76da468df5806298a26bcd",
+    "frontend/tests/e2e/knowledge-ingest.spec.ts": "6aec4396ad39a7e10fed072a0ae7852a545aa89f170ee7a76b66c7a691c837ae",
+    "frontend/tests/e2e/workspace-copilot.spec.ts": "246887adc649f3a04d5539d1e1713d3576fce75c61fce788fe7d0dab873c50f6",
+    "scripts/stack.sh": "5da705c724d0ef3b28943b5b4201d663952fe44b29396520ddf8575f306c2fb3"
+  }
+}

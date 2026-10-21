@@ -222,6 +222,30 @@ class TestAuthAPI(unittest.TestCase):
                         json={'role': 'User'})
         self.assertEqual(self.client.get('/api/v1/roles', headers=self.auth_headers(second['access_token'])).status_code, 403)
 
+    def test_demotion_applies_to_existing_business_token_and_refresh(self):
+        from app.models import Meeting
+        from datetime import datetime
+        first_id = self.make_user('Administrator', 'a@example.com', 'a')
+        second_id = self.make_user('Administrator', 'b@example.com', 'b')
+        meetings = [Meeting(title=title, organizer_id=first_id,
+                            start_time=datetime.utcnow(), end_time=datetime.utcnow())
+                    for title in ('Before demotion', 'After demotion')]
+        self.db.session.add_all(meetings)
+        self.db.session.commit()
+        first, second = self.login_as('a@example.com'), self.login_as('b@example.com')
+        existing = self.auth_headers(second['access_token'])
+        self.assertEqual(self.client.delete(f'/api/v1/meetings/{meetings[0].id}', headers=existing).status_code, 200)
+        changed = self.client.put(f'/api/v1/users/{second_id}/role',
+            headers=self.auth_headers(first['access_token']), json={'role': 'User'})
+        self.assertEqual(changed.status_code, 200)
+        self.assertEqual(self.client.delete(f'/api/v1/meetings/{meetings[1].id}', headers=existing).status_code, 403)
+        self.assertIsNotNone(Meeting.query.get(meetings[1].id))
+        refreshed = self.client.post('/api/v1/auth/refresh', headers=self.auth_headers(second['refresh_token']))
+        self.assertEqual(refreshed.status_code, 200)
+        self.assertEqual(refreshed.get_json()['user']['role'], 'User')
+        self.assertEqual(self.client.get('/api/v1/roles',
+            headers=self.auth_headers(refreshed.get_json()['access_token'])).status_code, 403)
+
     def test_cannot_demote_self_or_assign_unknown_role(self):
         user_id = self.make_user('Administrator')
         headers = self.auth_headers(self.login_as()['access_token'])
@@ -264,6 +288,24 @@ class TestAuthAPI(unittest.TestCase):
         self.assertEqual(self.client.get('/api/v1/auth/user', headers=self.auth_headers(first['access_token'])).status_code, 401)
         self.assertEqual(self.client.post('/api/v1/auth/refresh', headers=self.auth_headers(first['refresh_token'])).status_code, 401)
         self.assertEqual(self.client.get('/api/v1/auth/user', headers=self.auth_headers(second['access_token'])).status_code, 200)
+
+    def test_session_and_revocation_survive_app_recreation(self):
+        from app import create_app
+        self.register_user()
+        tokens = self.login_as()
+        self.db.session.remove()
+        restarted = create_app('testing')
+        with restarted.app_context():
+            client = restarted.test_client()
+            self.assertEqual(client.get('/api/v1/auth/user',
+                headers=self.auth_headers(tokens['access_token'])).status_code, 200)
+            self.assertEqual(client.post('/api/v1/auth/logout',
+                headers=self.auth_headers(tokens['refresh_token'])).status_code, 200)
+        self.db.session.remove()
+        self.assertEqual(self.client.get('/api/v1/auth/user',
+            headers=self.auth_headers(tokens['access_token'])).status_code, 401)
+        self.assertEqual(self.client.post('/api/v1/auth/refresh',
+            headers=self.auth_headers(tokens['refresh_token'])).status_code, 401)
 
     def test_tampered_and_legacy_tokens_are_rejected(self):
         import jwt
@@ -339,6 +381,65 @@ class TestAuthAPI(unittest.TestCase):
         headers = self.auth_headers(self.login_as('other@example.com')['access_token'])
         self.assertEqual(self.client.delete(f'/api/v1/achievements/{item.id}', headers=headers).status_code, 403)
         self.assertEqual(self.client.get('/api/v1/auth/user', headers=headers).status_code, 200)
+
+    def test_project_physical_delete_preserves_untrusted_paths_and_references(self):
+        from app.models.project import Project, ProjectFile
+        owner = self.make_user()
+        project = Project(name='Owner project', creator_id=owner)
+        self.db.session.add(project)
+        self.db.session.commit()
+        headers = self.auth_headers(self.login_as()['access_token'])
+        with tempfile.TemporaryDirectory(prefix='auth-upload-boundary-') as directory:
+            root = Path(directory)
+            uploads = root / 'uploads'
+            uploads.mkdir()
+            outside = root / 'outside.txt'
+            outside.write_text('synthetic outside sentinel')
+            unrelated = uploads / 'another-users-upload.txt'
+            unrelated.write_text('synthetic unrelated upload')
+            (uploads / 'link.txt').symlink_to(outside)
+            with mock.patch.dict(self.app.config, {'UPLOAD_FOLDER': str(uploads)}):
+                for path in [str(outside), '../outside.txt', 'link.txt', unrelated.name]:
+                    with self.subTest(path=path):
+                        # A valid JWT and a self-owned project must not turn a
+                        # client-provided attachment path into deletion authority.
+                        attached = self.client.post(f'/api/v1/projects/{project.id}/files',
+                            headers=headers, json={'file_path': path, 'original_name': 'fixture.txt'})
+                        self.assertEqual(attached.status_code, 201)
+                        file_id = attached.get_json()['id']
+                        response = self.client.delete(
+                            f'/api/v1/projects/{project.id}/files/{file_id}/physical', headers=headers)
+                        self.assertEqual(response.status_code, 409)
+                        self.assertEqual(response.get_json()['code'], 'physical_delete_requires_verified_upload')
+                        self.assertIsNotNone(ProjectFile.query.get(file_id))
+                        self.assertEqual(outside.read_text(), 'synthetic outside sentinel')
+                        self.assertEqual(unrelated.read_text(), 'synthetic unrelated upload')
+
+    def test_project_attachment_detach_with_string_jwt_keeps_uploaded_bytes(self):
+        from app.models.project import Project, ProjectFile
+        owner = self.make_user()
+        self.make_user(email='other@example.com', username='other')
+        project = Project(name='Owner project', creator_id=owner)
+        self.db.session.add(project)
+        self.db.session.commit()
+        owner_headers = self.auth_headers(self.login_as()['access_token'])
+        other_headers = self.auth_headers(self.login_as('other@example.com')['access_token'])
+        with tempfile.TemporaryDirectory(prefix='auth-upload-detach-') as directory:
+            uploaded = Path(directory) / 'fixture.txt'
+            uploaded.write_text('synthetic uploaded bytes')
+            with mock.patch.dict(self.app.config, {'UPLOAD_FOLDER': directory}):
+                attached = self.client.post(f'/api/v1/projects/{project.id}/files',
+                    headers=owner_headers, json={'file_path': uploaded.name, 'original_name': 'fixture.txt'})
+                self.assertEqual(attached.status_code, 201)
+                file_id = attached.get_json()['id']
+                path = f'/api/v1/projects/{project.id}/files/{file_id}'
+                self.assertEqual(self.client.delete(path, headers=other_headers).status_code, 403)
+                self.assertEqual(self.client.delete(path + '/physical', headers=other_headers).status_code, 403)
+                self.assertEqual(self.client.delete(path + '/physical').status_code, 401)
+                self.assertIsNotNone(ProjectFile.query.get(file_id))
+                self.assertEqual(self.client.delete(path, headers=owner_headers).status_code, 200)
+                self.assertIsNone(ProjectFile.query.get(file_id))
+                self.assertEqual(uploaded.read_text(), 'synthetic uploaded bytes')
 
 
     def test_session_migration_preserves_existing_accounts(self):
