@@ -4,6 +4,8 @@ from pathlib import Path
 
 from fastapi import Depends, FastAPI, HTTPException, Request
 from sqlalchemy.orm import Session
+from fastapi.responses import JSONResponse
+from .auth import AuthenticationError, require_user
 
 from .db import Base, create_session_factory
 from .mcp.registry import build_registry
@@ -26,9 +28,14 @@ def default_database_url() -> str:
 def create_app(database_url: str | None = None, testing: bool = False) -> FastAPI:
     app = FastAPI(
         title='Academic Manage Pro 2.0',
+        dependencies=[Depends(require_user)],
         version='2.0.0',
         docs_url='/docs' if testing else '/docs',
     )
+
+    @app.exception_handler(AuthenticationError)
+    async def authentication_error(request, exc):
+        return JSONResponse(status_code=exc.status, content=exc.payload)
 
     engine, session_factory = create_session_factory(database_url or default_database_url())
     Base.metadata.create_all(bind=engine)
@@ -211,6 +218,3 @@ def create_app(database_url: str | None = None, testing: bool = False) -> FastAP
             raise HTTPException(status_code=400, detail=str(exc)) from exc
 
     return app
-
-
-app = create_app()

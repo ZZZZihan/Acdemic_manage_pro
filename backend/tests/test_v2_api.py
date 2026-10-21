@@ -10,6 +10,7 @@ if str(BACKEND_ROOT) not in sys.path:
     sys.path.insert(0, str(BACKEND_ROOT))
 
 from app_v2.main import create_app
+from app_v2.auth import require_user
 
 
 class TestV2Api(unittest.TestCase):
@@ -17,6 +18,7 @@ class TestV2Api(unittest.TestCase):
         self.temp_dir = tempfile.TemporaryDirectory(prefix='app-v2-tests-')
         database_url = f"sqlite+pysqlite:///{Path(self.temp_dir.name) / 'app_v2.sqlite'}"
         self.app = create_app(database_url=database_url, testing=True)
+        self.app.dependency_overrides[require_user] = lambda: {'id': 1, 'role': 'User'}
         self.client = TestClient(self.app)
 
     def tearDown(self):

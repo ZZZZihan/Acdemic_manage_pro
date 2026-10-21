@@ -2,7 +2,7 @@ from flask import request, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from app.api.v1 import api
 from app.models import Achievement, User, db
-from app.api.v1.errors import bad_request, not_found, unauthorized
+from app.api.v1.errors import bad_request, not_found, unauthorized, forbidden
 import logging
 import json
 from datetime import datetime, date
@@ -22,6 +22,7 @@ def get_latest_achievements():
     return jsonify(result)
 
 @api.route('/achievements', methods=['GET'])
+@jwt_required(optional=True)
 def get_achievements():
     """获取成果列表"""
     # 获取分页参数
@@ -197,7 +198,7 @@ def update_achievement(id):
         return not_found('成果不存在')
     
     if achievement.user_id != current_user_id:
-        return unauthorized('无权修改此成果')
+        return forbidden('无权修改此成果')
     
     data = request.get_json() or {}
     logging.info(f"更新成果请求数据: {data}")
@@ -281,7 +282,7 @@ def delete_achievement(id):
         return not_found('成果不存在')
     
     if achievement.user_id != current_user_id:
-        return unauthorized('无权删除此成果')
+        return forbidden('无权删除此成果')
     
     db.session.delete(achievement)
     db.session.commit()

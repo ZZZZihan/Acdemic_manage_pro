@@ -15,7 +15,7 @@ const routes = [
         path: 'workspace',
         name: 'WorkspaceCopilot',
         component: () => import('@/views/WorkspaceCopilot.vue'),
-        meta: { title: '智能工作台', requiresAuth: false }
+        meta: { title: '智能工作台', requiresAuth: true }
       },
       {
         path: 'overview',
@@ -120,6 +120,12 @@ const routes = [
         meta: { title: '编辑会议', requiresAuth: true }
       },
       {
+        path: 'admin/users',
+        name: 'UserRoles',
+        component: () => import('@/views/user/UserRoles.vue'),
+        meta: { title: '角色管理', requiresAuth: true, requiresAdmin: true }
+      },
+      {
         path: 'profile',
         name: 'Profile',
         component: () => import('@/views/user/ProfileView.vue'),
@@ -164,32 +170,24 @@ const router = createRouter({
   routes
 })
 
-// 全局前置守卫
-router.beforeEach((to, from, next) => {
-  console.log('路由守卫触发：', { 
-    to: { path: to.path, name: to.name, meta: to.meta, query: to.query },
-    from: { path: from.path, name: from.name }
-  })
-  
-  // 设置页面标题
+router.beforeEach(async (to) => {
   document.title = to.meta.title ? `${to.meta.title} - 实验室知识管理系统` : '实验室知识管理系统'
-  
-  // 检查是否需要登录
-  const authStore = useAuthStore()
-  console.log('当前登录状态：', { 
-    isLoggedIn: authStore.isLoggedIn, 
-    token: !!authStore.token,
-    user: authStore.user
-  })
-  
-  if (to.meta.requiresAuth && !authStore.isLoggedIn) {
-    // 需要登录但未登录，重定向到登录页
-    console.log('需要登录但未登录，重定向到登录页，携带重定向路径：', to.fullPath)
-    next({ name: 'Login', query: { redirect: to.fullPath } })
-  } else {
-    console.log('允许访问路由：', to.path)
-    next()
+  const auth = useAuthStore()
+  try {
+    await auth.initialize()
+    if (to.meta.requiresAdmin && auth.isLoggedIn) await auth.fetchUserProfile()
+  } catch {
+    if (to.meta.requiresAuth) return { name: 'Login', query: { redirect: to.fullPath } }
+  }
+  if (to.meta.requiresAuth && !auth.isLoggedIn) return { name: 'Login', query: { redirect: to.fullPath } }
+  if (to.meta.requiresAdmin && !auth.isAdmin) return { name: 'Profile' }
+})
+
+window.addEventListener('auth:expired', () => {
+  const current = router.currentRoute.value
+  if (current.meta.requiresAuth) {
+    router.replace({ name: 'Login', query: { redirect: current.fullPath } })
   }
 })
 
-export default router 
+export default router

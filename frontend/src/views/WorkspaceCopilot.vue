@@ -151,7 +151,7 @@
             </div>
           </template>
           <div v-if="approvals.length" class="approval-list">
-            <div v-for="approval in approvals" :key="approval.id" class="approval-card" data-testid="approval-card">
+            <div v-for="approval in approvals" :key="approval.id" class="approval-card" data-testid="approval-card" :data-approval-id="approval.id">
               <strong>{{ approval.tool_name }}</strong>
               <p>{{ approval.rationale }}</p>
               <small>{{ approval.provider }} · {{ approval.status }}</small>

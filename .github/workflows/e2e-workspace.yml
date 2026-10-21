@@ -2,8 +2,6 @@ name: e2e-workspace
 
 on:
   pull_request:
-    branches:
-      - main
   push:
     branches:
       - main
@@ -40,3 +38,21 @@ jobs:
       - name: Run workspace E2E
         working-directory: frontend
         run: npm run e2e -- tests/e2e/workspace-copilot.spec.ts tests/e2e/provider-routing.spec.ts tests/e2e/ollama-local-only.spec.ts tests/e2e/knowledge-ingest.spec.ts
+
+      - name: Preserve failed workspace diagnostics
+        if: failure()
+        run: |
+          mkdir -p workspace-e2e-logs
+          cp .runtime_logs/*.log workspace-e2e-logs/ 2>/dev/null || true
+
+      - name: Upload failed workspace diagnostics
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: workspace-e2e-failure
+          path: |
+            frontend/playwright-report/
+            frontend/test-results/
+            workspace-e2e-logs/
+          if-no-files-found: ignore
+          retention-days: 7

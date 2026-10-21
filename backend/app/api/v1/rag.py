@@ -1,5 +1,4 @@
 from flask import request, jsonify, Blueprint
-from app.utils.flashrag_service import flashrag_service
 import logging
 
 rag_bp = Blueprint('rag', __name__)
@@ -49,6 +48,7 @@ def rag_chat():
     
     try:
         # 直接使用FlashRAG服务
+        from app.utils.flashrag_service import flashrag_service
         result = flashrag_service.rag_query(query, provider)
         
         return jsonify(result)
@@ -72,6 +72,7 @@ def init_flashrag():
     """
     try:
         # 重新初始化FlashRAG服务
+        from app.utils.flashrag_service import flashrag_service
         flashrag_service._init_index()
         
         return jsonify({

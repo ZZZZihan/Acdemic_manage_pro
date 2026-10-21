@@ -2,15 +2,14 @@ from flask import request, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from app.api.v1 import api
 from app.models import TechSummary, User, db
-from app.api.v1.errors import bad_request, not_found, unauthorized
+from app.api.v1.errors import bad_request, not_found, unauthorized, forbidden
 import logging
 from datetime import datetime
 from app.utils.crawler import crawl_url
-from app.utils.llm_api import llm_service
-from app.utils.chat_with_doc import chat_with_document, chat_with_knowledge_base
 from app.utils.knowledge_base import knowledge_base
 
 @api.route('/tech_summaries', methods=['GET'])
+@jwt_required(optional=True)
 def get_tech_summaries():
     """获取技术总结列表"""
     # 获取分页参数
@@ -157,7 +156,7 @@ def update_tech_summary(id):
         return not_found('技术总结不存在')
     
     if summary.user_id != current_user_id:
-        return unauthorized('无权修改此技术总结')
+        return forbidden('无权修改此技术总结')
     
     data = request.get_json() or {}
     
@@ -229,7 +228,7 @@ def delete_tech_summary(id):
     
     if not (is_owner or is_admin):
         logging.warning(f"权限不足 - 用户 {current_user_id} ({current_user.username}) 尝试删除用户 {summary.user_id} 创建的技术总结 {id}")
-        return unauthorized('无权删除此技术总结，只有创建者或管理员可以删除')
+        return forbidden('无权删除此技术总结，只有创建者或管理员可以删除')
     
     # 记录删除操作
     if is_admin and not is_owner:
@@ -277,6 +276,7 @@ def crawl_and_summarize():
     original_title = crawled_data['title']
     
     # 使用大语言模型进行总结
+    from app.utils.llm_api import llm_service
     summary_result = llm_service.summarize_content(
         content=content,
         url=url,
@@ -338,9 +338,11 @@ def chat_with_tech_summary(id):
     try:
         if use_knowledge_base:
             # 使用知识库回答问题
+            from app.utils.chat_with_doc import chat_with_knowledge_base
             result = chat_with_knowledge_base(data['query'], str(id), provider)
         else:
             # 使用单个文档内容回答问题
+            from app.utils.chat_with_doc import chat_with_document
             result = chat_with_document(summary.content, data['query'], provider)
         
         if result['success']:
@@ -378,6 +380,7 @@ def chat_with_global_knowledge_base():
     
     try:
         # 使用知识库回答问题
+        from app.utils.chat_with_doc import chat_with_knowledge_base
         result = chat_with_knowledge_base(data['query'], None, provider)
         
         if result['success']:

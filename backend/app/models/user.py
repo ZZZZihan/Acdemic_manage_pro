@@ -75,11 +75,8 @@ class User(db.Model):
     
     def __init__(self, **kwargs):
         super(User, self).__init__(**kwargs)
-        if self.role is None:
-            if self.email == 'admin@example.com':
-                self.role = Role.query.filter_by(name='Administrator').first()
-            if self.role is None:
-                self.role = Role.query.filter_by(default=True).first()
+        if self.role is None and self.role_id is None:
+            self.role = Role.query.filter_by(name='User').first()
     
     @property
     def password(self):
@@ -106,6 +103,9 @@ class User(db.Model):
     def to_dict(self):
         return {
             'id': self.id,
+            'role': self.role.name if self.role else None,
+            'permissions': self.role.permissions if self.role else 0,
+            'is_administrator': self.is_administrator(),
             'email': self.email,
             'username': self.username,
             'name': self.name,

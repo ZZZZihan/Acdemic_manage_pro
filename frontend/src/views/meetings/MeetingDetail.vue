@@ -161,7 +161,7 @@
               v-if="canEdit"
               class="upload-attachment"
               :action="`/api/v1/meetings/attachments/upload`"
-              :headers="uploadHeaders"
+              :http-request="uploadMeetingAttachment"
               :on-success="handleAttachmentSuccess"
               :on-error="handleAttachmentError"
               :show-file-list="false"
@@ -324,6 +324,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { ArrowDown, Document } from '@element-plus/icons-vue'
 import axios from '@/utils/axios'
+import { uploadMeetingAttachment } from '@/utils/meetingUpload'
 import { useUserStore } from '@/stores/user'
 import { formatDate } from '@/utils/format'
 
@@ -409,13 +410,6 @@ export default {
       
       return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i]
     }
-    
-    // 上传文件所需的headers
-    const uploadHeaders = computed(() => {
-      return {
-        Authorization: `Bearer ${userStore.token}`
-      }
-    })
     
     // 加载会议详情
     const loadMeetingDetail = async () => {
@@ -651,7 +645,7 @@ export default {
       statusText,
       formatDateTime,
       formatFileSize,
-      uploadHeaders,
+      uploadMeetingAttachment,
       
       editMeeting,
       handleCommand,
