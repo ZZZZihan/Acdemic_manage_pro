@@ -7,14 +7,14 @@
       </div>
     </div>
     
-    <el-row :gutter="20">
-      <el-col :span="16">
+    <el-row :gutter="narrow ? 0 : 20">
+      <el-col :xs="24" :sm="24" :md="16">
         <el-card class="chat-card">
           <global-knowledge-chat />
         </el-card>
       </el-col>
       
-      <el-col :span="8">
+      <el-col :xs="24" :sm="24" :md="8">
         <el-card class="info-card">
           <h3>知识库助手使用说明</h3>
           <div class="info-content">
@@ -66,12 +66,19 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { onBeforeUnmount, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import GlobalKnowledgeChat from '@/components/GlobalKnowledgeChat.vue'
 import axios from '@/utils/axios'
 
 const router = useRouter()
+const narrow = ref(false)
+const narrowQuery = window.matchMedia('(max-width: 768px)')
+
+function syncNarrow() {
+  narrow.value = narrowQuery.matches
+}
+
 const stats = ref({
   totalSummaries: 0,
   lastUpdate: '-'
@@ -114,7 +121,13 @@ const fetchStats = async () => {
 }
 
 onMounted(() => {
+  syncNarrow()
+  narrowQuery.addEventListener('change', syncNarrow)
   fetchStats()
+})
+
+onBeforeUnmount(() => {
+  narrowQuery.removeEventListener('change', syncNarrow)
 })
 </script>
 
@@ -127,7 +140,14 @@ onMounted(() => {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
   margin-bottom: 20px;
+}
+
+.page-title {
+  margin: 0;
+  font-size: 22px;
 }
 
 .header-actions {
@@ -206,5 +226,19 @@ onMounted(() => {
   font-size: 16px;
   font-weight: 600;
   color: #409EFF;
+}
+
+@media (max-width: 768px) {
+  .knowledge-chat-page {
+    padding: 0;
+  }
+
+  .page-title {
+    font-size: 18px;
+  }
+
+  .page-header {
+    margin-bottom: 12px;
+  }
 }
 </style> 

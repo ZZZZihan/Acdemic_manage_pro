@@ -476,6 +476,38 @@ onMounted(() => {
   gap: 4px;
 }
 
+@media (max-width: 768px) {
+  .global-knowledge-chat {
+    height: calc(100vh - 260px);
+    min-height: 420px;
+  }
+
+  .message {
+    max-width: 92%;
+  }
+
+  .chat-header {
+    padding: 10px 12px;
+  }
+
+  .chat-header .description {
+    font-size: 12px;
+  }
+
+  .chat-messages {
+    padding: 12px;
+  }
+
+  .chat-input {
+    padding: 8px;
+  }
+
+  .chat-settings {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+}
+
 .typing-indicator span {
   width: 8px;
   height: 8px;
