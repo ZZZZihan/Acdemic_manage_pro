@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test'
+import { expect, test } from './authenticated-test'
 
 test.describe('Ollama Local Mode', () => {
   test('keeps external-write request in local read-only mode', async ({ page }) => {

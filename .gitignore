@@ -12,3 +12,6 @@ backend_env/
 e2e-workspace.png
 frontend/playwright-report/
 frontend/test-results/
+# Local signing keys and auth runtime
+backend/instance/.jwt-secret
+.venv_auth_*/

@@ -20,6 +20,10 @@ def create_app(config_name):
     from app.models import db
     db.init_app(app)
     jwt.init_app(app)
+    from app.authentication import configure_jwt
+    configure_jwt(jwt)
+    from app.auth_cli import register_auth_commands
+    register_auth_commands(app)
     
     # 配置CORS，允许所有来源、所有方法和自定义头
     # 直接使用简单配置解决跨域问题

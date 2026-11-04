@@ -44,14 +44,17 @@
 <script setup>
 import { useAuthStore } from '@/stores/auth'
 import { useRouter } from 'vue-router'
+import { ElMessage } from 'element-plus'
 import { ArrowDown } from '@element-plus/icons-vue'
 
 const authStore = useAuthStore()
 const router = useRouter()
 
-const handleCommand = (command) => {
+const handleCommand = async (command) => {
   if (command === 'logout') {
-    authStore.logout()
+    try { await authStore.logout() } catch {
+      ElMessage.warning('本机已退出，服务端会话撤销失败，请恢复网络后重试或等待会话过期')
+    }
   } else if (command === 'profile') {
     router.push('/profile')
   }

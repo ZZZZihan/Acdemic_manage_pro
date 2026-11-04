@@ -7,4 +7,5 @@ from app.models.user import User, Role, Permission
 from app.models.achievement import Achievement
 from app.models.tech_summary import TechSummary
 from app.models.project import Project, ProjectMember
-from app.models.meeting import Meeting, MeetingParticipant, MeetingFile 
+from app.models.meeting import Meeting, MeetingParticipant, MeetingFile
+from app.models.auth_session import AuthSession
