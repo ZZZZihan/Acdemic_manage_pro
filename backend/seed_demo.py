@@ -4,6 +4,7 @@ Run from the backend directory after exporting ADMIN_PASSWORD and
 MEMBER_PASSWORD. Passwords are never written into the repository.
 Demo accounts use example.com addresses only.
 """
+import json
 import os
 import sys
 from datetime import datetime, timedelta, date
@@ -85,7 +86,22 @@ def main():
                 tags="demo",
                 user_id=admin.id,
                 source_url="https://example.com/demo-note",
+                access_scope="lab",
             ))
+            corpus_path = os.path.join(os.path.dirname(__file__), "evals", "corpus.jsonl")
+            if os.path.exists(corpus_path):
+                with open(corpus_path, encoding="utf-8") as handle:
+                    for line in handle:
+                        row = json.loads(line)
+                        db.session.add(TechSummary(
+                            title=row["title"],
+                            content=row["content"],
+                            summary_type="示例",
+                            tags="eval",
+                            user_id=admin.id,
+                            source_url=row.get("source_url") or "https://example.com/seed",
+                            access_scope=row.get("access_scope") or "lab",
+                        ))
         if Achievement.query.count() == 0:
             db.session.add(Achievement(
                 title="示例成果",
@@ -124,6 +140,11 @@ def main():
             db.session.flush()
             db.session.add(MeetingParticipant(meeting_id=meeting.id, user_id=member.id, role="参与者"))
         db.session.commit()
+        from app.rag.ingest import rebuild_from_db
+        from app.rag.service import sync_corpus_from_db
+
+        sync_corpus_from_db()
+        rebuild_from_db()
         print(
             "Demo database ready. "
             f"tech_summaries={TechSummary.query.count()} "

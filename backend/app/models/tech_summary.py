@@ -18,6 +18,9 @@ class TechSummary(db.Model):
     
     # 来源URL
     source_url = db.Column(db.String(512))
+
+    # lab: every member. private: owner and administrators.
+    access_scope = db.Column(db.String(32), default="lab", server_default="lab")
     
     def to_dict(self):
         return {
@@ -31,7 +34,8 @@ class TechSummary(db.Model):
             'user_id': self.user_id,
             'file_path': self.file_path,
             'original_file_name': self.original_file_name,
-            'source_url': self.source_url
+            'source_url': self.source_url,
+            'access_scope': self.access_scope or 'lab',
         }
     
     def __repr__(self):

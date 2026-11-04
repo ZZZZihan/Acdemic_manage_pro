@@ -1,0 +1,58 @@
+{"id": "e01", "question": "石英舟用稀释氢氟酸浸泡这一条记录的关键结论是什么", "answerable": true, "doc_id": "g01", "key_phrase": "石英舟用稀释氢氟酸浸泡", "set_version": "p1-v1"}
+{"id": "h01", "question": "编号 CODE-1001 的校准周期是多少", "answerable": true, "doc_id": "g01", "key_phrase": "石英舟用稀释氢氟酸浸泡", "set_version": "p1-v1"}
+{"id": "e02", "question": "真空规管烘烤上限一百二十度这一条记录的关键结论是什么", "answerable": true, "doc_id": "g02", "key_phrase": "真空规管烘烤上限一百二十度", "set_version": "p1-v1"}
+{"id": "h02", "question": "编号 CODE-1002 的校准周期是多少", "answerable": true, "doc_id": "g02", "key_phrase": "真空规管烘烤上限一百二十度", "set_version": "p1-v1"}
+{"id": "e03", "question": "光刻胶开封后必须冷藏这一条记录的关键结论是什么", "answerable": true, "doc_id": "g03", "key_phrase": "光刻胶开封后必须冷藏", "set_version": "p1-v1"}
+{"id": "h03", "question": "编号 CODE-1003 的校准周期是多少", "answerable": true, "doc_id": "g03", "key_phrase": "光刻胶开封后必须冷藏", "set_version": "p1-v1"}
+{"id": "e04", "question": "等离子清洗机腔体先抽空这一条记录的关键结论是什么", "answerable": true, "doc_id": "g04", "key_phrase": "等离子清洗机腔体先抽空", "set_version": "p1-v1"}
+{"id": "h04", "question": "编号 CODE-1004 的校准周期是多少", "answerable": true, "doc_id": "g04", "key_phrase": "等离子清洗机腔体先抽空", "set_version": "p1-v1"}
+{"id": "e05", "question": "金线键合压力逐批记录这一条记录的关键结论是什么", "answerable": true, "doc_id": "g05", "key_phrase": "金线键合压力逐批记录", "set_version": "p1-v1"}
+{"id": "h05", "question": "编号 CODE-1005 的校准周期是多少", "answerable": true, "doc_id": "g05", "key_phrase": "金线键合压力逐批记录", "set_version": "p1-v1"}
+{"id": "e06", "question": "椭圆偏振仪入射角固定七十度这一条记录的关键结论是什么", "answerable": true, "doc_id": "g06", "key_phrase": "椭圆偏振仪入射角固定七十度", "set_version": "p1-v1"}
+{"id": "h06", "question": "编号 CODE-1006 的校准周期是多少", "answerable": true, "doc_id": "g06", "key_phrase": "椭圆偏振仪入射角固定七十度", "set_version": "p1-v1"}
+{"id": "e07", "question": "超声波清洗换水不超过三次这一条记录的关键结论是什么", "answerable": true, "doc_id": "g07", "key_phrase": "超声波清洗换水不超过三次", "set_version": "p1-v1"}
+{"id": "h07", "question": "编号 CODE-1007 的校准周期是多少", "answerable": true, "doc_id": "g07", "key_phrase": "超声波清洗换水不超过三次", "set_version": "p1-v1"}
+{"id": "e08", "question": "手套箱水氧报警阈值写在门上这一条记录的关键结论是什么", "answerable": true, "doc_id": "g08", "key_phrase": "手套箱水氧报警阈值写在门上", "set_version": "p1-v1"}
+{"id": "h08", "question": "编号 CODE-1008 的校准周期是多少", "answerable": true, "doc_id": "g08", "key_phrase": "手套箱水氧报警阈值写在门上", "set_version": "p1-v1"}
+{"id": "e09", "question": "溅射靶材更换要双人签字这一条记录的关键结论是什么", "answerable": true, "doc_id": "g09", "key_phrase": "溅射靶材更换要双人签字", "set_version": "p1-v1"}
+{"id": "h09", "question": "编号 CODE-1009 的校准周期是多少", "answerable": true, "doc_id": "g09", "key_phrase": "溅射靶材更换要双人签字", "set_version": "p1-v1"}
+{"id": "e10", "question": "退火炉升温斜率每分钟五度这一条记录的关键结论是什么", "answerable": true, "doc_id": "g10", "key_phrase": "退火炉升温斜率每分钟五度", "set_version": "p1-v1"}
+{"id": "h10", "question": "编号 CODE-1010 的校准周期是多少", "answerable": true, "doc_id": "g10", "key_phrase": "退火炉升温斜率每分钟五度", "set_version": "p1-v1"}
+{"id": "e11", "question": "探针台接地线每周测电阻这一条记录的关键结论是什么", "answerable": true, "doc_id": "g11", "key_phrase": "探针台接地线每周测电阻", "set_version": "p1-v1"}
+{"id": "h11", "question": "请核对运行记录中的储存温度、负责岗位、校准周期和操作步骤，只看编号 CODE-1011。", "answerable": true, "doc_id": "g11", "key_phrase": "探针台接地线每周测电阻", "set_version": "p1-v1"}
+{"id": "e12", "question": "光罩盒只能竖立存放这一条记录的关键结论是什么", "answerable": true, "doc_id": "g12", "key_phrase": "光罩盒只能竖立存放", "set_version": "p1-v1"}
+{"id": "h12", "question": "请核对运行记录中的储存温度、负责岗位、校准周期和操作步骤，只看编号 CODE-1012。", "answerable": true, "doc_id": "g12", "key_phrase": "光罩盒只能竖立存放", "set_version": "p1-v1"}
+{"id": "e13", "question": "离心机转子对号入座这一条记录的关键结论是什么", "answerable": true, "doc_id": "g13", "key_phrase": "离心机转子对号入座", "set_version": "p1-v1"}
+{"id": "h13", "question": "请核对运行记录中的储存温度、负责岗位、校准周期和操作步骤，只看编号 CODE-1013。", "answerable": true, "doc_id": "g13", "key_phrase": "离心机转子对号入座", "set_version": "p1-v1"}
+{"id": "e14", "question": "液氮罐补液前先排空软管这一条记录的关键结论是什么", "answerable": true, "doc_id": "g14", "key_phrase": "液氮罐补液前先排空软管", "set_version": "p1-v1"}
+{"id": "h14", "question": "请核对运行记录中的储存温度、负责岗位、校准周期和操作步骤，只看编号 CODE-1014。", "answerable": true, "doc_id": "g14", "key_phrase": "液氮罐补液前先排空软管", "set_version": "p1-v1"}
+{"id": "e15", "question": "培养箱二氧化碳瓶压力每天看这一条记录的关键结论是什么", "answerable": true, "doc_id": "g15", "key_phrase": "培养箱二氧化碳瓶压力每天看", "set_version": "p1-v1"}
+{"id": "h15", "question": "请核对运行记录中的储存温度、负责岗位、校准周期和操作步骤，只看编号 CODE-1015。", "answerable": true, "doc_id": "g15", "key_phrase": "培养箱二氧化碳瓶压力每天看", "set_version": "p1-v1"}
+{"id": "e16", "question": "超净台风速滤芯按月更换这一条记录的关键结论是什么", "answerable": true, "doc_id": "g16", "key_phrase": "超净台风速滤芯按月更换", "set_version": "p1-v1"}
+{"id": "h16", "question": "请核对运行记录中的储存温度、负责岗位、校准周期和操作步骤，只看编号 CODE-1016。", "answerable": true, "doc_id": "g16", "key_phrase": "超净台风速滤芯按月更换", "set_version": "p1-v1"}
+{"id": "e17", "question": "移液器外校证书贴在抽屉这一条记录的关键结论是什么", "answerable": true, "doc_id": "g17", "key_phrase": "移液器外校证书贴在抽屉", "set_version": "p1-v1"}
+{"id": "h17", "question": "请核对运行记录中的储存温度、负责岗位、校准周期和操作步骤，只看编号 CODE-1017。", "answerable": true, "doc_id": "g17", "key_phrase": "移液器外校证书贴在抽屉", "set_version": "p1-v1"}
+{"id": "e18", "question": "纯水机电阻率低于读数就停用这一条记录的关键结论是什么", "answerable": true, "doc_id": "g18", "key_phrase": "纯水机电阻率低于读数就停用", "set_version": "p1-v1"}
+{"id": "h18", "question": "请核对运行记录中的储存温度、负责岗位、校准周期和操作步骤，只看编号 CODE-1018。", "answerable": true, "doc_id": "g18", "key_phrase": "纯水机电阻率低于读数就停用", "set_version": "p1-v1"}
+{"id": "e19", "question": "真空泵油窗口变色即更换这一条记录的关键结论是什么", "answerable": true, "doc_id": "g19", "key_phrase": "真空泵油窗口变色即更换", "set_version": "p1-v1"}
+{"id": "h19", "question": "请核对运行记录中的储存温度、负责岗位、校准周期和操作步骤，只看编号 CODE-1019。", "answerable": true, "doc_id": "g19", "key_phrase": "真空泵油窗口变色即更换", "set_version": "p1-v1"}
+{"id": "e20", "question": "样品袋条码与工单号一致这一条记录的关键结论是什么", "answerable": true, "doc_id": "g20", "key_phrase": "样品袋条码与工单号一致", "set_version": "p1-v1"}
+{"id": "h20", "question": "请核对运行记录中的储存温度、负责岗位、校准周期和操作步骤，只看编号 CODE-1020。", "answerable": true, "doc_id": "g20", "key_phrase": "样品袋条码与工单号一致", "set_version": "p1-v1"}
+{"id": "u01", "question": "国际空间站年度预算折合多少美元", "answerable": false, "doc_id": null, "key_phrase": null, "set_version": "p1-v1"}
+{"id": "u02", "question": "周三食堂供应什么午餐", "answerable": false, "doc_id": null, "key_phrase": null, "set_version": "p1-v1"}
+{"id": "u03", "question": "贵州茅台今天的收盘价是多少", "answerable": false, "doc_id": null, "key_phrase": null, "set_version": "p1-v1"}
+{"id": "u04", "question": "个人护照延期要准备哪些材料", "answerable": false, "doc_id": null, "key_phrase": null, "set_version": "p1-v1"}
+{"id": "u05", "question": "世界杯决赛在哪座球场踢", "answerable": false, "doc_id": null, "key_phrase": null, "set_version": "p1-v1"}
+{"id": "u06", "question": "红烧排骨的配菜有哪几样", "answerable": false, "doc_id": null, "key_phrase": null, "set_version": "p1-v1"}
+{"id": "u07", "question": "地铁二号线末班车几点", "answerable": false, "doc_id": null, "key_phrase": null, "set_version": "p1-v1"}
+{"id": "u08", "question": "去年票房最高的电影叫什么", "answerable": false, "doc_id": null, "key_phrase": null, "set_version": "p1-v1"}
+{"id": "u09", "question": "北极航线冬季是否通航", "answerable": false, "doc_id": null, "key_phrase": null, "set_version": "p1-v1"}
+{"id": "u10", "question": "美元兑日元汇率现在是多少", "answerable": false, "doc_id": null, "key_phrase": null, "set_version": "p1-v1"}
+{"id": "u11", "question": "流感疫苗预约还开放吗", "answerable": false, "doc_id": null, "key_phrase": null, "set_version": "p1-v1"}
+{"id": "u12", "question": "钢琴考级曲目有哪些", "answerable": false, "doc_id": null, "key_phrase": null, "set_version": "p1-v1"}
+{"id": "u13", "question": "火星车太阳能板如何展开", "answerable": false, "doc_id": null, "key_phrase": null, "set_version": "p1-v1"}
+{"id": "u14", "question": "奥运会开幕式在哪天举行", "answerable": false, "doc_id": null, "key_phrase": null, "set_version": "p1-v1"}
+{"id": "u15", "question": "个人所得税专项扣除怎么填", "answerable": false, "doc_id": null, "key_phrase": null, "set_version": "p1-v1"}
+{"id": "u16", "question": "航空里程可以兑换什么机票", "answerable": false, "doc_id": null, "key_phrase": null, "set_version": "p1-v1"}
+{"id": "u17", "question": "咖啡豆烘焙曲线怎么看", "answerable": false, "doc_id": null, "key_phrase": null, "set_version": "p1-v1"}
+{"id": "u18", "question": "足球越位规则如何判定", "answerable": false, "doc_id": null, "key_phrase": null, "set_version": "p1-v1"}

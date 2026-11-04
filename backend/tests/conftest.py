@@ -4,6 +4,7 @@ os.environ["SECRET_KEY"] = "test-secret-key-value-must-be-32b-x"
 os.environ["JWT_SECRET_KEY"] = "test-jwt-secret-value-must-be-32b-y"
 os.environ["RAG_ENABLED"] = "false"
 os.environ["RAG_RETRIEVER"] = "keyword"
+os.environ["RAG_EMBEDDER"] = "hash"
 os.environ["FLASK_DEBUG"] = "false"
 os.environ["FLASK_CONFIG"] = "testing"
 os.environ["CORS_ORIGINS"] = "http://localhost:5173"
@@ -28,6 +29,8 @@ def app(tmp_path):
     upload_root = tmp_path / "uploads"
     upload_root.mkdir()
     application.config["UPLOAD_FOLDER"] = str(upload_root)
+    application.config["RAG_INDEX_PATH"] = str(tmp_path / "rag.sqlite")
+    application.config["RAG_EMBEDDER"] = "hash"
     with application.app_context():
         db.create_all()
         Role.insert_roles()

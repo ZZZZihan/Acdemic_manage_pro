@@ -1,5 +1,5 @@
-from flask import request, jsonify
-from flask_jwt_extended import jwt_required, get_jwt_identity
+from flask import g, request, jsonify
+from flask_jwt_extended import jwt_required, get_jwt_identity, verify_jwt_in_request
 from app.api.v1 import api
 from app.models import TechSummary, User, db
 from app.api.v1.errors import bad_request, not_found, unauthorized
@@ -12,6 +12,31 @@ from app.utils.knowledge_base import knowledge_base
 from app.audit import emit
 from app.rate_limit import rate_limit
 from app.security import admin_required, member_required
+from app.rag.acl import can_read
+
+
+def _viewer():
+    auth = request.headers.get("Authorization")
+    if not auth:
+        return None
+    try:
+        verify_jwt_in_request(optional=True)
+    except Exception:
+        return None
+    identity = get_jwt_identity()
+    try:
+        return User.query.get(int(identity))
+    except (TypeError, ValueError):
+        return None
+
+
+def _visible_query(query, viewer):
+    public = db.or_(TechSummary.access_scope.is_(None), TechSummary.access_scope != "private")
+    if viewer is None:
+        return query.filter(public)
+    if viewer.is_administrator():
+        return query
+    return query.filter(db.or_(public, TechSummary.user_id == viewer.id))
 
 @api.route('/tech_summaries', methods=['GET'])
 def get_tech_summaries():
@@ -28,8 +53,8 @@ def get_tech_summaries():
     keyword = request.args.get('keyword', '')
     tags = request.args.get('tags', '')
     
-    # 构建查询
-    query = TechSummary.query
+    # 构建查询。private 只对作者和管理员可见。
+    query = _visible_query(TechSummary.query, _viewer())
     
     # 应用筛选条件
     if summary_type:
@@ -79,7 +104,7 @@ def get_tech_summaries():
 def get_tech_summary(id):
     """获取指定ID的技术总结"""
     summary = TechSummary.query.get(id)
-    if not summary:
+    if not summary or not can_read(summary.access_scope, summary.user_id, _viewer()):
         return not_found('技术总结不存在')
     
     return jsonify(summary.to_dict())
@@ -107,6 +132,10 @@ def create_tech_summary():
     if 'content' not in data:
         return bad_request('技术总结内容是必填项')
     
+    scope = str(data.get('access_scope') or 'lab')
+    if scope not in {'lab', 'private'}:
+        return bad_request('access_scope 只能是 lab 或 private')
+
     # 创建新的技术总结记录
     summary = TechSummary(
         user_id=current_user_id,
@@ -116,7 +145,8 @@ def create_tech_summary():
         tags=str(data.get('tags', '')),
         file_path=str(data.get('file_path', '')),
         original_file_name=str(data.get('original_file_name', '')),
-        source_url=str(data.get('source_url', ''))
+        source_url=str(data.get('source_url', '')),
+        access_scope=scope,
     )
     
     # 处理文件路径和原始文件名
@@ -156,7 +186,8 @@ def update_tech_summary(id):
             return jsonify({"msg": "无效的用户ID"}), 400
     
     summary = TechSummary.query.get(id)
-    if not summary:
+    viewer = User.query.get(current_user_id)
+    if not summary or not can_read(getattr(summary, "access_scope", None), summary.user_id, viewer):
         return not_found('技术总结不存在')
     
     if summary.user_id != current_user_id:
@@ -179,6 +210,11 @@ def update_tech_summary(id):
         summary.original_file_name = str(data['original_file_name'])
     if 'source_url' in data:
         summary.source_url = str(data['source_url'])
+    if 'access_scope' in data:
+        scope = str(data.get('access_scope') or 'lab')
+        if scope not in {'lab', 'private'}:
+            return bad_request('access_scope 只能是 lab 或 private')
+        summary.access_scope = scope
     
     summary.updated_at = datetime.utcnow()
     
@@ -211,7 +247,7 @@ def delete_tech_summary(id):
             return jsonify({"msg": "无效的用户ID"}), 400
     
     summary = TechSummary.query.get(id)
-    if not summary:
+    if not summary or not can_read(getattr(summary, "access_scope", None), summary.user_id, User.query.get(current_user_id)):
         logging.warning(f"技术总结不存在 - ID: {id}")
         return not_found('技术总结不存在')
     
@@ -246,6 +282,8 @@ def delete_tech_summary(id):
     # 从知识库中移除技术总结
     try:
         knowledge_base.remove_document(str(id))
+        from app.rag.ingest import delete_summary
+        delete_summary(id)
         logging.info(f"已从知识库中移除技术总结 '{summary.title}' (ID: {id})")
     except Exception as e:
         logging.error(f"从知识库中移除技术总结时出错: {str(e)}")
@@ -354,7 +392,7 @@ def _respond_chat(result, provider):
 def chat_with_tech_summary(id):
     """基于技术总结内容进行聊天"""
     summary = TechSummary.query.get(id)
-    if not summary:
+    if not summary or not can_read(summary.access_scope, summary.user_id, getattr(g, "actor", None)):
         return not_found('技术总结不存在')
 
     data = request.get_json() or {}
@@ -475,9 +513,12 @@ def add_tech_summary_to_knowledge_base(tech_summary):
                 'created_at': tech_summary.created_at.isoformat() if tech_summary.created_at else None,
                 'updated_at': tech_summary.updated_at.isoformat() if tech_summary.updated_at else None,
                 'user_id': tech_summary.user_id,
-                'source_url': tech_summary.source_url
+                'source_url': tech_summary.source_url,
+                'access_scope': getattr(tech_summary, 'access_scope', None) or 'lab',
             }
         )
+        from app.rag.ingest import upsert_summary
+        upsert_summary(tech_summary)
         logging.info(f"已将技术总结 '{tech_summary.title}' (ID: {tech_summary.id}) 添加到知识库")
     except Exception as e:
         logging.error(f"将技术总结添加到知识库时出错: {str(e)}")
@@ -490,7 +531,10 @@ def init_knowledge_base():
     from app.rag.service import corpus_count, sync_corpus_from_db
 
     try:
+        from app.rag.ingest import rebuild_from_db
+
         count = sync_corpus_from_db()
+        rebuild_from_db()
         rows = TechSummary.query.count()
         emit("index_rebuild", outcome="ok", corpus_docs=count, tech_summary_rows=rows)
         return jsonify({
