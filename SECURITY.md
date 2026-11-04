@@ -19,15 +19,13 @@
 
 `backend/.env.example` 只含占位符。复制后不替换占位符将无法启动。
 
-## 仍需所有者处理
+## 历史清理
 
-历史中曾经提交过 DeepSeek API 密钥（位于已从工作区删除的 `backend/.env.backup`）。本次变更不改写 git 历史。所有者需要：
+所有者已撤销曾经进入历史的 DeepSeek 密钥，并用 `git filter-repo` 从全部分支历史中删除了该文件以及其他已提交的环境备份、依赖目录、构建产物、数据库和上传文件。当前历史里不再包含那把密钥。CI 使用 `gitleaks detect` 扫描克隆中的全部提交，不再只扫工作区。
 
-- 立即在 DeepSeek 撤销该密钥，并确认没有其他副本仍在使用。
-- 在确认撤销后，用 filter-repo 或同等工具清理历史，并强制更新受保护的远程分支。
-- 清理完成之前，对全历史运行的密钥扫描会失败。当前 CI 只扫描工作区（`gitleaks detect --no-git`）。
-- 清理之后再在 GitHub 上打开 Secret scanning 和 Push protection。
-- 为默认分支打开分支保护，要求本仓库的 CI 通过后才能合并。
+GitHub 仍可能在缓存页面、fork 或旧的 pull request 视图里保留改写前的对象。协作者必须重新克隆，不能在旧克隆上 pull。若需要 GitHub 清除服务端缓存的旧对象，由所有者向 GitHub Support 提交历史清除请求。
+
+仍建议所有者打开 Secret scanning、Push protection，并为 `main` 设置分支保护，要求本仓库 CI 通过后才能合并。
 
 ## 认证、授权与调试
 
@@ -53,7 +51,7 @@ JSON 日志记录登录成功和失败、拒绝访问、文件下载、索引重
 
 ## 本地密钥扫描
 
-安装 [gitleaks](https://github.com/gitleaks/gitleaks) v8.21.2 后，提交前可启用 `.pre-commit-config.yaml`。手动扫描工作区：
+安装 [gitleaks](https://github.com/gitleaks/gitleaks) v8.21.2 后，提交前可启用 `.pre-commit-config.yaml`。手动扫描全部历史：
 
 ```bash
 bash scripts/scan-secrets.sh

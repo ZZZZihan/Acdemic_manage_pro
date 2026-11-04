@@ -55,7 +55,7 @@ ruff check ../backend
 bash ../scripts/scan-secrets.sh
 ```
 
-GitHub Actions 会运行工作区密钥扫描、后端 lint 与测试，以及 `npm ci`。工作区扫描不会检查 git 历史。
+GitHub Actions 会运行全历史密钥扫描、后端 lint 与测试，以及 `npm ci`。
 
 ## 主要接口
 
