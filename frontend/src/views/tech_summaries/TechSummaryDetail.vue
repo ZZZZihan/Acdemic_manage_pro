@@ -63,6 +63,7 @@ import axios from '@/utils/axios'
 import { ElMessage } from 'element-plus'
 import MarkdownRenderer from '@/components/MarkdownRenderer.vue'
 import DocumentChat from '@/components/DocumentChat.vue'
+import { downloadAuthorizedFile } from '@/utils/download'
 
 const route = useRoute()
 const router = useRouter()
@@ -91,9 +92,7 @@ const fetchSummary = async () => {
 
 const downloadFile = () => {
   if (!summary.value || !summary.value.file_path) return
-  
-  const fileUrl = `${import.meta.env.VITE_API_URL}/api/v1/files/download/${encodeURIComponent(summary.value.file_path)}`
-  window.open(fileUrl, '_blank')
+  downloadAuthorizedFile(summary.value.file_path, summary.value.original_file_name)
 }
 
 const formatDate = (dateString) => {

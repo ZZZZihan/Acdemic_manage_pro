@@ -1,0 +1,16 @@
+title = "Worktree secret scan"
+
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Generated trees and local databases. Do not allowlist secrets."
+paths = [
+  '''(^|/)node_modules/''',
+  '''(^|/)dist/''',
+  '''(^|/)\.venv/''',
+  '''(^|/)venv/''',
+  '''__pycache__''',
+  '''\.sqlite$''',
+  '''\.sqlite3$''',
+]

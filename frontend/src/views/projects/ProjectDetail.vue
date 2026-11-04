@@ -276,6 +276,7 @@ import axios from '@/utils/axios'
 import { ElMessage } from 'element-plus'
 import FileUpload from '@/components/FileUpload.vue'
 import { Document, Loading } from '@element-plus/icons-vue'
+import { downloadAuthorizedFile } from '@/utils/download'
 
 export default {
   name: 'ProjectDetail',
@@ -617,9 +618,7 @@ export default {
     // 下载文件
     const downloadFile = (file) => {
       if (!file || !file.file_path) return
-      
-      const downloadUrl = `${import.meta.env.VITE_API_URL || ''}/api/v1/files/download/${file.file_path}`
-      window.open(downloadUrl, '_blank')
+      downloadAuthorizedFile(file.file_path, file.original_name)
     }
     
     // 格式化文件大小

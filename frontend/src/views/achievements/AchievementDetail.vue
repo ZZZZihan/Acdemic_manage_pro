@@ -41,6 +41,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import axios from '@/utils/axios'
 import { useAuthStore } from '@/stores/auth'
+import { downloadAuthorizedFile } from '@/utils/download'
 
 const route = useRoute()
 const router = useRouter()
@@ -104,22 +105,7 @@ const deleteAchievement = async () => {
 
 const downloadFile = () => {
   if (!achievement.value || !achievement.value.file_path) return
-  
-  // 构建下载URL
-  const downloadUrl = `${import.meta.env.VITE_API_URL}/api/v1/files/download/${achievement.value.file_path}`
-  
-  // 添加原始文件名参数（如果有）
-  const urlWithParams = achievement.value.original_file_name 
-    ? `${downloadUrl}?original_name=${encodeURIComponent(achievement.value.original_file_name)}`
-    : downloadUrl
-  
-  // 创建一个隐藏的a标签并触发点击
-  const link = document.createElement('a')
-  link.href = urlWithParams
-  link.target = '_blank'
-  document.body.appendChild(link)
-  link.click()
-  document.body.removeChild(link)
+  downloadAuthorizedFile(achievement.value.file_path, achievement.value.original_file_name)
 }
 
 const formatDate = (dateString) => {

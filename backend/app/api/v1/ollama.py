@@ -1,5 +1,8 @@
 from flask import Blueprint, request, jsonify
 from app.utils.ollama_chat import OllamaChat
+from app.audit import emit
+from app.rate_limit import rate_limit
+from app.security import member_required
 import logging
 
 # 创建蓝图
@@ -12,6 +15,8 @@ logger = logging.getLogger(__name__)
 ollama_client = OllamaChat()
 
 @ollama_bp.route('/chat', methods=['POST'])
+@rate_limit("chat")
+@member_required
 def chat():
     """
     与Ollama模型聊天的API端点
@@ -34,8 +39,12 @@ def chat():
         
         # 调用Ollama客户端进行聊天
         result = ollama_client.chat(query)
-        
-        # 返回结果
+        emit(
+            "llm_call",
+            outcome="answered" if isinstance(result, dict) and result.get("success") else "unavailable",
+            provider="ollama",
+            retrieved_doc_ids=[],
+        )
         return jsonify(result)
         
     except Exception as e:

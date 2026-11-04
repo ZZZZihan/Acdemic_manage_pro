@@ -119,7 +119,7 @@ const routes = [
         path: 'knowledge_chat',
         name: 'KnowledgeChat',
         component: () => import('@/views/KnowledgeChat.vue'),
-        meta: { title: '知识库聊天', requiresAuth: false }
+        meta: { title: '知识库聊天', requiresAuth: true }
       }
     ]
   },

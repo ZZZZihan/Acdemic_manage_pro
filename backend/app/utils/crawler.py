@@ -4,6 +4,8 @@ import logging
 import re
 from urllib.parse import urlparse
 
+from app.utils.url_safety import assert_safe_http_url
+
 def extract_main_content(html, url):
     """
     从HTML中提取主要内容，尽量保留原始结构
@@ -155,6 +157,14 @@ def crawl_url(url):
                 'message': '无效的URL格式',
                 'data': None
             }
+        try:
+            assert_safe_http_url(url)
+        except ValueError as exc:
+            return {
+                'success': False,
+                'message': str(exc),
+                'data': None
+            }
         
         # 设置请求头，模拟浏览器
         headers = {
@@ -164,7 +174,7 @@ def crawl_url(url):
         }
         
         # 发送请求
-        response = requests.get(url, headers=headers, timeout=10)
+        response = requests.get(url, headers=headers, timeout=10, allow_redirects=False)
         response.raise_for_status()  # 如果请求失败，抛出异常
         
         # 检测编码

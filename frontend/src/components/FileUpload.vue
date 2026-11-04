@@ -8,6 +8,7 @@
       :on-error="handleError"
       :on-exceed="handleExceed"
       :on-remove="handleRemove"
+      :on-preview="handlePreview"
       :before-upload="beforeUpload"
       :file-list="fileList"
       :multiple="true"
@@ -28,6 +29,7 @@
 import { ref, computed, onMounted, watch } from 'vue'
 import { ElMessage } from 'element-plus'
 import { useAuthStore } from '@/stores/auth'
+import { downloadAuthorizedFile } from '@/utils/download'
 
 const props = defineProps({
   initialFiles: {
@@ -61,8 +63,7 @@ watch(() => props.initialFiles, (newFiles) => {
     // 将初始文件转换为fileList格式
     fileList.value = newFiles.map(file => ({
       name: file.original_name || '附件',
-      url: `${import.meta.env.VITE_API_URL}/api/v1/files/download/${encodeURIComponent(file.file_path)}`,
-      // 保存原始文件信息，用于后续处理
+      file_path: file.file_path,
       raw: file
     }))
   } else {
@@ -75,7 +76,7 @@ onMounted(() => {
   if (props.initialFiles && props.initialFiles.length > 0) {
     fileList.value = props.initialFiles.map(file => ({
       name: file.original_name || '附件',
-      url: `${import.meta.env.VITE_API_URL}/api/v1/files/download/${encodeURIComponent(file.file_path)}`,
+      file_path: file.file_path,
       raw: file
     }))
   }
@@ -102,9 +103,16 @@ const beforeUpload = (file) => {
 }
 
 // 处理上传成功
+const handlePreview = (file) => {
+  const path = file.file_path || file.raw?.file_path
+  if (!path) return
+  downloadAuthorizedFile(path, file.name)
+}
+
 const handleSuccess = (response, file, fileList) => {
-  console.log('文件上传成功:', response)
-  // 发送文件信息到父组件
+  if (response?.file_path) {
+    file.file_path = response.file_path
+  }
   emit('file-uploaded', {
     original_name: file.name,
     file_path: response.file_path,
