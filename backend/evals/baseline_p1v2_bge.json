@@ -1,0 +1,184 @@
+{
+  "set_version": "p1-v2",
+  "split": "test",
+  "embedder": "bge",
+  "device": "cpu",
+  "embedding_model": "BAAI/bge-small-zh-v1.5",
+  "rerank_model": "BAAI/bge-reranker-base",
+  "query_prefix": "为这个句子生成表示以用于检索相关文章：",
+  "library_versions": {
+    "sentence-transformers": "3.3.1",
+    "torch": "2.2.2+cpu"
+  },
+  "threshold_policy": "Cosine and cross-encoder thresholds maximize 0.5*answerable_accept + 0.5*unanswerable_refuse on the dev split. Test rows are scored once with the chosen threshold.",
+  "answerable": 24,
+  "unanswerable": 14,
+  "dev_questions": 28,
+  "test_questions": 38,
+  "top_k": 5,
+  "rerank_pool": 15,
+  "modes": {
+    "dense": {
+      "recall_at_5": 0.75,
+      "mrr": 0.4931,
+      "citation_accuracy": 0.2917,
+      "refusal_correctness": 0.7105,
+      "answerable_accept_rate": 0.7917,
+      "unanswerable_refuse_rate": 0.5714,
+      "threshold": 0.6,
+      "evidence": "dense",
+      "latency_ms": {
+        "p50": 16.87,
+        "p95": 17.71,
+        "n": 38
+      }
+    },
+    "hybrid": {
+      "recall_at_5": 0.4167,
+      "mrr": 0.3056,
+      "citation_accuracy": 0.2083,
+      "refusal_correctness": 0.5526,
+      "answerable_accept_rate": 0.4583,
+      "unanswerable_refuse_rate": 0.7143,
+      "threshold": 0.62,
+      "evidence": "dense",
+      "latency_ms": {
+        "p50": 19.84,
+        "p95": 22.18,
+        "n": 38
+      }
+    },
+    "hybrid_cross_encoder": {
+      "recall_at_5": 0.7083,
+      "mrr": 0.5278,
+      "citation_accuracy": 0.375,
+      "refusal_correctness": 0.8158,
+      "answerable_accept_rate": 0.7083,
+      "unanswerable_refuse_rate": 1.0,
+      "threshold": 0.8981,
+      "evidence": "cross",
+      "latency_ms": {
+        "p50": 2760.5,
+        "p95": 3207.25,
+        "n": 38
+      }
+    }
+  },
+  "tuning": {
+    "split": "dev",
+    "objective": "0.5 * answerable_accept_rate + 0.5 * unanswerable_refuse_rate",
+    "tie_break": [
+      "citation_accuracy",
+      "recall_at_5",
+      "higher_threshold"
+    ],
+    "dense": {
+      "grid": "cosine 0.20..0.84 step 0.02",
+      "chosen_threshold": 0.6,
+      "dev_score_min": 0.453,
+      "dev_score_max": 0.7878,
+      "dev": {
+        "objective": 0.7667,
+        "answerable_accept_rate": 0.8333,
+        "unanswerable_refuse_rate": 0.7,
+        "recall_at_5": 0.8333,
+        "mrr": 0.6019,
+        "citation_accuracy": 0.3889,
+        "refusal_correctness": 0.7857
+      }
+    },
+    "hybrid": {
+      "grid": "cosine 0.20..0.84 step 0.02",
+      "chosen_threshold": 0.62,
+      "dev_score_min": 0.453,
+      "dev_score_max": 0.7878,
+      "dev": {
+        "objective": 0.7056,
+        "answerable_accept_rate": 0.6111,
+        "unanswerable_refuse_rate": 0.8,
+        "recall_at_5": 0.6111,
+        "mrr": 0.5,
+        "citation_accuracy": 0.3889,
+        "refusal_correctness": 0.6786
+      }
+    },
+    "hybrid_cross_encoder": {
+      "grid": "midpoints of dev top-hit cross-encoder scores, plus always-accept and always-refuse",
+      "chosen_threshold": 0.8981,
+      "dev_score_min": 0.005,
+      "dev_score_max": 0.9987,
+      "dev": {
+        "objective": 0.8389,
+        "answerable_accept_rate": 0.7778,
+        "unanswerable_refuse_rate": 0.9,
+        "recall_at_5": 0.7778,
+        "mrr": 0.5,
+        "citation_accuracy": 0.2778,
+        "refusal_correctness": 0.8214
+      }
+    }
+  },
+  "by_type": {
+    "dense": {
+      "paraphrase": {
+        "n": 16,
+        "recall_at_5": 0.875,
+        "mrr": 0.5833,
+        "citation_accuracy": 0.375,
+        "answerable_accept_rate": 0.875
+      },
+      "multichunk": {
+        "n": 8,
+        "recall_at_5": 0.5,
+        "mrr": 0.3125,
+        "citation_accuracy": 0.125,
+        "answerable_accept_rate": 0.625
+      },
+      "unanswerable": {
+        "n": 14,
+        "refusal_correctness": 0.5714
+      }
+    },
+    "hybrid": {
+      "paraphrase": {
+        "n": 16,
+        "recall_at_5": 0.5,
+        "mrr": 0.3958,
+        "citation_accuracy": 0.3125,
+        "answerable_accept_rate": 0.5625
+      },
+      "multichunk": {
+        "n": 8,
+        "recall_at_5": 0.25,
+        "mrr": 0.125,
+        "citation_accuracy": 0.0,
+        "answerable_accept_rate": 0.25
+      },
+      "unanswerable": {
+        "n": 14,
+        "refusal_correctness": 0.7143
+      }
+    },
+    "hybrid_cross_encoder": {
+      "paraphrase": {
+        "n": 16,
+        "recall_at_5": 0.875,
+        "mrr": 0.6667,
+        "citation_accuracy": 0.5,
+        "answerable_accept_rate": 0.875
+      },
+      "multichunk": {
+        "n": 8,
+        "recall_at_5": 0.375,
+        "mrr": 0.25,
+        "citation_accuracy": 0.125,
+        "answerable_accept_rate": 0.375
+      },
+      "unanswerable": {
+        "n": 14,
+        "refusal_correctness": 1.0
+      }
+    }
+  },
+  "notes": "bge hybrid refuses on the fused top hit's dense cosine, not the min-max fusion score. hybrid_cross_encoder retrieves a hybrid pool of 15, reranks with the cross-encoder, and refuses on that score. sentence-transformers applies sigmoid for this one-label reranker, so the score is on (0, 1), not a raw logit. Latency is per test query after weights are loaded; index time is excluded. CI does not run this path."
+}

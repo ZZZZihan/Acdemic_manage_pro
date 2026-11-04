@@ -1,27 +1,38 @@
 <template>
   <div class="global-knowledge-chat">
     <div class="chat-header">
-      <h3>知识库助手</h3>
-      <p class="description">您可以向我提问关于所有技术总结的问题</p>
+      <h3>知识库问答</h3>
+      <p class="description">只根据检索到的技术总结作答。依据不足时会明确说明无法回答。</p>
     </div>
     
     <div class="chat-container">
       <div class="chat-messages" ref="messagesContainer">
         <div v-for="(message, index) in messages" :key="index" 
-             :class="['message', message.role === 'user' ? 'user-message' : 'ai-message', { 'error-message': message.isError }]">
+             :class="['message', message.role === 'user' ? 'user-message' : 'ai-message', { 'error-message': message.isError, 'no-grounded': message.noGrounded }]">
+          <div v-if="message.noGrounded" class="no-grounded-banner">没有足够依据</div>
           <div class="message-content">
-            <markdown-renderer v-if="message.role === 'ai'" :content="message.content" />
+            <markdown-renderer v-if="message.role === 'ai' && !message.noGrounded" :content="message.content" />
             <div v-else>{{ message.content }}</div>
           </div>
+
+          <div v-if="message.sources && message.sources.length" class="citation-list">
+            <button
+              v-for="source in message.sources"
+              :key="source.doc_id || source.id"
+              type="button"
+              class="citation-link"
+              @click="openCitation(source)"
+            >
+              <span class="citation-title">{{ source.title || '未命名文档' }}</span>
+              <span v-if="source.section" class="citation-section">{{ source.section }}</span>
+              <span v-if="source.span" class="citation-span">span {{ source.span[0] }}–{{ source.span[1] }}</span>
+            </button>
+          </div>
           
-          <!-- 显示AI回复的元信息 -->
-          <div v-if="message.role === 'ai' && !message.isError" class="message-meta">
+          <div v-if="message.role === 'ai' && !message.isError && !message.noGrounded" class="message-meta">
             <span v-if="message.provider" class="provider-tag">{{ message.provider }}</span>
             <span v-if="message.retrievedDocs !== undefined" class="docs-tag">
-              检索了 {{ message.retrievedDocs }} 篇文档
-            </span>
-            <span v-if="message.sources && message.sources.length > 0" class="sources-tag">
-              来源: {{ message.sources.length }} 个
+              引用 {{ message.retrievedDocs }} 篇
             </span>
           </div>
           
@@ -83,83 +94,48 @@
 
 <script setup>
 import { ref, reactive, onMounted, nextTick, watch } from 'vue'
+import { useRouter } from 'vue-router'
 import axios from '@/utils/axios'
 import { ElMessage } from 'element-plus'
 import MarkdownRenderer from '@/components/MarkdownRenderer.vue'
 
+const router = useRouter()
 const messagesContainer = ref(null)
 const userInput = ref('')
 const loading = ref(false)
 const provider = ref('deepseek')
-const useRag = ref(true)  // 默认启用RAG功能
+const useRag = ref(true)
 const messages = reactive([
   {
     role: 'ai',
-    content: '您好！我是您的知识库助手，您可以向我提问关于所有技术总结的任何问题。',
+    content: '我只能根据已检索到的技术总结回答。依据不足时，我会直接说明无法回答。',
     time: new Date()
   }
 ])
 
-// 发送消息
+const baseURL = import.meta.env.VITE_API_URL || ''
+
 const sendMessage = async () => {
   const input = userInput.value.trim()
   if (!input || loading.value) return
-  
-  // 添加用户消息
+
   messages.push({
     role: 'user',
     content: input,
     time: new Date()
   })
-  
-  // 清空输入框
   userInput.value = ''
-  
-  // 滚动到底部
   await nextTick()
   scrollToBottom()
-  
-  // 发送请求
   loading.value = true
   try {
-    // 根据是否启用RAG选择不同的API端点
-    const endpoint = useRag.value 
-      ? '/api/v1/rag/chat' 
-      : '/api/v1/knowledge_base/chat'
-    
-    const response = await axios.post(endpoint, {
-      query: input,
-      provider: provider.value
-    })
-    
-    if (response.data.success) {
-      // 添加AI回复
-      const aiMessage = {
-        role: 'ai',
-        content: response.data.data.answer,
-        time: new Date(),
-        provider: useRag.value ? response.data.data.model : response.data.data.provider,
-        sources: response.data.data.sources || []
-      }
-      
-      // 如果是RAG模式，添加检索信息
-      if (useRag.value && response.data.data.retrieved_docs !== undefined) {
-        aiMessage.retrievedDocs = response.data.data.retrieved_docs
-      }
-      
-      messages.push(aiMessage)
+    if (useRag.value) {
+      await sendRag(input)
     } else {
-      ElMessage.error(response.data.message || '获取回答失败')
-      // 添加错误消息到聊天记录
-      messages.push({
-        role: 'ai',
-        content: `抱歉，处理您的问题时出现了错误：${response.data.message || '未知错误'}`,
-        time: new Date(),
-        isError: true
-      })
+      await sendPlain(input)
     }
   } catch (error) {
-    const message = error.response?.data?.message || '请求失败，请稍后再试'
+    const message = error.response?.data?.message || error.message || '请求失败，请稍后再试'
     ElMessage.error(message)
     messages.push({
       role: 'ai',
@@ -169,31 +145,150 @@ const sendMessage = async () => {
     })
   } finally {
     loading.value = false
-    
-    // 滚动到底部
     await nextTick()
     scrollToBottom()
   }
 }
 
-// 清空对话
-const clearChat = () => {
-  messages.splice(1) // 保留第一条欢迎消息
+const sendPlain = async (input) => {
+  const response = await axios.post('/api/v1/knowledge_base/chat', {
+    query: input,
+    provider: provider.value
+  })
+  if (response.data.success) {
+    messages.push({
+      role: 'ai',
+      content: response.data.data.answer,
+      time: new Date(),
+      provider: response.data.data.provider,
+      sources: response.data.data.sources || []
+    })
+    return
+  }
+  pushFailure(response.data)
 }
 
-// 格式化时间
+const sendRag = async (input) => {
+  const token = localStorage.getItem('token')
+  const response = await fetch(`${baseURL}/api/v1/rag/chat/stream`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: token ? `Bearer ${token}` : ''
+    },
+    body: JSON.stringify({ query: input, provider: provider.value })
+  })
+  const contentType = response.headers.get('content-type') || ''
+  if (!contentType.includes('text/event-stream')) {
+    const body = await response.json()
+    pushFailure(body)
+    return
+  }
+  const aiMessage = reactive({
+    role: 'ai',
+    content: '',
+    time: new Date(),
+    provider: provider.value,
+    sources: [],
+    retrievedDocs: 0
+  })
+  messages.push(aiMessage)
+  const reader = response.body.getReader()
+  const decoder = new TextDecoder()
+  let buffer = ''
+  while (true) {
+    const { value, done } = await reader.read()
+    if (done) break
+    buffer += decoder.decode(value, { stream: true })
+    const parts = buffer.split('\n\n')
+    buffer = parts.pop() || ''
+    for (const part of parts) {
+      applyEvent(aiMessage, parseEvent(part))
+    }
+    await nextTick()
+    scrollToBottom()
+  }
+  if (buffer.trim()) {
+    applyEvent(aiMessage, parseEvent(buffer))
+  }
+}
+
+const pushFailure = (body) => {
+  const code = body?.code
+  if (code === 'no_grounded_answer') {
+    messages.push({
+      role: 'ai',
+      content: body.message || '知识库中没有足够依据回答该问题。',
+      time: new Date(),
+      noGrounded: true,
+      sources: []
+    })
+    return
+  }
+  messages.push({
+    role: 'ai',
+    content: body?.message || '获取回答失败',
+    time: new Date(),
+    isError: true
+  })
+}
+
+const parseEvent = (block) => {
+  let event = 'message'
+  const dataLines = []
+  for (const line of block.split('\n')) {
+    if (line.startsWith('event:')) event = line.slice(6).trim()
+    if (line.startsWith('data:')) dataLines.push(line.slice(5).trim())
+  }
+  let data = {}
+  if (dataLines.length) {
+    try {
+      data = JSON.parse(dataLines.join('\n'))
+    } catch (error) {
+      data = {}
+    }
+  }
+  return { event, data }
+}
+
+const applyEvent = (aiMessage, parsed) => {
+  if (!parsed) return
+  if (parsed.event === 'citations') {
+    aiMessage.sources = parsed.data.sources || []
+    aiMessage.retrievedDocs = aiMessage.sources.length
+    aiMessage.provider = parsed.data.model || aiMessage.provider
+  } else if (parsed.event === 'token') {
+    aiMessage.content += parsed.data.text || ''
+  } else if (parsed.event === 'refusal') {
+    aiMessage.noGrounded = true
+    aiMessage.content = parsed.data.message || '知识库中没有足够依据回答该问题。'
+  } else if (parsed.event === 'error') {
+    aiMessage.isError = true
+    aiMessage.content = parsed.data.message || '生成失败'
+  }
+}
+
+const openCitation = (source) => {
+  const docId = String(source.doc_id || source.id || '')
+  if (/^\d+$/.test(docId)) {
+    router.push({ name: 'TechSummaryDetail', params: { id: docId } })
+  }
+}
+
+const clearChat = () => {
+  messages.splice(1)
+}
+
 const formatTime = (date) => {
   return new Date(date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
 }
 
-// 滚动到底部
 const scrollToBottom = () => {
   if (messagesContainer.value) {
     messagesContainer.value.scrollTop = messagesContainer.value.scrollHeight
   }
 }
 
-// 监听消息变化，自动滚动到底部
 watch(messages, () => {
   nextTick(() => {
     scrollToBottom()
@@ -274,6 +369,48 @@ onMounted(() => {
   border-left: 4px solid #f56c6c;
 }
 
+.no-grounded {
+  background-color: #fdf6ec !important;
+  border-left: 4px solid #e6a23c;
+}
+
+.no-grounded-banner {
+  font-size: 12px;
+  font-weight: 700;
+  color: #b88230;
+  margin-bottom: 6px;
+}
+
+.citation-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.citation-link {
+  text-align: left;
+  border: 1px solid #d9ecff;
+  background: #f5f9ff;
+  border-radius: 8px;
+  padding: 6px 8px;
+  cursor: pointer;
+  color: #303133;
+}
+
+.citation-title {
+  display: block;
+  font-weight: 600;
+  color: #409EFF;
+}
+
+.citation-section,
+.citation-span {
+  display: block;
+  font-size: 12px;
+  color: #606266;
+}
+
 .message-content {
   word-break: break-word;
 }
@@ -285,7 +422,7 @@ onMounted(() => {
   gap: 6px;
 }
 
-.provider-tag, .docs-tag, .sources-tag {
+.provider-tag, .docs-tag {
   display: inline-block;
   padding: 2px 6px;
   border-radius: 10px;
@@ -301,11 +438,6 @@ onMounted(() => {
 .docs-tag {
   background-color: #f0f9ff;
   color: #67c23a;
-}
-
-.sources-tag {
-  background-color: #fdf6ec;
-  color: #e6a23c;
 }
 
 .message-time {
@@ -338,11 +470,42 @@ onMounted(() => {
   gap: 20px;
 }
 
-/* 打字指示器 */
 .typing-indicator {
   display: flex;
   align-items: center;
   gap: 4px;
+}
+
+@media (max-width: 768px) {
+  .global-knowledge-chat {
+    height: calc(100vh - 260px);
+    min-height: 420px;
+  }
+
+  .message {
+    max-width: 92%;
+  }
+
+  .chat-header {
+    padding: 10px 12px;
+  }
+
+  .chat-header .description {
+    font-size: 12px;
+  }
+
+  .chat-messages {
+    padding: 12px;
+  }
+
+  .chat-input {
+    padding: 8px;
+  }
+
+  .chat-settings {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
 }
 
 .typing-indicator span {
@@ -354,30 +517,15 @@ onMounted(() => {
   animation: typing 1.4s infinite ease-in-out both;
 }
 
-.typing-indicator span:nth-child(1) {
-  animation-delay: 0s;
-}
-
-.typing-indicator span:nth-child(2) {
-  animation-delay: 0.2s;
-}
-
-.typing-indicator span:nth-child(3) {
-  animation-delay: 0.4s;
-}
+.typing-indicator span:nth-child(1) { animation-delay: 0s; }
+.typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
+.typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
 
 @keyframes typing {
-  0%, 80%, 100% {
-    transform: scale(0.6);
-    opacity: 0.6;
-  }
-  40% {
-    transform: scale(1);
-    opacity: 1;
-  }
+  0%, 80%, 100% { transform: scale(0.6); opacity: 0.6; }
+  40% { transform: scale(1); opacity: 1; }
 }
 
-/* 横向显示 el-switch 文字 */
 .horizontal-switch :deep(.el-switch__label) {
   display: inline-block !important;
   writing-mode: horizontal-tb !important;
@@ -393,4 +541,4 @@ onMounted(() => {
   margin-left: 8px !important;
   margin-bottom: 0 !important;
 }
-</style> 
+</style>

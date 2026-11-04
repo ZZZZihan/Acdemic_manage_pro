@@ -209,9 +209,15 @@ def chat_with_knowledge_base(user_query: str, doc_id: Optional[str] = None, prov
     from app.rag.service import LLM_UNAVAILABLE_MESSAGE, NO_GROUNDED_MESSAGE
 
     logger.info("knowledge chat provider=%s scoped=%s", provider, bool(doc_id))
+    from flask import g, has_request_context
+
+    from app.rag.acl import can_read
+
+    viewer = g.actor if has_request_context() else None
     if doc_id:
         document = knowledge_base.get_document(doc_id)
-        if not document:
+        metadata = (document or {}).get("metadata") or {}
+        if not document or not can_read(metadata.get("access_scope"), metadata.get("user_id"), viewer):
             return _unavailable(provider, "no_grounded_answer", NO_GROUNDED_MESSAGE)
         result = chat_with_document(document.get("content") or "", user_query, provider)
         result["retrieved_doc_ids"] = [str(doc_id)]
@@ -221,7 +227,13 @@ def chat_with_knowledge_base(user_query: str, doc_id: Optional[str] = None, prov
         }]
         return result
 
-    matches = knowledge_base.search_documents(user_query)[:3]
+    matches = []
+    for match in knowledge_base.search_documents(user_query):
+        metadata = match.get("metadata") or {}
+        if can_read(metadata.get("access_scope"), metadata.get("user_id"), viewer):
+            matches.append(match)
+        if len(matches) >= 3:
+            break
     sources = [{
         "id": match["id"],
         "title": match.get("title") or "",

@@ -7,18 +7,18 @@
       </div>
     </div>
     
-    <el-row :gutter="20">
-      <el-col :span="16">
+    <el-row :gutter="narrow ? 0 : 20">
+      <el-col :xs="24" :sm="24" :md="16">
         <el-card class="chat-card">
           <global-knowledge-chat />
         </el-card>
       </el-col>
       
-      <el-col :span="8">
+      <el-col :xs="24" :sm="24" :md="8">
         <el-card class="info-card">
           <h3>知识库助手使用说明</h3>
           <div class="info-content">
-            <p>知识库助手可以回答关于所有技术总结的问题，您可以：</p>
+            <p>知识库问答只使用你有权阅读的技术总结。答案以流式输出，并附上可点击的引用。</p>
             <ul>
               <li>询问特定技术的用法和原理</li>
               <li>查询某个概念的解释</li>
@@ -37,8 +37,8 @@
             <div class="tips">
               <h4>RAG功能说明：</h4>
               <ul>
-                <li><strong>RAG模式</strong>：使用检索增强生成技术，先从知识库中检索相关文档，然后基于这些文档生成回答，准确性更高</li>
-                <li><strong>基础模式</strong>：直接基于整个知识库内容进行问答，响应更快但可能不够精确</li>
+                <li><strong>RAG模式</strong>：混合检索后流式生成，引用可以打开对应技术总结。依据不足时显示“没有足够依据”，不会编造答案。</li>
+                <li><strong>基础模式</strong>：仍走原来的知识库对话接口，只返回有命中的文档。</li>
               </ul>
               
               <h4>使用提示：</h4>
@@ -66,12 +66,19 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { onBeforeUnmount, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import GlobalKnowledgeChat from '@/components/GlobalKnowledgeChat.vue'
 import axios from '@/utils/axios'
 
 const router = useRouter()
+const narrow = ref(false)
+const narrowQuery = window.matchMedia('(max-width: 768px)')
+
+function syncNarrow() {
+  narrow.value = narrowQuery.matches
+}
+
 const stats = ref({
   totalSummaries: 0,
   lastUpdate: '-'
@@ -114,7 +121,13 @@ const fetchStats = async () => {
 }
 
 onMounted(() => {
+  syncNarrow()
+  narrowQuery.addEventListener('change', syncNarrow)
   fetchStats()
+})
+
+onBeforeUnmount(() => {
+  narrowQuery.removeEventListener('change', syncNarrow)
 })
 </script>
 
@@ -127,7 +140,14 @@ onMounted(() => {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
   margin-bottom: 20px;
+}
+
+.page-title {
+  margin: 0;
+  font-size: 22px;
 }
 
 .header-actions {
@@ -206,5 +226,19 @@ onMounted(() => {
   font-size: 16px;
   font-weight: 600;
   color: #409EFF;
+}
+
+@media (max-width: 768px) {
+  .knowledge-chat-page {
+    padding: 0;
+  }
+
+  .page-title {
+    font-size: 18px;
+  }
+
+  .page-header {
+    margin-bottom: 12px;
+  }
 }
 </style> 

@@ -65,8 +65,18 @@ class Config:
     DEBUG = False
     TESTING = False
     RAG_ENABLED = False
-    RAG_RETRIEVER = "vector"
-    RAG_EMBEDDING_MODEL = "paraphrase-multilingual-MiniLM-L12-v2"
+    RAG_RETRIEVER = "hybrid_rerank"
+    RAG_EMBEDDER = "hash"
+    RAG_EMBEDDING_MODEL = "BAAI/bge-small-zh-v1.5"
+    RAG_RERANKER = "overlap"
+    RAG_SCORE_THRESHOLD = 0.12
+    # Cosine / cross-encoder cutoffs used only when the embedder is bge.
+    # Chosen on the p1-v2 dev split; see backend/evals/baseline_p1v2_bge.json.
+    RAG_DENSE_SCORE_THRESHOLD = 0.60
+    RAG_HYBRID_DENSE_SCORE_THRESHOLD = 0.62
+    RAG_RERANK_SCORE_THRESHOLD = 0.8981
+    RAG_RERANK_POOL = 15
+    RAG_INDEX_PATH = os.path.join(basedir, "instance", "rag_index.sqlite")
     CORS_ORIGINS = ["http://localhost:5173", "http://127.0.0.1:5173"]
     AUTH_RATE_LIMIT = 10
     AUTH_RATE_WINDOW_SECONDS = 60
@@ -117,10 +127,23 @@ def apply_runtime_config(app):
     app.config["JWT_SECRET_KEY"] = secrets["JWT_SECRET_KEY"]
     app.config["DEBUG"] = _env_flag("FLASK_DEBUG", "false")
     app.config["RAG_ENABLED"] = _env_flag("RAG_ENABLED", "false")
-    app.config["RAG_RETRIEVER"] = os.environ.get("RAG_RETRIEVER", "vector").strip().lower()
+    app.config["RAG_RETRIEVER"] = os.environ.get("RAG_RETRIEVER", "hybrid_rerank").strip().lower()
+    app.config["RAG_EMBEDDER"] = os.environ.get("RAG_EMBEDDER", "hash").strip().lower()
     app.config["RAG_EMBEDDING_MODEL"] = os.environ.get(
         "RAG_EMBEDDING_MODEL",
-        "paraphrase-multilingual-MiniLM-L12-v2",
+        "BAAI/bge-small-zh-v1.5",
+    )
+    app.config["RAG_RERANKER"] = os.environ.get("RAG_RERANKER", "overlap").strip().lower()
+    app.config["RAG_SCORE_THRESHOLD"] = float(os.environ.get("RAG_SCORE_THRESHOLD", "0.12"))
+    app.config["RAG_DENSE_SCORE_THRESHOLD"] = float(os.environ.get("RAG_DENSE_SCORE_THRESHOLD", "0.60"))
+    app.config["RAG_HYBRID_DENSE_SCORE_THRESHOLD"] = float(
+        os.environ.get("RAG_HYBRID_DENSE_SCORE_THRESHOLD", "0.62")
+    )
+    app.config["RAG_RERANK_SCORE_THRESHOLD"] = float(os.environ.get("RAG_RERANK_SCORE_THRESHOLD", "0.8981"))
+    app.config["RAG_RERANK_POOL"] = int(os.environ.get("RAG_RERANK_POOL", "15"))
+    app.config["RAG_INDEX_PATH"] = os.environ.get(
+        "RAG_INDEX_PATH",
+        os.path.join(basedir, "instance", "rag_index.sqlite"),
     )
     app.config["CORS_ORIGINS"] = _parse_origins(
         os.environ.get(
