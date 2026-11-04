@@ -7,11 +7,12 @@ from docx import Document
 from app.models import db
 from app.models.tech_summary import TechSummary
 from app.rag.chunk import chunk_document
-from app.rag.engine import HashEmbedder
+from app.rag.engine import HashEmbedder, tokenize
 from app.rag.extract import extract_file
 from app.rag.ingest import rebuild_from_db
 from app.rag.store import SqliteVectorStore
 from evals.run_eval import evaluate, load_jsonl
+from evals.run_v2 import evaluate_hash
 from tests.conftest import login
 
 
@@ -228,3 +229,36 @@ def test_eval_matches_committed_baseline():
     with open(os.path.join(root, "baseline_results.json"), encoding="utf-8") as handle:
         baseline = json.load(handle)
     assert report["modes"] == baseline["modes"]
+
+
+def test_v2_hash_baseline_matches_and_questions_are_harder():
+    import sys
+
+    root = os.path.join(os.path.dirname(__file__), "..", "evals")
+    documents = load_jsonl(os.path.join(root, "corpus_v2.jsonl"))
+    questions = load_jsonl(os.path.join(root, "questions_v2.jsonl"))
+    assert len(questions) >= 60
+    assert {item["split"] for item in questions} == {"dev", "test"}
+    assert sum(1 for item in questions if item["answerable"]) >= 40
+    assert sum(1 for item in questions if not item["answerable"]) >= 20
+    corpus_tokens = set()
+    for row in documents:
+        corpus_tokens.update(tokenize((row.get("title") or "") + "\n" + (row.get("content") or "")))
+    for item in questions:
+        assert item["set_version"] == "p1-v2"
+        if item["answerable"]:
+            assert item["key_phrase"] not in item["question"]
+            assert item["type"] in {"paraphrase", "multichunk"}
+        else:
+            overlap = set(tokenize(item["question"])) & corpus_tokens
+            assert len(overlap) >= 2
+    test_questions = [item for item in questions if item["split"] == "test"]
+    report = evaluate_hash(documents, test_questions)
+    with open(os.path.join(root, "baseline_p1v2_hash.json"), encoding="utf-8") as handle:
+        baseline = json.load(handle)
+    assert baseline["embedder"] == "hash"
+    assert baseline["split"] == "test"
+    for mode in ("dense", "hybrid"):
+        for key in ("recall_at_5", "mrr", "citation_accuracy", "refusal_correctness"):
+            assert report["modes"][mode][key] == baseline["modes"][mode][key]
+    assert "sentence_transformers" not in sys.modules

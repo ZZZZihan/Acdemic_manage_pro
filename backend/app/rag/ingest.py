@@ -128,20 +128,55 @@ def search(query, user, mode, top_k=5):
         chunk for chunk in store.iter_chunks()
         if can_read(chunk.get("access_scope"), chunk.get("owner_id"), user)
     ]
-    threshold = float(current_app.config.get("RAG_SCORE_THRESHOLD", 0.12))
     embedder = active_embedder()
+    embedder_name = getattr(embedder, "name", "hash")
     rerank_kind = (current_app.config.get("RAG_RERANKER") or "overlap").strip().lower()
-    result = search_chunks(
-        visible,
-        query,
-        embedder,
-        mode=mode,
-        top_k=top_k,
-        threshold=threshold,
-    )
-    if mode in {"hybrid_rerank", "vector", "dense", "hybrid"} and rerank_kind == "cross-encoder" and mode == "hybrid_rerank":
-        result = _apply_cross_encoder(query, result, top_k, threshold)
-    return result, getattr(embedder, "name", "hash")
+    use_cross = mode == "hybrid_rerank" and rerank_kind == "cross-encoder"
+    if use_cross:
+        pool = int(current_app.config.get("RAG_RERANK_POOL", 15))
+        result = search_chunks(
+            visible,
+            query,
+            embedder,
+            mode="hybrid",
+            top_k=max(top_k, pool),
+            threshold=None,
+        )
+        result = _apply_cross_encoder(
+            query,
+            result,
+            top_k,
+            float(current_app.config.get("RAG_RERANK_SCORE_THRESHOLD", 0.0)),
+        )
+    elif embedder_name == "bge":
+        result = search_chunks(
+            visible,
+            query,
+            embedder,
+            mode=mode,
+            top_k=top_k,
+            threshold=_bge_dense_threshold(mode),
+            evidence="dense",
+        )
+    else:
+        result = search_chunks(
+            visible,
+            query,
+            embedder,
+            mode=mode,
+            top_k=top_k,
+            threshold=float(current_app.config.get("RAG_SCORE_THRESHOLD", 0.12)),
+            evidence="support",
+        )
+    return result, embedder_name
+
+
+def _bge_dense_threshold(mode):
+    from flask import current_app
+
+    if mode in {"dense", "vector"}:
+        return float(current_app.config.get("RAG_DENSE_SCORE_THRESHOLD", 0.60))
+    return float(current_app.config.get("RAG_HYBRID_DENSE_SCORE_THRESHOLD", 0.62))
 
 
 def _apply_cross_encoder(query, result, top_k, threshold):
@@ -150,7 +185,12 @@ def _apply_cross_encoder(query, result, top_k, threshold):
 
     pool = result["candidates"] or result["hits"]
     if not pool:
-        return result
+        empty = dict(result)
+        empty["hits"] = []
+        empty["refused"] = True
+        empty["evidence"] = 0.0
+        empty["mode"] = "hybrid_rerank"
+        return empty
     scores = cross_encode(query, [hit.get("text") or "" for hit in pool])
     ranked = []
     for hit, score in zip(pool, scores):
@@ -160,13 +200,15 @@ def _apply_cross_encoder(query, result, top_k, threshold):
         ranked.append(updated)
     ranked.sort(key=lambda item: item["score"], reverse=True)
     top = ranked[0]
+    top_score = float(top.get("score") or 0.0)
     support = support_score(query, top.get("text") or "")
-    refused = support < threshold
+    refused = False if threshold is None else top_score < threshold
     return {
         "hits": [] if refused else ranked[:top_k],
         "candidates": ranked[:top_k],
         "refused": refused,
         "support": round(support, 4),
+        "evidence": round(top_score, 4),
         "mode": "hybrid_rerank",
     }
 

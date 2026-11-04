@@ -70,6 +70,12 @@ class Config:
     RAG_EMBEDDING_MODEL = "BAAI/bge-small-zh-v1.5"
     RAG_RERANKER = "overlap"
     RAG_SCORE_THRESHOLD = 0.12
+    # Cosine / cross-encoder cutoffs used only when the embedder is bge.
+    # Chosen on the p1-v2 dev split; see backend/evals/baseline_p1v2_bge.json.
+    RAG_DENSE_SCORE_THRESHOLD = 0.60
+    RAG_HYBRID_DENSE_SCORE_THRESHOLD = 0.62
+    RAG_RERANK_SCORE_THRESHOLD = 0.8981
+    RAG_RERANK_POOL = 15
     RAG_INDEX_PATH = os.path.join(basedir, "instance", "rag_index.sqlite")
     CORS_ORIGINS = ["http://localhost:5173", "http://127.0.0.1:5173"]
     AUTH_RATE_LIMIT = 10
@@ -129,6 +135,12 @@ def apply_runtime_config(app):
     )
     app.config["RAG_RERANKER"] = os.environ.get("RAG_RERANKER", "overlap").strip().lower()
     app.config["RAG_SCORE_THRESHOLD"] = float(os.environ.get("RAG_SCORE_THRESHOLD", "0.12"))
+    app.config["RAG_DENSE_SCORE_THRESHOLD"] = float(os.environ.get("RAG_DENSE_SCORE_THRESHOLD", "0.60"))
+    app.config["RAG_HYBRID_DENSE_SCORE_THRESHOLD"] = float(
+        os.environ.get("RAG_HYBRID_DENSE_SCORE_THRESHOLD", "0.62")
+    )
+    app.config["RAG_RERANK_SCORE_THRESHOLD"] = float(os.environ.get("RAG_RERANK_SCORE_THRESHOLD", "0.8981"))
+    app.config["RAG_RERANK_POOL"] = int(os.environ.get("RAG_RERANK_POOL", "15"))
     app.config["RAG_INDEX_PATH"] = os.environ.get(
         "RAG_INDEX_PATH",
         os.path.join(basedir, "instance", "rag_index.sqlite"),

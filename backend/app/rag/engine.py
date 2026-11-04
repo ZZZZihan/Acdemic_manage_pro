@@ -136,11 +136,13 @@ def rerank_overlap(query, hits):
     return ranked
 
 
-def search_chunks(chunks, query, embedder, mode="hybrid", top_k=5, threshold=0.12, rerank_pool=15):
-    """Rank ``chunks`` and refuse when the top hit's token support is weak.
+def search_chunks(chunks, query, embedder, mode="hybrid", top_k=5, threshold=0.12, rerank_pool=15, evidence="support"):
+    """Rank ``chunks`` and optionally refuse.
 
-    ``chunks`` items need ``text`` and ``vector`` (a normalized float list).
-    Modes: ``dense`` / ``vector``, ``hybrid``, ``hybrid_rerank``.
+    ``evidence`` selects the number compared with ``threshold``:
+    ``support`` (lexical overlap, the hash/CI default), ``dense`` (cosine of
+    the top hit), or ``score`` (the ranking score after fusion or rerank).
+    ``threshold=None`` keeps every hit.
     """
     mode = (mode or "hybrid").lower()
     if mode == "vector":
@@ -154,7 +156,10 @@ def search_chunks(chunks, query, embedder, mode="hybrid", top_k=5, threshold=0.1
     query_tokens = tokenize(query)
     doc_tokens = [tokenize(chunk.get("text") or "") for chunk in chunks]
     sparse = bm25_scores(query_tokens, doc_tokens) if mode != "dense" else [0.0] * len(chunks)
-    query_vector = embedder.embed([query])[0]
+    if hasattr(embedder, "embed_query"):
+        query_vector = embedder.embed_query(query)
+    else:
+        query_vector = embedder.embed([query])[0]
     dense = [_dot(query_vector, chunk.get("vector") or []) for chunk in chunks]
 
     if mode == "dense":
@@ -185,12 +190,23 @@ def search_chunks(chunks, query, embedder, mode="hybrid", top_k=5, threshold=0.1
     candidates = ranked[:top_k]
     top = candidates[0] if candidates else None
     support = support_score(query, top.get("text") or "") if top else 0.0
-    refused = support < threshold
+    if top is None:
+        evidence_value = 0.0
+    elif evidence == "support":
+        evidence_value = support
+    elif evidence == "dense":
+        evidence_value = float(top.get("dense_score") or 0.0)
+    elif evidence == "score":
+        evidence_value = float(top.get("score") or 0.0)
+    else:
+        raise ValueError(f"unknown evidence: {evidence}")
+    refused = False if threshold is None else evidence_value < threshold
     hits = [] if refused else candidates
     return {
         "hits": hits,
         "candidates": candidates,
         "refused": refused,
         "support": round(support, 4),
+        "evidence": round(evidence_value, 4),
         "mode": mode,
     }

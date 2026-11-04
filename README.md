@@ -10,7 +10,7 @@ Flask 与 Vue 3 的实验室资料应用：技术总结、成果、项目、会�
 - 默认检索是混合检索再加重叠重排（`RAG_RETRIEVER=hybrid_rerank`）。稠密向量默认用确定性哈希，不下载模型。中文生产嵌入把 `RAG_EMBEDDER` 设为 `bge`（`BAAI/bge-small-zh-v1.5`，CPU）后重建索引。`RAG_RERANKER=cross-encoder` 才会加载 `BAAI/bge-reranker-base`。
 - `access_scope=private` 的技术总结只有作者和管理员能检索和打开。`lab` 对登录成员可见。
 - `RAG_ENABLED` 默认为 `false`。关闭时，RAG 对话返回 HTTP 503 和 `rag_unavailable`，业务 CRUD 仍可启动。
-- 证据分数低于 `RAG_SCORE_THRESHOLD` 时返回 `no_grounded_answer`，不会调用语言模型。命中但没有配置模型密钥时返回 HTTP 503 和 `llm_unavailable`，并带上引用。
+- 拒答阈值按嵌入器分开。哈希嵌入比较词元重叠和 `RAG_SCORE_THRESHOLD`（默认 0.12）。`RAG_EMBEDDER=bge` 时比较稠密余弦：dense 默认 0.60（`RAG_DENSE_SCORE_THRESHOLD`），hybrid 默认 0.62（`RAG_HYBRID_DENSE_SCORE_THRESHOLD`）。`RAG_RERANKER=cross-encoder` 时比较交叉编码器分数，默认 0.8981（`RAG_RERANK_SCORE_THRESHOLD`）。bge 的三个数来自 p1-v2 的 dev 划分。低于阈值时返回 `no_grounded_answer`，不会调用语言模型。命中但没有配置模型密钥时返回 HTTP 503 和 `llm_unavailable`，并带上引用。
 - 生成走同一个 OpenAI 兼容接口，供应商为 DeepSeek、OpenAI 或 Ollama（`/v1/chat/completions`）。`POST /api/v1/rag/chat/stream` 用 SSE 输出引用和 token。知识库页面会流式显示答案、可点击引用，以及单独的“没有足够依据”状态。
 - 每次 RAG 请求写一条 `rag_trace` 审计：检索耗时、命中 id、分数、模型名、token 数。不写问题、提示词或正文。
 
@@ -51,24 +51,46 @@ Vite 把 `/api` 代理到 `http://localhost:5003`。浏览器来源需在 `CORS_
 
 ## 检索评测
 
-题集在 `backend/evals/`，版本 `p1-v1`。语料是合成实验记录，`seed_demo.py` 会在空库里写入同一份 `corpus.jsonl`。问题含 40 条可回答和 18 条不可回答。脚本不下载模型，稠密路使用哈希嵌入。
+两套题都是合成实验记录，没有真实个人数据。`seed_demo.py` 只写入 `p1-v1` 的 `corpus.jsonl`。CI 只跑哈希嵌入，不会下载 `bge` 权重。`baseline_results.json` 和 `baseline_p1v2_hash.json` 是哈希基线。`baseline_p1v2_bge.json` 才是本机 CPU 上 `BAAI/bge-small-zh-v1.5` 与 `BAAI/bge-reranker-base` 的实测，pytest 不重算这份文件。
 
 ```bash
 cd backend
-python -m evals.run_eval
-python -m evals.run_eval --write-baseline
-python -m evals.run_eval --judge
+python -m evals.run_eval                  # p1-v1，哈希，可在 CI 中复现
+python -m evals.run_v2 --embedder hash    # p1-v2 测试划分，哈希
+python -m evals.run_v2 --embedder bge     # p1-v2，真实模型；需要本地权重，脚本设置 HF_HUB_OFFLINE=1
 ```
 
-`--judge` 才调用语言模型，并且只抽查几条；没有密钥时会跳过。`baseline_results.json` 是哈希嵌入 + BM25 + 重叠重排的实测基线，不是 `bge` 权重跑出来的数。切换到 `RAG_EMBEDDER=bge` 之后需要自行重跑评测，不要把基线数字当成神经模型的召回率。
+`python -m evals.run_eval --judge` 才会抽查语言模型，没有密钥时跳过。
+
+### p1-v1 哈希基线（整集，不是 bge）
+
+40 条可回答、18 条不可回答。稠密路是哈希嵌入，`hybrid_rerank` 是词重叠重排，不是交叉编码器。拒答看词元重叠，阈值 0.12。
 
 | 模式 | Recall@5 | MRR | 引用准确率 | 拒答正确率 |
 | --- | ---: | ---: | ---: | ---: |
-| dense | 0.6750 | 0.5708 | 0.5250 | 1.0000 |
-| hybrid | 0.7500 | 0.7500 | 0.7500 | 1.0000 |
-| hybrid_rerank | 1.0000 | 1.0000 | 1.0000 | 1.0000 |
+| hash dense | 0.6750 | 0.5708 | 0.5250 | 1.0000 |
+| hash hybrid | 0.7500 | 0.7500 | 0.7500 | 1.0000 |
+| hash hybrid_rerank | 1.0000 | 1.0000 | 1.0000 | 1.0000 |
 
-拒答正确率是 1，因为这 18 条不可回答问题和语料没有共享词元。它说明阈值能分开这组题，不是线上用户问题的估计。
+拒答正确率是 1，因为这 18 条不可回答问题和语料没有共享词元。它只说明阈值能分开这组题。
+
+### p1-v2 测试划分（哈希基线 vs 真实模型）
+
+42 篇文档（14 个主题，每题 1 篇金文档 + 2 篇近义干扰），66 题：28 条改写、14 条多块答案、24 条与语料共享词汇的不可回答题。dev 28 / test 38，按问题 id 的 MD5 固定划分。下表只报告 test（24 条可回答、14 条不可回答）。bge 的余弦和交叉编码器阈值只在 dev 上选择，测试集没有参与选阈值。哈希的 0.12 没有重调。
+
+延迟是索引建好、权重已加载之后，单条查询的检索时间（CPU）。交叉编码器那一行含 15 条候选的重排。
+
+| 模式 | 证据 / 阈值 | Recall@5 | MRR | 引用准确率 | 拒答正确率 | p50 | p95 |
+| --- | --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| hash dense | 词重叠 0.12 | 0.1250 | 0.0625 | 0.0000 | 0.2632 | 8.64 ms | 15.18 ms |
+| hash hybrid | 词重叠 0.12 | 0.3750 | 0.2049 | 0.0833 | 0.2368 | 11.34 ms | 11.65 ms |
+| bge dense | 余弦 0.60 | 0.7500 | 0.4931 | 0.2917 | 0.7105 | 16.87 ms | 17.71 ms |
+| bge hybrid | 融合首条的余弦 0.62 | 0.4167 | 0.3056 | 0.2083 | 0.5526 | 19.84 ms | 22.18 ms |
+| bge hybrid + cross-encoder | 分数 0.8981 | 0.7083 | 0.5278 | 0.3750 | 0.8158 | 2760.50 ms | 3207.25 ms |
+
+bge 查询加了模型卡要求的检索前缀，文档侧不加。交叉编码器分数经过 sigmoid，落在 (0, 1)，不是原始 logit。融合分数做了 min-max，首条经常接近 1，所以不能拿来做拒答阈值。
+
+这组数字说明：p1-v1 的拒答满分换到共享词汇的改写题上不成立；0.12 的词重叠同时漏掉改写题、又放进不可回答题。bge 稠密检索明显好于哈希，但 BM25 权重 0.62 的混合把改写题拉向同主题干扰文档，hybrid 低于 dense。交叉编码器把测试集上的不可回答题全部拒掉，引用和 MRR 也好于 hybrid，但 p50 约 2.8 秒，而且金文档必须先进入 hybrid 的 15 条候选。引用准确率仍然低，因为要点只写在文末「判定」节，前部块就能算进 Recall@5。
 
 ## 检查
 
