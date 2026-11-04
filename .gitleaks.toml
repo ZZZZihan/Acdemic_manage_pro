@@ -1,0 +1,23 @@
+title = "Full history secret scan"
+
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Generated trees and local databases. Do not allowlist secrets."
+paths = [
+  '''(^|/)node_modules/''',
+  '''(^|/)dist/''',
+  '''(^|/)\.venv/''',
+  '''(^|/)venv/''',
+  '''__pycache__''',
+  '''\.sqlite$''',
+  '''\.sqlite3$''',
+  '''source-sha256\.json''',
+]
+
+[[allowlists]]
+description = "SHA-256 file digests in a validation manifest. These are content hashes, not credentials."
+paths = [
+  '''docs/validation/pr3-2026-10-21/source-sha256\.json''',
+]

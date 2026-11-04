@@ -9,8 +9,10 @@ from app.models import db
 from app.models.project import Project, ProjectMember, ProjectFile
 from app.models.user import User
 from app.api.v1.errors import bad_request, not_found
+from app.security import member_required
 
 @api.route('/projects', methods=['GET'])
+@member_required
 def get_projects():
     """获取项目列表"""
     # 分页参数
@@ -48,6 +50,7 @@ def get_projects():
     })
 
 @api.route('/projects/<int:id>', methods=['GET'])
+@member_required
 def get_project(id):
     """获取单个项目详情"""
     project = Project.query.get_or_404(id)
@@ -432,6 +435,7 @@ def delete_project_file_physical(project_id, file_id):
     return jsonify({'msg': '文件已完全删除'})
 
 @api.route('/projects/<int:project_id>/members', methods=['GET'])
+@member_required
 def get_project_members(project_id):
     """获取项目成员列表"""
     # 查找项目

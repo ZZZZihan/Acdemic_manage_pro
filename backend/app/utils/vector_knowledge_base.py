@@ -4,7 +4,6 @@ import os
 import pickle
 import numpy as np
 from typing import List, Dict, Any, Optional
-from sentence_transformers import SentenceTransformer
 from .startup_optimizer import startup_optimizer
 
 # 配置日志
@@ -61,6 +60,8 @@ class VectorKnowledgeBase:
             else:
                 logger.info("正在加载句向量模型: paraphrase-multilingual-MiniLM-L12-v2")
                 
+            from sentence_transformers import SentenceTransformer
+
             self.model = SentenceTransformer('paraphrase-multilingual-MiniLM-L12-v2')
             self.use_mock = False
             self._model_loaded = True

@@ -55,11 +55,6 @@
         <el-icon><User /></el-icon>
         <span>个人中心</span>
       </el-menu-item>
-      
-      <el-menu-item v-if="authStore.isAdmin" index="/admin">
-        <el-icon><Setting /></el-icon>
-        <span>系统管理</span>
-      </el-menu-item>
     </el-menu>
   </div>
 </template>
@@ -67,7 +62,6 @@
 <script setup>
 import { computed } from 'vue'
 import { useRoute } from 'vue-router'
-import { useAuthStore } from '@/stores/auth'
 import {
   HomeFilled,
   Trophy,
@@ -75,12 +69,10 @@ import {
   Histogram,
   Calendar,
   User,
-  Setting,
   ChatDotRound
 } from '@element-plus/icons-vue'
 
 const route = useRoute()
-const authStore = useAuthStore()
 
 const activeMenu = computed(() => {
   return route.path

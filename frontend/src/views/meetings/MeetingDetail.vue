@@ -326,6 +326,7 @@ import { ArrowDown, Document } from '@element-plus/icons-vue'
 import axios from '@/utils/axios'
 import { useUserStore } from '@/stores/user'
 import { formatDate } from '@/utils/format'
+import { downloadAuthorizedFile } from '@/utils/download'
 
 export default {
   name: 'MeetingDetail',
@@ -556,7 +557,12 @@ export default {
     
     // 下载附件
     const downloadAttachment = (attachment) => {
-      window.open(attachment.url, '_blank')
+      const raw = attachment.file_path || attachment.url || ''
+      const marker = '/api/v1/files/download/'
+      const index = raw.indexOf(marker)
+      const filePath = index >= 0 ? decodeURIComponent(raw.slice(index + marker.length)) : raw
+      if (!filePath) return
+      downloadAuthorizedFile(filePath, attachment.original_name || attachment.name)
     }
     
     // 删除附件

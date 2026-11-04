@@ -9,6 +9,9 @@ from app.utils.crawler import crawl_url
 from app.utils.llm_api import llm_service
 from app.utils.chat_with_doc import chat_with_document, chat_with_knowledge_base
 from app.utils.knowledge_base import knowledge_base
+from app.audit import emit
+from app.rate_limit import rate_limit
+from app.security import admin_required, member_required
 
 @api.route('/tech_summaries', methods=['GET'])
 def get_tech_summaries():
@@ -228,7 +231,12 @@ def delete_tech_summary(id):
     logging.info(f"权限检查 - 是否创建者: {is_owner}, 是否管理员: {is_admin}")
     
     if not (is_owner or is_admin):
-        logging.warning(f"权限不足 - 用户 {current_user_id} ({current_user.username}) 尝试删除用户 {summary.user_id} 创建的技术总结 {id}")
+        emit(
+            "permission_denied",
+            actor_id=current_user_id,
+            outcome="denied",
+            required_role="owner_or_admin",
+        )
         return unauthorized('无权删除此技术总结，只有创建者或管理员可以删除')
     
     # 记录删除操作
@@ -314,93 +322,89 @@ def crawl_and_summarize():
         }
     }) 
 
+def _respond_chat(result, provider):
+    code = result.get("code")
+    doc_ids = result.get("retrieved_doc_ids") or []
+    if result.get("success"):
+        emit("llm_call", outcome="answered", provider=provider, retrieved_doc_ids=doc_ids)
+        return jsonify({
+            "success": True,
+            "data": {
+                "answer": result.get("answer"),
+                "provider": result.get("provider") or provider,
+                "sources": result.get("sources") or [],
+            },
+        })
+    status = 503 if code in {"llm_unavailable", "rag_unavailable"} else 200
+    if code not in {"llm_unavailable", "rag_unavailable", "no_grounded_answer"}:
+        status = 500
+    emit("llm_call", outcome=code or "error", provider=provider, retrieved_doc_ids=doc_ids)
+    body = {
+        "success": False,
+        "code": code or "error",
+        "message": result.get("message") or "处理问题时出错",
+        "sources": result.get("sources") or [],
+    }
+    return jsonify(body), status
+
+
 @api.route('/tech_summaries/<int:id>/chat', methods=['POST'])
+@rate_limit("chat")
+@member_required
 def chat_with_tech_summary(id):
     """基于技术总结内容进行聊天"""
-    # 获取技术总结
     summary = TechSummary.query.get(id)
     if not summary:
         return not_found('技术总结不存在')
-    
-    # 获取请求数据
+
     data = request.get_json() or {}
-    
-    # 检查必填字段
     if 'query' not in data:
         return bad_request('问题是必填项')
-    
-    # 获取AI提供商
+
     provider = data.get('provider', 'deepseek')
-    
-    # 获取是否使用知识库
     use_knowledge_base = data.get('use_knowledge_base', False)
-    
     try:
         if use_knowledge_base:
-            # 使用知识库回答问题
             result = chat_with_knowledge_base(data['query'], str(id), provider)
         else:
-            # 使用单个文档内容回答问题
             result = chat_with_document(summary.content, data['query'], provider)
-        
-        if result['success']:
-            return jsonify({
-                'success': True,
-                'data': {
-                    'answer': result['answer'],
-                    'provider': result['provider']
-                }
-            })
-        else:
-            return jsonify({
-                'success': False,
-                'message': result.get('message', '处理问题时出错')
-            }), 500
-    except Exception as e:
-        logging.exception(f"处理聊天请求时出错: {str(e)}")
+            result["retrieved_doc_ids"] = [str(id)]
+        return _respond_chat(result, provider)
+    except Exception:
+        logging.exception("处理聊天请求时出错")
+        emit("llm_call", outcome="error", provider=provider, retrieved_doc_ids=[str(id)])
         return jsonify({
             'success': False,
-            'message': f'处理请求时出错: {str(e)}'
+            'message': '处理请求时出错'
         }), 500
 
 @api.route('/knowledge_base/chat', methods=['POST'])
+@rate_limit("chat")
+@member_required
 def chat_with_global_knowledge_base():
     """基于全局知识库进行聊天"""
-    # 获取请求数据
     data = request.get_json() or {}
-    
-    # 检查必填字段
     if 'query' not in data:
         return bad_request('问题是必填项')
-    
-    # 获取AI提供商
+
     provider = data.get('provider', 'deepseek')
-    
     try:
-        # 使用知识库回答问题
+        from app.rag.service import sync_corpus_from_db
+
+        sync_corpus_from_db()
         result = chat_with_knowledge_base(data['query'], None, provider)
-        
-        if result['success']:
-            return jsonify({
-                'success': True,
-                'data': {
-                    'answer': result['answer'],
-                    'provider': result['provider']
-                }
-            })
-        else:
-            return jsonify({
-                'success': False,
-                'message': result.get('message', '处理问题时出错')
-            }), 500
-    except Exception as e:
-        logging.exception(f"处理全局知识库聊天请求时出错: {str(e)}")
+        return _respond_chat(result, provider)
+    except Exception:
+        logging.exception("处理全局知识库聊天请求时出错")
+        emit("llm_call", outcome="error", provider=provider, retrieved_doc_ids=[])
         return jsonify({
             'success': False,
-            'message': f'处理请求时出错: {str(e)}'
+            'message': '处理请求时出错'
         }), 500
 
 @api.route('/ai/chat', methods=['POST'])
+@rate_limit("chat")
+@member_required
 def pure_ai_chat():
     """纯AI聊天，不使用知识库"""
     # 获取请求数据
@@ -433,6 +437,7 @@ def pure_ai_chat():
         ai_answer = _call_ai_api(data['query'], system_prompt, provider)
         
         if ai_answer:
+            emit("llm_call", outcome="answered", provider=provider, retrieved_doc_ids=[])
             return jsonify({
                 'success': True,
                 'data': {
@@ -441,17 +446,19 @@ def pure_ai_chat():
                     'mode': 'pure_ai'
                 }
             })
-        else:
-            return jsonify({
-                'success': False,
-                'message': f'{provider} API调用失败，请稍后重试'
-            }), 500
-            
-    except Exception as e:
-        logging.exception(f"处理纯AI聊天请求时出错: {str(e)}")
+        emit("llm_call", outcome="llm_unavailable", provider=provider, retrieved_doc_ids=[])
         return jsonify({
             'success': False,
-            'message': f'处理请求时出错: {str(e)}'
+            'code': 'llm_unavailable',
+            'message': '语言模型未配置或调用失败，已拒绝生成无依据回答。'
+        }), 503
+            
+    except Exception:
+        logging.exception("处理纯AI聊天请求时出错")
+        emit("llm_call", outcome="error", provider=provider, retrieved_doc_ids=[])
+        return jsonify({
+            'success': False,
+            'message': '处理请求时出错'
         }), 500
 
 # 添加技术总结到知识库的钩子函数
@@ -477,31 +484,33 @@ def add_tech_summary_to_knowledge_base(tech_summary):
 
 # 添加初始化知识库的API
 @api.route('/knowledge_base/init', methods=['POST'])
-@jwt_required()
+@admin_required
 def init_knowledge_base():
-    """初始化知识库，将所有技术总结添加到知识库"""
+    """Rebuild the derived corpus from technical-summary rows. Administrators only."""
+    from app.rag.service import corpus_count, sync_corpus_from_db
+
     try:
-        # 获取所有技术总结
-        summaries = TechSummary.query.all()
-        
-        # 添加到知识库
-        for summary in summaries:
-            add_tech_summary_to_knowledge_base(summary)
-        
+        count = sync_corpus_from_db()
+        rows = TechSummary.query.count()
+        emit("index_rebuild", outcome="ok", corpus_docs=count, tech_summary_rows=rows)
         return jsonify({
             'success': True,
-            'message': f'已成功将{len(summaries)}篇技术总结添加到知识库'
+            'message': '语料已从数据库重建',
+            'corpus_docs': count,
+            'tech_summary_rows': rows,
+            'corpus_matches_rows': count == rows and count == corpus_count(),
         })
-    except Exception as e:
-        logging.exception(f"初始化知识库时出错: {str(e)}")
+    except Exception:
+        logging.exception("初始化知识库时出错")
+        emit("index_rebuild", outcome="failed")
         return jsonify({
             'success': False,
-            'message': f'初始化知识库时出错: {str(e)}'
+            'message': '初始化知识库时出错'
         }), 500
 
 # 添加调试API端点
 @api.route('/tech_summaries/<int:id>/debug', methods=['GET'])
-@jwt_required()
+@admin_required
 def debug_tech_summary_ownership(id):
     """调试技术总结所有权信息"""
     current_user_id = get_jwt_identity()

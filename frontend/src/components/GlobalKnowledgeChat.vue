@@ -100,20 +100,6 @@ const messages = reactive([
   }
 ])
 
-// 初始化知识库
-const initKnowledgeBase = async () => {
-  try {
-    const response = await axios.post('/api/v1/knowledge_base/init')
-    if (response.data.success) {
-      console.log('知识库初始化成功:', response.data.message)
-    } else {
-      console.error('知识库初始化失败:', response.data.message)
-    }
-  } catch (error) {
-    console.error('知识库初始化请求失败:', error)
-  }
-}
-
 // 发送消息
 const sendMessage = async () => {
   const input = userInput.value.trim()
@@ -173,13 +159,11 @@ const sendMessage = async () => {
       })
     }
   } catch (error) {
-    console.error('聊天请求失败:', error)
-    ElMessage.error('请求失败，请稍后再试')
-    
-    // 添加错误消息到聊天记录
+    const message = error.response?.data?.message || '请求失败，请稍后再试'
+    ElMessage.error(message)
     messages.push({
       role: 'ai',
-      content: `网络请求失败，请检查网络连接后重试。错误信息：${error.message || '未知网络错误'}`,
+      content: message,
       time: new Date(),
       isError: true
     })
@@ -218,7 +202,6 @@ watch(messages, () => {
 
 onMounted(() => {
   scrollToBottom()
-  initKnowledgeBase()
 })
 </script>
 

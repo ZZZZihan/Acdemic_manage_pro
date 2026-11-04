@@ -12,7 +12,7 @@
         <el-carousel-item v-for="item in achievementsWithImages" :key="item.id">
           <div class="carousel-item" @click="viewDetails(item.id)">
             <div class="image-container">
-              <img :src="getImageUrl(item)" :alt="item.title" class="carousel-image">
+              <img v-if="getImageUrl(item)" :src="getImageUrl(item)" :alt="item.title" class="carousel-image">
             </div>
             <div class="carousel-content">
               <div class="type-tag">{{ item.achievement_type }}</div>
@@ -32,7 +32,7 @@
       <el-row :gutter="20">
         <el-col :xs="24" :sm="12" :md="8" v-for="item in achievements" :key="item.id" class="mb-20">
           <el-card shadow="hover" class="achievement-card" @click="viewDetails(item.id)">
-            <div v-if="hasImage(item)" class="card-image">
+            <div v-if="getImageUrl(item)" class="card-image">
               <img :src="getImageUrl(item)" :alt="item.title">
             </div>
             <div class="card-header">
@@ -60,14 +60,17 @@ import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import axios from '@/utils/axios'
 import { ElMessage } from 'element-plus'
+import { useAuthStore } from '@/stores/auth'
+import { authorizedObjectUrl } from '@/utils/download'
 
 const router = useRouter()
+const authStore = useAuthStore()
 const achievements = ref([])
 const loading = ref(false)
+const imageUrls = ref({})
 
-// 筛选有图片的成果
 const achievementsWithImages = computed(() => {
-  return achievements.value.filter(item => hasImage(item))
+  return achievements.value.filter(item => imageUrls.value[item.id])
 })
 
 // 获取最新成果
@@ -82,9 +85,9 @@ const fetchLatestAchievements = async () => {
     } else if (response.data && response.data.items && Array.isArray(response.data.items)) {
       achievements.value = response.data.items
     } else {
-      console.warn('响应数据格式不符合预期:', response.data)
       achievements.value = []
     }
+    await loadImages(achievements.value)
   } catch (error) {
     console.error('获取最新成果失败:', error)
     ElMessage.error('获取最新成果失败，请稍后再试')
@@ -104,12 +107,22 @@ const hasImage = (achievement) => {
   return imageExts.includes(fileExt)
 }
 
-// 获取图片URL
-const getImageUrl = (achievement) => {
-  if (!achievement.file_path) return ''
-  
-  return `${import.meta.env.VITE_API_URL || ''}/api/v1/files/download/${achievement.file_path}`
+const loadImages = async (items) => {
+  imageUrls.value = {}
+  if (!authStore.isLoggedIn) return
+  const next = {}
+  for (const item of items) {
+    if (!hasImage(item)) continue
+    try {
+      next[item.id] = await authorizedObjectUrl(item.file_path)
+    } catch {
+      next[item.id] = ''
+    }
+  }
+  imageUrls.value = next
 }
+
+const getImageUrl = (achievement) => imageUrls.value[achievement.id] || ''
 
 // 截断文本
 const truncateText = (text, length) => {

@@ -1,13 +1,16 @@
-from flask import request, jsonify, current_app
+from flask import request, jsonify
 from flask_jwt_extended import (
     create_access_token, create_refresh_token,
-    jwt_required, get_jwt_identity, get_jwt
+    jwt_required, get_jwt_identity
 )
 from app.models import db, User
 from app.api.v1 import api
 from app.api.v1.errors import bad_request, unauthorized
+from app.audit import emit
+from app.rate_limit import rate_limit
 
 @api.route('/auth/register', methods=['POST'])
+@rate_limit("auth")
 def register():
     data = request.get_json()
     if not data:
@@ -39,6 +42,7 @@ def register():
     }), 201
 
 @api.route('/auth/login', methods=['POST'])
+@rate_limit("auth")
 def login():
     data = request.get_json()
     if not data:
@@ -52,10 +56,12 @@ def login():
     
     user = User.query.filter_by(email=email).first()
     if user is None or not user.verify_password(password):
+        emit("login_failure", outcome="denied")
         return unauthorized('邮箱或密码错误')
     
     # 更新最后登录时间
     user.ping()
+    emit("login_success", actor_id=user.id, outcome="ok")
     
     # 创建访问令牌和刷新令牌
     # 确保identity是字符串类型
@@ -69,6 +75,7 @@ def login():
     })
 
 @api.route('/auth/refresh', methods=['POST'])
+@rate_limit("auth")
 @jwt_required(refresh=True)
 def refresh():
     current_user_id = get_jwt_identity()

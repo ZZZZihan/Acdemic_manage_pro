@@ -112,7 +112,8 @@ class User(db.Model):
             'location': self.location,
             'about_me': self.about_me,
             'member_since': self.member_since.isoformat() if self.member_since else None,
-            'last_seen': self.last_seen.isoformat() if self.last_seen else None
+            'last_seen': self.last_seen.isoformat() if self.last_seen else None,
+            'role': self.role.name if self.role else None,
         }
     
     def __repr__(self):

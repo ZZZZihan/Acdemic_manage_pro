@@ -6,7 +6,8 @@ from flask_jwt_extended import jwt_required, get_jwt_identity
 from werkzeug.utils import secure_filename
 from app.api.v1 import api
 from app.models import User
-import logging
+from app.audit import emit
+from app.security import member_required
 
 # 允许的文件类型
 ALLOWED_EXTENSIONS = {'pdf', 'doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx', 'txt', 'zip', 'rar', 'jpg', 'jpeg', 'png'}
@@ -33,9 +34,6 @@ def upload_file():
     """
     current_user_id = get_jwt_identity()
     
-    logging.info(f"文件上传请求: {request.files}")
-    logging.info(f"表单数据: {request.form}")
-    
     # 确保user_id是整数
     if isinstance(current_user_id, str):
         try:
@@ -60,15 +58,10 @@ def upload_file():
     if not allowed_file(file.filename):
         return jsonify({"msg": f"不支持的文件类型，允许的类型: {', '.join(ALLOWED_EXTENSIONS)}"}), 400
     
-    # 记录文件信息
-    logging.info(f"文件名: {file.filename}, 内容类型: {file.content_type}")
-    
     # 检查文件大小
     file.seek(0, os.SEEK_END)
     file_size = file.tell()
     file.seek(0)
-    logging.info(f"文件大小: {file_size} 字节")
-    
     if file_size > MAX_FILE_SIZE:
         return jsonify({"msg": f"文件大小超过限制 (最大 {MAX_FILE_SIZE/1024/1024}MB)"}), 400
     
@@ -89,56 +82,35 @@ def upload_file():
         'original_name': file.filename
     }), 200
 
-@api.route('/files/download/<path:filename>', methods=['GET'])
-def download_file(filename):
-    """
-    下载文件API
-    """
-    upload_folder = get_upload_path()
-    
-    # 处理前导斜杠问题
-    if filename.startswith('/'):
-        filename = filename[1:]
-    
-    # 检查文件路径是否安全（防止目录遍历攻击）
-    normalized_path = os.path.normpath(filename)
-    if '..' in normalized_path or normalized_path.startswith('/'):
-        return jsonify({"msg": "无效的文件路径"}), 400
-    
-    # 项目图片特殊处理
-    if 'projects/' in normalized_path:
-        project_image = os.path.basename(normalized_path)
-        project_folder = os.path.join(current_app.root_path, 'static', 'uploads', 'projects')
-        if os.path.exists(os.path.join(project_folder, project_image)):
-            return send_from_directory(project_folder, project_image)
-    
-    # 检查完整路径
-    full_path = os.path.join(upload_folder, normalized_path)
-    dir_path = os.path.dirname(full_path)
-    file_name = os.path.basename(full_path)
-    
-    if os.path.exists(full_path) and os.path.isfile(full_path):
-        return send_from_directory(dir_path, file_name)
-    
-    # 尝试从uploads/projects目录获取
-    projects_dir = os.path.join(current_app.root_path, 'static', 'uploads', 'projects')
-    if os.path.exists(os.path.join(projects_dir, file_name)):
-        return send_from_directory(projects_dir, file_name)
-    
-    # 尝试直接从static目录获取
-    static_path = os.path.join(current_app.root_path, 'static', normalized_path)
-    if os.path.exists(static_path) and os.path.isfile(static_path):
-        static_dir = os.path.dirname(static_path)
-        return send_from_directory(static_dir, os.path.basename(static_path))
-    
-    # 文件不存在
-    return jsonify({"msg": "文件不存在", "path": normalized_path}), 404
+def _resolve_upload(filename):
+    """Return a real file inside the upload root, or None."""
+    upload_root = os.path.realpath(get_upload_path())
+    relative = (filename or "").lstrip("/")
+    normalized = os.path.normpath(relative)
+    if normalized in {"", "."} or normalized.startswith("..") or os.path.isabs(normalized):
+        return None
+    full_path = os.path.realpath(os.path.join(upload_root, normalized))
+    if full_path != upload_root and not full_path.startswith(upload_root + os.sep):
+        return None
+    if not os.path.isfile(full_path):
+        return None
+    return full_path
 
-# 添加静态文件访问路由
+
+@api.route('/files/download/<path:filename>', methods=['GET'])
+@member_required
+def download_file(filename):
+    """Authenticated download confined to the upload directory."""
+    full_path = _resolve_upload(filename)
+    if full_path is None:
+        return jsonify({"msg": "文件不存在"}), 404
+    emit("file_download", outcome="ok", filename=os.path.basename(full_path))
+    directory = os.path.dirname(full_path)
+    return send_from_directory(directory, os.path.basename(full_path))
+
+
 @api.route('/static/<path:filename>', methods=['GET'])
+@member_required
 def serve_static(filename):
-    """
-    提供静态文件访问
-    """
-    static_folder = os.path.join(current_app.root_path, 'static')
-    return send_from_directory(static_folder, filename) 
+    """Uploads are not a public static tree."""
+    return download_file(filename) 

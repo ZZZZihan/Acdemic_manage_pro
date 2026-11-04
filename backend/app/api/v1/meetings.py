@@ -10,6 +10,7 @@ from app.models.meeting import Meeting, MeetingParticipant, MeetingFile
 from app.models.user import User
 from app.models.project import Project
 from app.api.v1.errors import bad_request, not_found
+from app.security import member_required
 
 @api.route('/meetings', methods=['GET'])
 @jwt_required()
@@ -95,6 +96,7 @@ def get_meetings():
     })
 
 @api.route('/meetings/<int:id>', methods=['GET'])
+@member_required
 def get_meeting(id):
     """获取单个会议详情"""
     meeting = Meeting.query.get_or_404(id)

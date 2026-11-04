@@ -19,44 +19,19 @@ console.log('Axios实例创建，baseURL:', import.meta.env.VITE_API_URL || '未
 // 请求拦截器
 instance.interceptors.request.use(
   config => {
-    console.log(`发送${config.method.toUpperCase()}请求到: ${config.baseURL}${config.url}`, config)
-    
-    // 从localStorage获取token - 确保每次都获取最新的token
     const token = localStorage.getItem('token')
-    console.log('当前token状态:', { hasToken: !!token, tokenLength: token ? token.length : 0 })
-    
-    // 如果存在token，则添加到请求头
     if (token) {
       config.headers['Authorization'] = `Bearer ${token}`
-      console.log('请求已添加认证Token')
-    } else {
-      console.log('无token，不添加认证头')
-      
-      // 检查是否是需要认证的请求路径
-      const publicPaths = ['/auth/login', '/auth/register', '/auth/forgot-password']
-      const isAuthRequired = !publicPaths.some(path => config.url.includes(path))
-      
-      if (isAuthRequired) {
-        console.warn('警告: 访问需要认证的路径但无token')
-      }
     }
-    
-    // 确保所有字段都是字符串
-    if (config.data) {
+
+    if (config.data && !(config.data instanceof FormData) && typeof config.data === 'object') {
       Object.keys(config.data).forEach(key => {
         if (config.data[key] === null || config.data[key] === undefined) {
           config.data[key] = ''
         }
       })
     }
-    
-    console.log('最终请求配置:', {
-      url: config.url,
-      method: config.method,
-      hasAuthHeader: !!config.headers['Authorization'],
-      data: config.data
-    })
-    
+
     return config
   },
   error => {
@@ -68,11 +43,9 @@ instance.interceptors.request.use(
 // 响应拦截器
 instance.interceptors.response.use(
   response => {
-    console.log(`收到响应: ${response.config.url}`, response.status, response.data)
     return response
   },
   async error => {
-    console.error('请求失败:', error)
     
     if (error.code === 'ECONNABORTED') {
       console.error('请求超时')
@@ -169,6 +142,12 @@ instance.interceptors.response.use(
           break
         case 404:
           ElMessage.error('请求的资源不存在')
+          break
+        case 429:
+          ElMessage.error(error.response.data?.message || '请求过于频繁，请稍后再试')
+          break
+        case 503:
+          ElMessage.error(error.response.data?.message || '服务暂时不可用')
           break
         case 500:
           ElMessage.error('服务器内部错误')
