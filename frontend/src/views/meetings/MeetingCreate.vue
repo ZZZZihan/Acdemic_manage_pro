@@ -168,9 +168,8 @@
 <script>
 import { ref, reactive, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import { ElMessage, ElLoading } from 'element-plus'
+import { ElMessage } from 'element-plus'
 import axios from '@/utils/axios'
-import _ from 'lodash'
 import { useUserStore } from '@/stores/user'
 
 export default {

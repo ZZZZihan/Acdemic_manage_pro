@@ -75,7 +75,7 @@
 </template>
 
 <script setup>
-import { ref, reactive, onMounted, computed } from 'vue'
+import { ref, reactive, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import axios from '@/utils/axios'
@@ -99,21 +99,7 @@ const achievementData = reactive({
   files: []  // 存储多个文件信息
 })
 const originalData = ref(null)
-const newFileInfo = ref(null)
 const fileRemoved = ref(false)
-
-// 计算当前文件信息
-const fileInfo = computed(() => {
-  if (fileRemoved.value) return null
-  if (newFileInfo.value) return newFileInfo.value
-  if (achievementData.file_path) {
-    return {
-      original_name: achievementData.original_file_name || '附件',
-      file_path: achievementData.file_path
-    }
-  }
-  return null
-})
 
 const rules = {
   title: [
@@ -133,7 +119,7 @@ const rules = {
     { required: true, message: '请输入描述', trigger: 'blur' }
   ],
   url: [
-    { pattern: /^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})([\/\w .-]*)*\/?$/, message: '请输入有效的URL', trigger: 'blur' }
+    { pattern: /^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})([/\w .-]*)*\/?$/, message: '请输入有效的URL', trigger: 'blur' }
   ]
 }
 
@@ -167,7 +153,6 @@ const handleFileUploaded = (fileInfo) => {
 
 // 处理文件移除
 const handleFileRemoved = () => {
-  newFileInfo.value = null
   fileRemoved.value = true
 }
 

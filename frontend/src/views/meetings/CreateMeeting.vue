@@ -126,7 +126,7 @@
           </el-table-column>
           
           <el-table-column label="操作" width="100">
-            <template #default="{ row, $index }">
+            <template #default="{ $index }">
               <el-button type="danger" size="small" @click="removeParticipant($index)" text>
                 移除
               </el-button>
@@ -205,7 +205,7 @@
 <script>
 import { ref, reactive, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import { ElMessage, ElMessageBox } from 'element-plus'
+import { ElMessage } from 'element-plus'
 import axios from '@/utils/axios'  // 导入配置好的axios实例
 import { useUserStore } from '@/stores/user'
 
