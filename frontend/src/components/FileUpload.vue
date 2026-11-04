@@ -102,7 +102,7 @@ const beforeUpload = (file) => {
 }
 
 // 处理上传成功
-const handleSuccess = (response, file, fileList) => {
+const handleSuccess = (response, file) => {
   console.log('文件上传成功:', response)
   // 发送文件信息到父组件
   emit('file-uploaded', {

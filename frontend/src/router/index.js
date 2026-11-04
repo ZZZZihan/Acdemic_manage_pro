@@ -9,6 +9,16 @@ const routes = [
     children: [
       {
         path: '',
+        redirect: '/workspace'
+      },
+      {
+        path: 'workspace',
+        name: 'WorkspaceCopilot',
+        component: () => import('@/views/WorkspaceCopilot.vue'),
+        meta: { title: '智能工作台', requiresAuth: false }
+      },
+      {
+        path: 'overview',
         name: 'Home',
         component: () => import('@/views/HomeView.vue'),
         meta: { title: '首页' }

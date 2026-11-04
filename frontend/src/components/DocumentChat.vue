@@ -27,7 +27,7 @@
           type="textarea"
           :rows="2"
           placeholder="输入您的问题..."
-          @keyup.enter.native="sendMessage"
+          @keyup.enter="sendMessage"
           :disabled="loading"
         />
         <el-button 

@@ -67,12 +67,7 @@ export const useAuthStore = defineStore('auth', () => {
   }
   
   async function register(userData) {
-    try {
-      const response = await axios.post('/api/v1/auth/register', userData)
-      return response
-    } catch (error) {
-      throw error
-    }
+    return axios.post('/api/v1/auth/register', userData)
   }
   
   async function logout() {
@@ -103,14 +98,10 @@ export const useAuthStore = defineStore('auth', () => {
   }
   
   async function fetchUserProfile() {
-    try {
-      const response = await axios.get('/api/v1/auth/user')
-      user.value = response.data
-      localStorage.setItem('user', JSON.stringify(user.value))
-      return response
-    } catch (error) {
-      throw error
-    }
+    const response = await axios.get('/api/v1/auth/user')
+    user.value = response.data
+    localStorage.setItem('user', JSON.stringify(user.value))
+    return response
   }
   
   function setAuthData(data) {
